@@ -336,3 +336,16 @@ create policy "settings_read" on public.settings
 drop policy if exists "settings_admin_write" on public.settings;
 create policy "settings_admin_write" on public.settings
   for all using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================
+-- GRANTS
+--   Supabase concede estos privilegios por defecto; los declaramos
+--   explícitamente para que el esquema sea portable. La seguridad
+--   real la siguen aplicando las políticas RLS de arriba.
+-- ============================================================
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant select on all tables in schema public to anon;
+
+-- app_secrets queda protegida (RLS sin políticas): revocamos todo acceso.
+revoke all on public.app_secrets from anon, authenticated;
