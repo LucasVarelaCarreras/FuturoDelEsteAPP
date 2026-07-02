@@ -20,7 +20,13 @@ interface AuthContextValue {
   loading: boolean
   signInWithEmail: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
-  signUp: (name: string, email: string, password: string, role: UserRole) => Promise<void>
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole,
+    adminCode?: string,
+  ) => Promise<void>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
 }
@@ -93,14 +99,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signUp = useCallback(
-    async (name: string, email: string, password: string, role: UserRole) => {
+    async (name: string, email: string, password: string, role: UserRole, adminCode?: string) => {
+      const data: Record<string, string> = {
+        full_name: name.trim(),
+        initials: initialsFrom(name),
+        role,
+      }
+      if (role === 'admin' && adminCode) data.admin_code = adminCode
       const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: {
-          data: { full_name: name.trim(), initials: initialsFrom(name), role },
-          emailRedirectTo: window.location.origin,
-        },
+        options: { data, emailRedirectTo: window.location.origin },
       })
       if (error) throw error
     },

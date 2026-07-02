@@ -5,6 +5,7 @@ import { Icon, type Glyph } from './Icon'
 import { Avatar } from './ui'
 import { colorForId } from '@/lib/format'
 import { useRealtime } from '@/hooks/useRealtime'
+import { InstallPrompt } from './InstallPrompt'
 
 interface NavItem {
   to: string
@@ -147,6 +148,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       )}
+
+      <InstallPrompt />
     </div>
   )
 }

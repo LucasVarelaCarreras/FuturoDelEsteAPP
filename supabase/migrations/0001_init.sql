@@ -147,6 +147,25 @@ values ('terms', jsonb_build_object('version', '1.0', 'hash', ''))
 on conflict (key) do nothing;
 
 -- ============================================================
+-- APP_SECRETS  (valores sensibles — SIN acceso desde el cliente)
+--   RLS habilitado y sin políticas => ningún rol puede leerlo.
+--   Sólo funciones SECURITY DEFINER (como el trigger de alta) acceden.
+-- ============================================================
+create table if not exists public.app_secrets (
+  key    text primary key,
+  value  text not null
+);
+alter table public.app_secrets enable row level security;
+-- (sin políticas: acceso denegado para anon y authenticated)
+
+-- Código para autorizar el alta de administradores.
+-- IMPORTANTE: cambialo por uno propio antes de producción:
+--   update public.app_secrets set value = 'TU-CODIGO' where key = 'admin_signup_code';
+insert into public.app_secrets (key, value)
+values ('admin_signup_code', 'FDE2026')
+on conflict (key) do nothing;
+
+-- ============================================================
 -- FUNCIONES
 -- ============================================================
 
@@ -193,15 +212,27 @@ declare
   v_name text;
   v_role user_role;
   v_initials text;
+  v_requested text;
+  v_code text;
+  v_secret text;
 begin
   v_name := coalesce(new.raw_user_meta_data->>'full_name',
                      new.raw_user_meta_data->>'name',
                      split_part(new.email, '@', 1));
-  begin
-    v_role := coalesce((new.raw_user_meta_data->>'role')::user_role, 'guia');
-  exception when others then
-    v_role := 'guia';
-  end;
+
+  -- El rol admin sólo se concede si el código de equipo coincide con el
+  -- secreto guardado en app_secrets (validación del lado del servidor).
+  -- Cualquier otro caso queda como 'guia'. Nunca se confía sólo en el
+  -- metadata del cliente para otorgar privilegios.
+  v_requested := new.raw_user_meta_data->>'role';
+  v_role := 'guia';
+  if v_requested = 'admin' then
+    v_code := new.raw_user_meta_data->>'admin_code';
+    select value into v_secret from public.app_secrets where key = 'admin_signup_code';
+    if v_secret is not null and v_code is not null and upper(v_code) = upper(v_secret) then
+      v_role := 'admin';
+    end if;
+  end if;
   v_initials := upper(
     left(coalesce(split_part(v_name, ' ', 1), ''), 1) ||
     left(coalesce(nullif(split_part(v_name, ' ', 2), ''), ''), 1)

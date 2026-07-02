@@ -103,6 +103,11 @@ Se abre en modo standalone (sin barras del navegador), con ícono y splash propi
 - Las guías sólo pueden crear/cancelar **sus propios** acompañamientos.
 - Sólo administradores pueden crear/editar atletas, actividades y cobertura.
 - La verificación de rol se hace con la función `is_admin()` (SECURITY DEFINER, sin recursión).
+- El **rol admin se otorga en el servidor**: el trigger de alta valida el código de
+  equipo contra `app_secrets.admin_signup_code` (tabla sin acceso desde el cliente).
+  No se confía en el metadata del cliente para dar privilegios.
+  > `VITE_ADMIN_TEAM_CODE` debe coincidir con ese secreto. Para cambiarlo:
+  > `update public.app_secrets set value = 'TU-CODIGO' where key = 'admin_signup_code';`
 
 ## 🗂️ Estructura
 

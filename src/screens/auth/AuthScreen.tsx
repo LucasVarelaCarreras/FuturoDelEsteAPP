@@ -272,7 +272,8 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
         if (pass.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres.')
         if (code.trim().toUpperCase() !== ADMIN_CODE.toUpperCase())
           throw new Error('Código de equipo incorrecto. Pedilo a la fundación.')
-        await signUp(name, email, pass, 'admin')
+        // El código también se valida en el servidor (trigger de alta).
+        await signUp(name, email, pass, 'admin', code.trim())
         setError('')
         setMode('login')
         setLoading(false)
