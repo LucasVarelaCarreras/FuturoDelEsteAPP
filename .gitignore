@@ -1,0 +1,19 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# PWA generated
+dev-dist
+
+# TS build info
+*.tsbuildinfo
