@@ -1,0 +1,19 @@
+<!-- @dsCard group="Spacing" viewport="700x200" name="Shadows" subtitle="Soft, cool-tinted elevation + brand glow" -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;padding:30px 26px;background:var(--surface-page);font-family:var(--font-sans);}
+  .row{display:flex;gap:26px;align-items:center;}
+  .sw{text-align:center;}
+  .box{width:96px;height:64px;background:var(--surface-card);border-radius:14px;}
+  .name{font-size:11px;font-weight:700;color:var(--text-heading);margin-top:14px;}
+  .val{font-size:10px;color:var(--text-muted);font-family:var(--font-display);}
+</style></head><body>
+<div class="row">
+  <div class="sw"><div class="box" style="box-shadow:var(--shadow-xs)"></div><div class="name">xs</div></div>
+  <div class="sw"><div class="box" style="box-shadow:var(--shadow-sm)"></div><div class="name">sm</div></div>
+  <div class="sw"><div class="box" style="box-shadow:var(--shadow-md)"></div><div class="name">md</div></div>
+  <div class="sw"><div class="box" style="box-shadow:var(--shadow-lg)"></div><div class="name">lg</div></div>
+  <div class="sw"><div class="box" style="box-shadow:var(--shadow-brand)"></div><div class="name">brand</div><div class="val">cyan glow</div></div>
+</div>
+</body></html>

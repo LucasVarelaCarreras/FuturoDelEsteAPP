@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Futuro del Este — Sistema de Diseño (Referencia / Prompt)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Lora:ital,wght@0,500;0,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{
+    --emerald:#01B8A4;--aqua:#1DC9C9;--cyan:#019AC4;--blue:#0397CD;--ocean:#01608F;--pine:#018176;--navy:#133B5C;
+    --paper:#F4F8FA;--mist:#E9F0F3;--line:#D5E1E7;--slate:#5C7682;--slate7:#3A535F;--ink:#112532;
+    --wave:linear-gradient(135deg,#01B8A4 0%,#1DC9C9 28%,#019AC4 60%,#0397CD 78%,#01608F 100%);
+    --deep:linear-gradient(160deg,#01608F 0%,#133B5C 100%);
+    --sans:'Mulish',system-ui,sans-serif;--disp:'Oswald','Arial Narrow',sans-serif;--serif:'Lora',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--sans);color:var(--slate7);background:var(--mist);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .page{max-width:920px;margin:0 auto;background:#fff;}
+  section{padding:54px 64px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-weight:600;font-size:13px;color:var(--cyan);margin:0 0 10px;}
+  h1{font-family:var(--sans);font-weight:800;color:var(--navy);letter-spacing:-.01em;line-height:1.06;margin:0;}
+  h2{font-family:var(--sans);font-weight:800;color:var(--navy);letter-spacing:-.01em;font-size:30px;margin:0 0 6px;}
+  h3{font-family:var(--sans);font-weight:800;color:var(--navy);font-size:19px;margin:26px 0 8px;}
+  h4{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--slate);font-weight:600;margin:22px 0 10px;}
+  p{margin:0 0 12px;max-width:62ch;}
+  a{color:var(--cyan);}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ocean);}
+  pre{font-family:var(--mono);font-size:13px;line-height:1.55;background:var(--navy);color:#DCEAF2;border-radius:12px;padding:18px 20px;overflow:auto;margin:10px 0 18px;}
+  pre .k{color:var(--aqua);} pre .s{color:#9FE5C8;} pre .c{color:#6F8C9B;}
+  ul{margin:0 0 12px;padding-left:20px;max-width:62ch;}
+  li{margin:4px 0;}
+  .lead{font-size:18px;color:var(--slate7);max-width:60ch;}
+  .quote{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ocean);border-left:3px solid var(--aqua);padding-left:18px;margin:14px 0;max-width:60ch;}
+
+  /* cover */
+  .cover{background:var(--deep);color:#fff;padding:72px 64px 64px;border-bottom:none;}
+  .cover h1{color:#fff;font-size:52px;}
+  .cover .mark{width:92px;height:92px;margin-bottom:26px;}
+  .cover .tag{font-size:24px;color:#fff;font-weight:800;margin-top:18px;}
+  .cover .tag b{color:var(--aqua);}
+  .cover .sub{color:rgba(255,255,255,.8);font-size:16px;margin-top:14px;max-width:60ch;}
+  .meta-row{display:flex;gap:30px;flex-wrap:wrap;margin-top:30px;font-size:13px;color:rgba(255,255,255,.7);}
+  .meta-row b{display:block;color:#fff;font-family:var(--disp);letter-spacing:.06em;text-transform:uppercase;font-size:11px;margin-bottom:3px;}
+
+  /* swatches */
+  .sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0 6px;}
+  .sw{border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .sw .chip{height:64px;}
+  .sw .info{padding:8px 12px;}
+  .sw .nm{font-weight:800;color:var(--navy);font-size:13px;}
+  .sw .hx{font-family:var(--mono);font-size:11px;color:var(--slate);}
+  .ramp{height:54px;border-radius:12px;background:var(--wave);margin:8px 0 4px;}
+
+  /* type specimen */
+  .spec{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:10px 0;}
+  .spec .lbl{font-family:var(--mono);font-size:11px;color:var(--slate);margin-top:6px;}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:14px;}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);}
+  th{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--slate);font-weight:600;}
+  td code{font-size:12px;}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px;border-radius:999px;padding:5px 12px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0;}
+  .btn{display:inline-flex;align-items:center;font-family:var(--sans);font-weight:700;border-radius:999px;padding:11px 24px;font-size:15px;border:1.5px solid transparent;}
+
+  .note{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--warning,#E8A21C);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;}
+  .note b{color:var(--navy);}
+
+  @media print{
+    body{background:#fff;} .page{max-width:none;}
+    section{padding:30px 36px;page-break-inside:avoid;}
+    .cover{padding:46px 36px;}
+    pre{background:#0e1f2c;}
+  }
+</style>
+<template id="__bundler_thumbnail" data-bg-color="#133B5C">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#133B5C"/>
+    <circle cx="600" cy="330" r="150" fill="#0c2438" stroke="#fff" stroke-width="9"/>
+    <clipPath id="tc"><circle cx="600" cy="330" r="146"/></clipPath>
+    <g clip-path="url(#tc)">
+      <path d="M454,300 q49,-48 99,0 t99,0 t99,0 V480 H454 Z" fill="#01B8A4"/>
+      <path d="M454,336 q49,-48 99,0 t99,0 t99,0 V480 H454 Z" fill="#1DC9C9"/>
+      <path d="M454,372 q49,-48 99,0 t99,0 t99,0 V480 H454 Z" fill="#019AC4"/>
+      <path d="M454,408 q49,-48 99,0 t99,0 t99,0 V480 H454 Z" fill="#01608F"/>
+    </g>
+    <text x="600" y="560" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-weight="800" font-size="52" letter-spacing="3">FUTURO DEL ESTE</text>
+    <text x="600" y="616" text-anchor="middle" fill="#1DC9C9" font-family="Arial, sans-serif" font-weight="600" font-size="27">Sistema de Diseño</text>
+  </svg>
+</template>
+</head>
+<body>
+<div class="page">
+
+<!-- COVER -->
+<section class="cover">
+  <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="47" fill="#0c2438" stroke="#fff" stroke-width="3"/>
+    <clipPath id="cc"><circle cx="50" cy="50" r="45"/></clipPath>
+    <g clip-path="url(#cc)">
+      <rect x="0" y="0" width="100" height="100" fill="#0e3f5e"/>
+      <path d="M0,42 q16,-16 33,0 t33,0 t34,0 V100 H0 Z" fill="#01B8A4"/>
+      <path d="M0,54 q16,-16 33,0 t33,0 t34,0 V100 H0 Z" fill="#1DC9C9"/>
+      <path d="M0,66 q16,-16 33,0 t33,0 t34,0 V100 H0 Z" fill="#019AC4"/>
+      <path d="M0,78 q16,-16 33,0 t33,0 t34,0 V100 H0 Z" fill="#01608F"/>
+    </g>
+  </svg>
+  <p class="eyebrow" style="color:var(--aqua)">Sistema de Diseño · Documento de referencia</p>
+  <h1>Fundación Futuro del Este</h1>
+  <div class="tag">Sustentabilidad <b>+</b> Accesibilidad</div>
+  <p class="sub">Identidad visual y verbal destilada del sitio web e Instagram de la fundación. Este documento reúne todo el sistema en un solo lugar para usarlo como guía de marca o como <b>prompt</b> al diseñar nuevos productos (empezando por la app).</p>
+  <div class="meta-row">
+    <div><b>Región</b>Este de Uruguay · Maldonado / Punta del Este</div>
+    <div><b>Idioma</b>Español rioplatense (voseo)</div>
+    <div><b>Color primario</b>Cyan #019AC4</div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section>
+  <p class="eyebrow">01 · Fuentes</p>
+  <h2>De dónde sale este sistema</h2>
+  <p>Reconstruido a partir del material provisto por el cliente. El sitio actual está hecho en Google Sites, por lo que no hay tokens ni código de diseño propietario — todo se derivó de los visuales y los assets de marca.</p>
+  <ul>
+    <li><b>Web:</b> <a href="https://www.futurodeleste.org">futurodeleste.org</a> (Inicio, Quiénes somos, Qué hacemos, Contactanos, Novedades, Colaborá)</li>
+    <li><b>Instagram:</b> <a href="https://www.instagram.com/futurodeleste/">@futurodeleste</a></li>
+    <li><b>Assets:</b> logo (marca de la ola), foto del hero, grilla de Instagram</li>
+    <li>También enlazados: LinkedIn, Facebook, X, WhatsApp, video institucional en YouTube</li>
+  </ul>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <p class="eyebrow">02 · Fundamentos de contenido</p>
+  <h2>Voz y tono</h2>
+  <p><b>Idioma:</b> español rioplatense (Uruguay). Usa <b>voseo</b> — “Sumate”, “Colaborá”, “Conocé”, “Contactanos” — nunca las formas de España (“Súmate / Colabora”).</p>
+  <p><b>Voz:</b> cálida, inclusiva, colectiva y esperanzadora. La fundación habla en <b>“nosotros”</b> (“Queremos contribuir…”, “Buscamos naturalizar…”, “Brindamos experiencias…”) y se dirige al lector de forma informal (“vos”). Es una voz con propósito y llana — no corporativa, no académica, nunca solemne.</p>
+  <h4>Vocabulario recurrente</h4>
+  <p>sustentabilidad · accesibilidad · inclusión · discapacidad · cuidado ambiental · cambio cultural · naturalizar · concientizar · en alianza · comunidad · el Este</p>
+  <h4>Mayúsculas</h4>
+  <p>Titulares en sentence case o ALL CAPS para afiches/wordmark. El “+” de <i>Sustentabilidad + Accesibilidad</i> es una firma — mantener los espacios alrededor.</p>
+  <h4>Ejemplos de tono</h4>
+  <ul>
+    <li><b>CTA:</b> “Colaborá”, “Sumate al cambio”, “Confirmá tu asistencia”, “Ver todas las novedades”.</li>
+    <li><b>Cuerpo:</b> “En alianza con diversas instituciones locales, nacionales e internacionales, brindamos experiencias para ayudar a concientizar e incorporar aprendizajes sobre inclusión y sustentabilidad.”</li>
+    <li><b>Afiche:</b> “ENTRADA GRATUITA”, “48° ANIVERSARIO”, “DÍA MUNDIAL DEL MEDIO AMBIENTE”.</li>
+  </ul>
+  <div class="quote">“Queremos contribuir a generar un cambio cultural que permita incorporar, de forma orgánica, conceptos de sustentabilidad y accesibilidad en todos los proyectos.”</div>
+  <p><b>Emoji:</b> no forman parte de la marca formal en la web. Mantener mínimo y funcional en producto.</p>
+</section>
+
+<!-- VISUAL -->
+<section>
+  <p class="eyebrow">03 · Fundamentos visuales</p>
+  <h2>El motivo: la ola</h2>
+  <p>La identidad es una <b>ola oceánica</b>: el logo es un círculo con bandas onduladas superpuestas que van del verde-azulado arriba al azul océano profundo abajo, separadas por finas líneas blancas. Esta ola “costera / del Este” se repite como divisores de sección, gradientes y acentos de tarjetas.</p>
+  <table>
+    <tr><th>Aspecto</th><th>Regla</th></tr>
+    <tr><td>Formas / radios</td><td>Suaves y redondeadas. Botones tipo <b>píldora</b>; tarjetas con radios grandes (20px+); afiches sociales 40px+. Nada con esquinas filosas.</td></tr>
+    <tr><td>Sombras</td><td>Suaves, bajo contraste, tinte frío <code>rgba(17,37,50,…)</code>. Glow cyan en botones primarios. Sin sombras negras ni duras.</td></tr>
+    <tr><td>Bordes</td><td>Hairline 1px <code>#D5E1E7</code> en tarjetas; 1.5px en inputs; foco = borde cyan 2px + ring cyan suave.</td></tr>
+    <tr><td>Movimiento</td><td>Calmo y gentil — fades y pequeños lifts, ease estándar, 140–400ms. <b>Sin bounce ni spring.</b></td></tr>
+    <tr><td>Estados</td><td>Hover = tono más oscuro del mismo color (nunca opacidad). Tarjetas suben −3px. Press = escala 0.97. Disabled = 50% opacidad.</td></tr>
+    <tr><td>Fondos</td><td>(1) superficies blanco-frío limpias; (2) fotografía full-bleed con wash claro o navy; (3) color de marca / gradiente de ola. Sin ruido ni textura.</td></tr>
+    <tr><td>Layout</td><td>Aireado, mucho espacio en blanco alrededor de la marca. Lockups centrados; contenido máx. 1200px; espaciado base 8px.</td></tr>
+    <tr><td>Fotografía</td><td>Cálida-natural, espontánea, centrada en personas, exteriores, comunidad.</td></tr>
+  </table>
+</section>
+
+<!-- COLOR -->
+<section>
+  <p class="eyebrow">04 · Color</p>
+  <h2>Rampa de la ola</h2>
+  <p>Una rampa fría azul-verde tomada directo del logo. <b>Cyan #019AC4</b> es el color interactivo primario; el emerald es secundario. La tinta navy ancla wordmark y titulares.</p>
+  <div class="ramp"></div>
+  <div class="sw-grid">
+    <div class="sw"><div class="chip" style="background:#01B8A4"></div><div class="info"><div class="nm">Emerald</div><div class="hx">#01B8A4</div></div></div>
+    <div class="sw"><div class="chip" style="background:#1DC9C9"></div><div class="info"><div class="nm">Aqua</div><div class="hx">#1DC9C9</div></div></div>
+    <div class="sw"><div class="chip" style="background:#019AC4"></div><div class="info"><div class="nm">Cyan · primario</div><div class="hx">#019AC4</div></div></div>
+    <div class="sw"><div class="chip" style="background:#0397CD"></div><div class="info"><div class="nm">Blue</div><div class="hx">#0397CD</div></div></div>
+    <div class="sw"><div class="chip" style="background:#01608F"></div><div class="info"><div class="nm">Ocean</div><div class="hx">#01608F</div></div></div>
+    <div class="sw"><div class="chip" style="background:#133B5C"></div><div class="info"><div class="nm">Navy · tinta</div><div class="hx">#133B5C</div></div></div>
+  </div>
+  <h4>Neutrales (fríos)</h4>
+  <div class="sw-grid">
+    <div class="sw"><div class="chip" style="background:#F4F8FA"></div><div class="info"><div class="nm">Paper</div><div class="hx">#F4F8FA</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E9F0F3"></div><div class="info"><div class="nm">Mist</div><div class="hx">#E9F0F3</div></div></div>
+    <div class="sw"><div class="chip" style="background:#D5E1E7"></div><div class="info"><div class="nm">Line</div><div class="hx">#D5E1E7</div></div></div>
+    <div class="sw"><div class="chip" style="background:#5C7682"></div><div class="info"><div class="nm">Slate · texto 2°</div><div class="hx">#5C7682</div></div></div>
+    <div class="sw"><div class="chip" style="background:#112532"></div><div class="info"><div class="nm">Ink · texto</div><div class="hx">#112532</div></div></div>
+    <div class="sw"><div class="chip" style="background:#018176"></div><div class="info"><div class="nm">Pine</div><div class="hx">#018176</div></div></div>
+  </div>
+  <h4>Estados semánticos</h4>
+  <div class="sw-grid">
+    <div class="sw"><div class="chip" style="background:#1E9E6A"></div><div class="info"><div class="nm">Success</div><div class="hx">#1E9E6A</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E8A21C"></div><div class="info"><div class="nm">Warning</div><div class="hx">#E8A21C</div></div></div>
+    <div class="sw"><div class="chip" style="background:#D9534F"></div><div class="info"><div class="nm">Danger</div><div class="hx">#D9534F</div></div></div>
+  </div>
+  <h4>Gradientes</h4>
+  <table>
+    <tr><td><code>--gradient-wave</code></td><td>135°: #01B8A4 → #1DC9C9 → #019AC4 → #0397CD → #01608F</td></tr>
+    <tr><td><code>--gradient-deep</code></td><td>160°: #01608F → #133B5C (bandas/heros oscuros)</td></tr>
+    <tr><td><code>--gradient-wave-soft</code></td><td>135°: #E6F8F5 → #E2F3F9 → #E1ECF2 (washes claros)</td></tr>
+  </table>
+</section>
+
+<!-- TYPE -->
+<section>
+  <p class="eyebrow">05 · Tipografía</p>
+  <h2>Tres familias</h2>
+  <div class="spec">
+    <div style="font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:42px;color:var(--navy);line-height:1;">48° Aniversario</div>
+    <div class="lbl">DISPLAY — Oswald · condensada mayúsculas · 400/500/600/700 · tracking .02–.14em · afiches, numerales, eyebrows</div>
+  </div>
+  <div class="spec">
+    <div style="font-family:var(--sans);font-weight:800;letter-spacing:-.01em;font-size:34px;color:var(--navy);line-height:1.08;">Sustentabilidad + Accesibilidad</div>
+    <div class="lbl">UI / BODY — Mulish · sans humanista · 800 titulares, 400/500/600 texto · tracking −.01em en titulares</div>
+  </div>
+  <div class="spec">
+    <div style="font-family:var(--serif);font-style:italic;font-weight:500;font-size:26px;color:var(--ocean);line-height:1.3;">“Celebramos 48 años de compromiso con la inclusión.”</div>
+    <div class="lbl">ACENTO — Lora italic · serif transicional · captions, pull quotes, testimonios</div>
+  </div>
+  <div class="note"><b>⚠ Sustitución de fuentes:</b> las fuentes reales de la marca no son de distribución pública; se mapearon a las más cercanas en Google Fonts (Oswald / Mulish / Lora). Si tenés los archivos reales, se reemplazan en <code>tokens/fonts.css</code>.</div>
+  <h4>Escala tipográfica</h4>
+  <table>
+    <tr><th>Token</th><th>px</th><th>Uso</th></tr>
+    <tr><td><code>--text-4xl</code></td><td>48</td><td>Hero / H1</td></tr>
+    <tr><td><code>--text-3xl</code></td><td>38</td><td>H2 sección</td></tr>
+    <tr><td><code>--text-2xl</code></td><td>30</td><td>Título de bloque</td></tr>
+    <tr><td><code>--text-xl</code></td><td>24</td><td>H3</td></tr>
+    <tr><td><code>--text-lg</code></td><td>20</td><td>Subtítulo / lead</td></tr>
+    <tr><td><code>--text-base</code></td><td>16</td><td>Cuerpo</td></tr>
+    <tr><td><code>--text-sm</code></td><td>14</td><td>Texto secundario</td></tr>
+  </table>
+</section>
+
+<!-- SPACING -->
+<section>
+  <p class="eyebrow">06 · Espaciado, radios y sombras</p>
+  <h2>Sistema de espaciado</h2>
+  <p>Base 4px, grilla suave de 8px. Layouts generosos y aireados.</p>
+  <table>
+    <tr><th>Escala</th><th>Valor</th><th>·</th><th>Radio</th><th>Valor</th></tr>
+    <tr><td>space-1</td><td>4px</td><td></td><td>radius-sm</td><td>8px</td></tr>
+    <tr><td>space-2</td><td>8px</td><td></td><td>radius-md</td><td>14px</td></tr>
+    <tr><td>space-4</td><td>16px</td><td></td><td>radius-lg · tarjetas</td><td>20px</td></tr>
+    <tr><td>space-5</td><td>24px</td><td></td><td>radius-xl</td><td>28px</td></tr>
+    <tr><td>space-6</td><td>32px</td><td></td><td>radius-pill · botones</td><td>999px</td></tr>
+    <tr><td>space-9</td><td>64px</td><td></td><td>radius-circle</td><td>50%</td></tr>
+  </table>
+  <h4>Sombras</h4>
+  <table>
+    <tr><td><code>--shadow-sm</code></td><td>0 2px 8px rgba(17,37,50,.07)</td><td>tarjetas en reposo</td></tr>
+    <tr><td><code>--shadow-lg</code></td><td>0 18px 48px rgba(17,37,50,.12)</td><td>hover / elevado</td></tr>
+    <tr><td><code>--shadow-brand</code></td><td>0 12px 28px rgba(1,154,196,.28)</td><td>glow cyan en botón primario</td></tr>
+  </table>
+</section>
+
+<!-- COMPONENTS -->
+<section>
+  <p class="eyebrow">07 · Componentes</p>
+  <h2>Primitivas de UI</h2>
+  <p>Namespace en runtime: <code>window.FuturoDelEsteDesignSystem_&lt;hash&gt;</code>. Todas referencian las CSS custom properties; sin librerías externas.</p>
+
+  <h3>Button</h3>
+  <p>Botón CTA tipo píldora. Hover desplaza el color (nunca opacidad); press escala a 0.97.</p>
+  <div class="row">
+    <span class="btn" style="background:#019AC4;color:#fff;box-shadow:0 12px 28px rgba(1,154,196,.28)">Colaborá</span>
+    <span class="btn" style="background:#01B8A4;color:#fff">Sumate</span>
+    <span class="btn" style="background:transparent;color:#019AC4;border-color:#019AC4">Conocé más</span>
+    <span class="btn" style="background:transparent;color:var(--navy)">Cancelar</span>
+    <span class="btn" style="background:#133B5C;color:#fff">Contactanos</span>
+  </div>
+  <pre><span class="c">// variant: primary | secondary | outline | ghost | deep · size: sm | md | lg</span>
+<span class="k">&lt;Button</span> variant=<span class="s">"primary"</span> size=<span class="s">"md"</span> onClick={save}<span class="k">&gt;</span>Colaborá<span class="k">&lt;/Button&gt;</span>
+<span class="k">&lt;Button</span> variant=<span class="s">"outline"</span> iconLeft={&lt;PlusIcon/&gt;} full<span class="k">&gt;</span>Sumate<span class="k">&lt;/Button&gt;</span></pre>
+
+  <h3>Badge</h3>
+  <p>Pill chico para estado, categoría, fecha o conteo.</p>
+  <div class="row">
+    <span class="pill" style="background:#E2F3F9;color:#016684">● Inscripción abierta</span>
+    <span class="pill" style="background:#E6F8F5;color:#018176">Sustentabilidad</span>
+    <span class="pill" style="background:#01608F;color:#fff">13 JUN</span>
+  </div>
+  <pre><span class="c">// tone: cyan | emerald | aqua | ocean | navy | success | warning</span>
+<span class="k">&lt;Badge</span> tone=<span class="s">"emerald"</span><span class="k">&gt;</span>Sustentabilidad<span class="k">&lt;/Badge&gt;</span>
+<span class="k">&lt;Badge</span> tone=<span class="s">"cyan"</span> dot<span class="k">&gt;</span>Inscripción abierta<span class="k">&lt;/Badge&gt;</span>
+<span class="k">&lt;Badge</span> tone=<span class="s">"ocean"</span> soft={false}<span class="k">&gt;</span>13 JUN<span class="k">&lt;/Badge&gt;</span></pre>
+
+  <h3>Card</h3>
+  <p>Superficie redondeada suave — contenedor base para features, novedades, stats y paneles. <code>accent</code> agrega la franja de ola arriba; <code>interactive</code> sube + profundiza sombra en hover.</p>
+  <pre><span class="k">&lt;Card</span> accent interactive padding=<span class="s">"lg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;Badge</span> tone=<span class="s">"emerald"</span><span class="k">&gt;</span>Novedades<span class="k">&lt;/Badge&gt;</span>
+  <span class="k">&lt;h3&gt;</span>Día Mundial del Medio Ambiente<span class="k">&lt;/h3&gt;</span>
+<span class="k">&lt;/Card&gt;</span></pre>
+
+  <h3>Input</h3>
+  <p>Campo de texto redondeado con label, hint/error y ring cyan calmo.</p>
+  <pre><span class="k">&lt;Input</span> label=<span class="s">"Email"</span> type=<span class="s">"email"</span> placeholder=<span class="s">"tu@correo.com"</span> hint=<span class="s">"Te escribiremos pronto."</span> <span class="k">/&gt;</span>
+<span class="k">&lt;Input</span> label=<span class="s">"Nombre"</span> error=<span class="s">"Este campo es obligatorio."</span> <span class="k">/&gt;</span></pre>
+
+  <h3>Logo &amp; WaveDivider</h3>
+  <p><b>Logo</b> — marca de la ola, opcionalmente con wordmark. Variantes: <code>mark</code>, <code>lockup</code> (apilado), <code>lockup-horizontal</code>; <code>tone="white"</code> sobre fondos oscuros/foto. Nunca recolorear ni distorsionar la marca.</p>
+  <p><b>WaveDivider</b> — la ola firma como separador de sección o cap de hero. Props: <code>fill</code>, <code>gradient</code>, <code>height</code>, <code>flip</code>.</p>
+  <pre><span class="k">&lt;Logo</span> variant=<span class="s">"lockup"</span> size={56} <span class="k">/&gt;</span>
+<span class="k">&lt;Logo</span> variant=<span class="s">"lockup"</span> tone=<span class="s">"white"</span> <span class="k">/&gt;</span>  <span class="c">// sobre marca/foto</span>
+<span class="k">&lt;WaveDivider</span> gradient height={80} <span class="k">/&gt;</span></pre>
+</section>
+
+<!-- ICONOGRAPHY -->
+<section>
+  <p class="eyebrow">08 · Iconografía</p>
+  <h2>Enfoque de íconos</h2>
+  <p>El sitio actual (Google Sites) no trae set de íconos propio — usa los glifos sociales por defecto y un chevron. No hay fuente de íconos propietaria.</p>
+  <ul>
+    <li>El único asset de marca verdadero es la <b>marca de la ola</b>. Tratarla como el glifo hero; nunca recolorear ni distorsionar.</li>
+    <li>Para íconos de UI, usar un set <b>outline con caps/joins redondeados</b> para acompañar la geometría suave — ej. <b>Lucide</b> o <b>Phosphor (regular)</b> por CDN. <i>Es una sustitución</i> (la marca no tiene librería propia) — a confirmar con el cliente.</li>
+    <li>Emoji solo como placeholder de wayfinding en el kit de app; reemplazar por el set elegido antes de producción.</li>
+    <li>La ola decorativa (WaveDivider) es mobiliario de marca, no un ícono.</li>
+  </ul>
+</section>
+
+<!-- CAVEATS -->
+<section>
+  <p class="eyebrow">09 · Caveats / a confirmar</p>
+  <h2>Sustituciones</h2>
+  <div class="note"><b>Fuentes:</b> sustituciones por aproximación (Oswald / Mulish / Lora). Enviar los archivos reales para reemplazar.</div>
+  <div class="note"><b>Colores:</b> muestreados del PNG del logo y la imaginería — precisos pero no de una spec oficial. Confirmar hexes exactos si existe un brand book.</div>
+  <div class="note"><b>App móvil:</b> el kit es un <b>concepto</b> diseñado desde la marca (la app aún no existe). Tratar como dirección de arranque, no spec.</div>
+  <div class="note"><b>Íconos:</b> no existe set propio en el sitio; se recomienda Lucide/Phosphor (redondeados) — sustitución marcada.</div>
+</section>
+
+<!-- MANIFEST -->
+<section>
+  <p class="eyebrow">10 · Índice del sistema</p>
+  <h2>Qué incluye el proyecto</h2>
+  <table>
+    <tr><th>Área</th><th>Contenido</th></tr>
+    <tr><td>Fundaciones</td><td><code>styles.css</code> + <code>tokens/</code> (fonts, colors, typography, spacing, base)</td></tr>
+    <tr><td>Componentes</td><td>Button, Badge, Card · Input · Logo, WaveDivider</td></tr>
+    <tr><td>UI kit — Web</td><td>Homepage (Nav, Hero, Mission, News, Footer)</td></tr>
+    <tr><td>UI kit — App</td><td>App concepto (Home, Event, Colaborá, Perfil + shell)</td></tr>
+    <tr><td>Social</td><td>Templates de Instagram (evento, efeméride, cita/aniversario)</td></tr>
+    <tr><td>Cards de fundación</td><td>22 specimens de color, tipo, espaciado y marca</td></tr>
+    <tr><td>Skill</td><td><code>SKILL.md</code> — manifiesto portable de Agent Skill</td></tr>
+  </table>
+  <p style="margin-top:24px;color:var(--slate);font-size:13px;font-family:var(--mono)">Fundación Futuro del Este · Sistema de Diseño · documento de referencia generado para uso como guía / prompt · futurodeleste.org</p>
+</section>
+
+</div>
+</body>
+</html>

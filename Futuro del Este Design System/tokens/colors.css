@@ -1,0 +1,80 @@
+/* ============================================================
+   Futuro del Este — Color tokens
+   Palette extracted from the wave logo gradient + web/IG brand.
+   The signature is an ocean wave ramp: emerald → aqua → cyan →
+   blue → deep ocean, anchored by a deep navy ink for text.
+   ============================================================ */
+:root {
+  /* ---- Brand ramp (the wave, light → deep) ---- */
+  --fde-emerald: #01B8A4; /* teal-green, top of the wave   */
+  --fde-aqua:    #1DC9C9; /* turquoise highlight           */
+  --fde-cyan:    #019AC4; /* signature cyan-blue           */
+  --fde-blue:    #0397CD; /* mid ocean blue                */
+  --fde-ocean:   #01608F; /* deep ocean blue               */
+  --fde-pine:    #018176; /* deep teal shadow              */
+  --fde-navy:    #133B5C; /* wordmark / heading ink        */
+
+  /* ---- Tints (surfaces, washes) ---- */
+  --fde-emerald-50: #E6F8F5;
+  --fde-aqua-50:    #E4FAFA;
+  --fde-cyan-50:    #E2F3F9;
+  --fde-ocean-50:   #E1ECF2;
+  --fde-cyan-100:   #C2E6F1;
+  --fde-emerald-100:#C9F0EA;
+
+  /* ---- Shades (hover / pressed) ---- */
+  --fde-cyan-600:    #017FA3;
+  --fde-cyan-700:    #016684;
+  --fde-emerald-600: #019586;
+  --fde-ocean-700:   #0A4A6B;
+
+  /* ---- Neutrals (cool-leaning to match the palette) ---- */
+  --fde-white:   #FFFFFF;
+  --fde-paper:   #F4F8FA; /* page background, soft cool white */
+  --fde-mist:    #E9F0F3; /* subtle fill / dividers tint      */
+  --fde-line:    #D5E1E7; /* hairline borders                 */
+  --fde-gray-300:#B6C6CE;
+  --fde-gray-400:#90A6B0;
+  --fde-slate:   #5C7682; /* secondary text                   */
+  --fde-slate-700:#3A535F;
+  --fde-ink:     #112532; /* primary text, near-black navy    */
+
+  /* ---- Semantic status ---- */
+  --fde-success: #1E9E6A;
+  --fde-warning: #E8A21C;
+  --fde-danger:  #D9534F;
+  --fde-info:    var(--fde-cyan);
+
+  /* ============================================================
+     Semantic aliases — reference these in components
+     ============================================================ */
+  --color-primary:        var(--fde-cyan);
+  --color-primary-hover:  var(--fde-cyan-600);
+  --color-primary-active: var(--fde-cyan-700);
+  --color-secondary:      var(--fde-emerald);
+  --color-secondary-hover:var(--fde-emerald-600);
+  --color-accent:         var(--fde-aqua);
+  --color-deep:           var(--fde-ocean);
+
+  --text-strong:   var(--fde-ink);
+  --text-heading:  var(--fde-navy);
+  --text-body:     var(--fde-slate-700);
+  --text-muted:    var(--fde-slate);
+  --text-on-brand: var(--fde-white);
+  --text-link:     var(--fde-cyan-600);
+
+  --surface-page:  var(--fde-paper);
+  --surface-card:  var(--fde-white);
+  --surface-sunken:var(--fde-mist);
+  --surface-brand: var(--fde-cyan);
+  --surface-deep:  var(--fde-navy);
+
+  --border-subtle: var(--fde-line);
+  --border-strong: var(--fde-gray-300);
+  --border-focus:  var(--fde-cyan);
+
+  /* ---- Signature wave gradient ---- */
+  --gradient-wave: linear-gradient(135deg, #01B8A4 0%, #1DC9C9 28%, #019AC4 60%, #0397CD 78%, #01608F 100%); /* @kind color */
+  --gradient-wave-soft: linear-gradient(135deg, #E6F8F5 0%, #E2F3F9 55%, #E1ECF2 100%); /* @kind color */
+  --gradient-deep: linear-gradient(160deg, #01608F 0%, #133B5C 100%); /* @kind color */
+}

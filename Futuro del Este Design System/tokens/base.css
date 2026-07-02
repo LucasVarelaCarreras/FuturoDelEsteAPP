@@ -1,0 +1,74 @@
+/* ============================================================
+   Futuro del Este — Base element styles & utility helpers
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--heading-font);
+  font-weight: var(--fw-extra);
+  color: var(--text-heading);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-4);
+  text-wrap: balance;
+}
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+
+p { margin: 0 0 var(--space-4); text-wrap: pretty; }
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- Brand helpers ---- */
+.fde-eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+.fde-display {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-tight);
+  color: var(--text-heading);
+}
+.fde-quote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: var(--fw-500);
+  color: var(--text-body);
+  line-height: var(--leading-snug);
+}
+.fde-wordmark {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wordmark);
+  color: var(--text-heading);
+}
+.fde-gradient-text {
+  background: var(--gradient-wave);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.fde-wave-bg { background: var(--gradient-wave); }

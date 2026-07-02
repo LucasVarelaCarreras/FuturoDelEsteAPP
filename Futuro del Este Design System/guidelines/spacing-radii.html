@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Corner radii" subtitle="Soft & round — pills for actions, large radii for cards" -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;padding:26px;background:var(--surface-card);font-family:var(--font-sans);}
+  .row{display:flex;gap:18px;align-items:flex-end;}
+  .sw{text-align:center;}
+  .box{width:76px;height:64px;background:var(--fde-cyan-50);border:2px solid var(--fde-cyan);}
+  .name{font-size:11px;font-weight:700;color:var(--text-heading);margin-top:8px;}
+  .val{font-size:10px;color:var(--text-muted);font-family:var(--font-display);}
+</style></head><body>
+<div class="row">
+  <div class="sw"><div class="box" style="border-radius:var(--radius-xs)"></div><div class="name">xs</div><div class="val">4px</div></div>
+  <div class="sw"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="name">sm</div><div class="val">8px</div></div>
+  <div class="sw"><div class="box" style="border-radius:var(--radius-md)"></div><div class="name">md</div><div class="val">14px</div></div>
+  <div class="sw"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="name">lg</div><div class="val">20px</div></div>
+  <div class="sw"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="name">xl</div><div class="val">28px</div></div>
+  <div class="sw"><div class="box" style="border-radius:var(--radius-pill);width:110px;"></div><div class="name">pill</div><div class="val">999px</div></div>
+</div>
+</body></html>

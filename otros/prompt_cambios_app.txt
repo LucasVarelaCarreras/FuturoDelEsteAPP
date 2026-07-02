@@ -1,0 +1,66 @@
+========================================================
+  ESPECIFICACIÓN DE CAMBIOS — APP WEB
+========================================================
+
+--------------------------------------------------------
+1. UNIFICAR EN UN SOLO ARCHIVO
+--------------------------------------------------------
+Los archivos "acompañá" e "index" son equivalentes
+(el servidor toma "index" al subir online). Para evitar
+duplicación y confusión:
+
+  - Renombrar "acompañá.html" → "index.html"
+  - Eliminar el "index.html" anterior
+  - Trabajar desde ahora en un único archivo
+
+--------------------------------------------------------
+2. T&C OBLIGATORIOS EN CADA INICIO DE SESIÓN (DEMO)
+--------------------------------------------------------
+En la cuenta de atleta guía (acompañante), los Términos
+y Condiciones deben mostrarse CADA VEZ que el usuario
+inicia sesión, no solo la primera vez.
+
+NOTA: Esta es una medida exclusiva para la demo de
+aprobación. En la versión final no será así.
+
+--------------------------------------------------------
+3. HISTORIAL DE ACEPTACIÓN DE T&C (PANEL ADMIN)
+--------------------------------------------------------
+En la cuenta de administrador, al ingresar al perfil
+de un atleta guía, agregar al final de la página un
+botón que al presionarse muestre la información de la
+ÚLTIMA VEZ que ese usuario aceptó los T&C.
+
+Datos a mostrar:
+
+  • Timestamp exacto     → fecha y hora de aceptación
+  • Versión del documento → qué versión de T&C aceptó
+  • IP del usuario        → al momento de aceptar
+  • User Agent            → dispositivo y navegador
+  • ID del usuario        → vinculado al registro
+  • Hash del documento    → firma criptográfica del
+                            texto exacto vigente
+
+--------------------------------------------------------
+4. FIX: SELECTOR DE HORA/MINUTOS NO FUNCIONA EN iOS
+--------------------------------------------------------
+En la sección "Agregar actividad", los desplegables de
+hora y minutos no funcionan en iOS. El problema: solo
+muestra un ícono de check en lugar de todas las opciones.
+
+  - Corregir para que muestre todas las opciones en iOS
+  - Mantener la misma estética actual
+
+--------------------------------------------------------
+5. RENOMBRAR ROLES EN TODA LA APLICACIÓN
+--------------------------------------------------------
+Reemplazar los nombres de roles de forma global en
+toda la app (interfaz, menús, mensajes, filtros,
+perfiles, etc.):
+
+  Antes          →   Ahora
+  ─────────────────────────
+  Atleta         →   Atleta Líder
+  Guía           →   Atleta Guía
+
+========================================================
