@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from '@/lib/supabase'
 import { FullScreenLoader } from '@/components/ui'
 import { ConfigNeeded } from '@/screens/ConfigNeeded'
 import { AuthScreen } from '@/screens/auth/AuthScreen'
+import { UpdatePassword } from '@/screens/auth/UpdatePassword'
 import { AppShell } from '@/components/AppShell'
 import { TermsGate } from '@/screens/TermsGate'
 
@@ -20,10 +21,12 @@ const AdminActividadDetalle = lazy(() =>
 const AdminConfig = lazy(() => import('@/screens/admin/AdminConfig').then((m) => ({ default: m.AdminConfig })))
 
 export function App() {
-  const { session, profile, role, loading } = useAuth()
+  const { session, profile, role, loading, passwordRecovery } = useAuth()
 
   if (!isSupabaseConfigured) return <ConfigNeeded />
   if (loading) return <FullScreenLoader label="Iniciando…" />
+  // Enlace de recuperación de contraseña: prioridad sobre todo lo demás.
+  if (passwordRecovery) return <UpdatePassword />
   if (!session) return <AuthScreen />
   if (!profile) return <FullScreenLoader label="Preparando tu cuenta…" />
 

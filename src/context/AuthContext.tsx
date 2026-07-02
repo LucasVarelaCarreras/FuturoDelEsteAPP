@@ -29,6 +29,9 @@ interface AuthContextValue {
   ) => Promise<void>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
+  updatePassword: (password: string) => Promise<void>
+  passwordRecovery: boolean
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -46,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<ProfileRow | null>(null)
   const [loading, setLoading] = useState(true)
+  const [passwordRecovery, setPasswordRecovery] = useState(false)
   const mounted = useRef(true)
 
   const loadProfile = useCallback(async (userId: string | undefined) => {
@@ -72,8 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (mounted.current) setLoading(false)
     })
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       if (!mounted.current) return
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       setSession(newSession)
       await loadProfile(newSession?.user.id)
       if (mounted.current) setLoading(false)
@@ -126,6 +131,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (session?.user.id) await loadProfile(session.user.id)
   }, [session, loadProfile])
 
+  const resetPassword = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    })
+    if (error) throw error
+  }, [])
+
+  const updatePassword = useCallback(async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw error
+    setPasswordRecovery(false)
+  }, [])
+
   const value = useMemo<AuthContextValue>(
     () => ({
       session,
@@ -137,8 +155,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       signOut,
       refreshProfile,
+      resetPassword,
+      updatePassword,
+      passwordRecovery,
     }),
-    [session, profile, loading, signInWithEmail, signInWithGoogle, signUp, signOut, refreshProfile],
+    [
+      session,
+      profile,
+      loading,
+      signInWithEmail,
+      signInWithGoogle,
+      signUp,
+      signOut,
+      refreshProfile,
+      resetPassword,
+      updatePassword,
+      passwordRecovery,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui'
 import { TextField, FormError } from '@/components/fields'
 import { Icon } from '@/components/Icon'
 
-type View = 'welcome' | 'login' | 'register' | 'admin'
+type View = 'welcome' | 'login' | 'register' | 'admin' | 'forgot'
 
 const ADMIN_CODE = (import.meta.env.VITE_ADMIN_TEAM_CODE as string | undefined) ?? 'FDE2026'
 
@@ -40,6 +40,7 @@ export function AuthScreen() {
         {view === 'login' && <LoginForm onView={setView} />}
         {view === 'register' && <RegisterForm onView={setView} />}
         {view === 'admin' && <AdminForm onView={setView} />}
+        {view === 'forgot' && <ForgotForm onView={setView} />}
       </div>
     </div>
   )
@@ -172,12 +173,73 @@ function LoginForm({ onView }: { onView: (v: View) => void }) {
       <Button full loading={loading} type="submit" style={{ marginTop: 6 }}>
         Ingresar
       </Button>
-      <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: 'var(--text-muted)' }}>
+      <p style={{ textAlign: 'center', marginTop: 14 }}>
+        <button type="button" onClick={() => onView('forgot')} style={{ ...linkBtn, fontWeight: 700, color: 'var(--text-muted)' }}>
+          ¿Olvidaste tu contraseña?
+        </button>
+      </p>
+      <p style={{ textAlign: 'center', marginTop: 8, fontSize: 14, color: 'var(--text-muted)' }}>
         ¿No tenés cuenta?{' '}
         <button type="button" onClick={() => onView('register')} style={linkBtn}>
           Crear cuenta
         </button>
       </p>
+    </form>
+  )
+}
+
+function ForgotForm({ onView }: { onView: (v: View) => void }) {
+  const { resetPassword } = useAuth()
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    const parsed = emailSchema.safeParse(email)
+    if (!parsed.success) return setError(parsed.error.issues[0].message)
+    setLoading(true)
+    try {
+      await resetPassword(email)
+      setSent(true)
+    } catch {
+      setError('No se pudo enviar el correo. Intentá de nuevo.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (sent) {
+    return (
+      <div style={{ textAlign: 'center', paddingTop: 20 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 20, background: 'var(--fde-cyan-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <Icon glyph="inbox" size={30} color="var(--fde-cyan)" />
+        </div>
+        <h2 style={{ fontSize: 20, marginBottom: 8 }}>Revisá tu correo</h2>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 20 }}>
+          Si existe una cuenta con ese email, te enviamos un enlace para restablecer tu contraseña.
+        </p>
+        <Button full onClick={() => onView('login')}>
+          Volver a iniciar sesión
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={submit}>
+      <BackLink onView={onView} />
+      <h2 style={{ fontSize: 22, marginBottom: 8 }}>Recuperar contraseña</h2>
+      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 18 }}>
+        Ingresá tu email y te enviaremos un enlace para crear una nueva contraseña.
+      </p>
+      <FormError>{error}</FormError>
+      <TextField label="Email" id="femail" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vos@email.com" />
+      <Button full loading={loading} type="submit" style={{ marginTop: 6 }}>
+        Enviar enlace
+      </Button>
     </form>
   )
 }
