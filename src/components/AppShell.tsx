@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { Icon, type Glyph } from './Icon'
 import { Avatar } from './ui'
 import { colorForId } from '@/lib/format'
+import { useRealtime } from '@/hooks/useRealtime'
 
 interface NavItem {
   to: string
@@ -27,6 +28,7 @@ const ADMIN_NAV: NavItem[] = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, role } = useAuth()
   const location = useLocation()
+  useRealtime(Boolean(profile))
   const nav = role === 'admin' ? ADMIN_NAV : GUIA_NAV
   const showNav = !location.pathname.startsWith('/actividad/')
 
