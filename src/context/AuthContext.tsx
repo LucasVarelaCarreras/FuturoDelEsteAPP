@@ -19,6 +19,8 @@ interface AuthContextValue {
   profile: ProfileRow | null
   role: UserRole | null
   loading: boolean
+  /** true si hay sesión pero el perfil no se pudo cargar (p. ej. sin conexión). */
+  profileError: boolean
   signInWithEmail: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signUp: (
@@ -50,12 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<ProfileRow | null>(null)
   const [loading, setLoading] = useState(true)
+  const [profileError, setProfileError] = useState(false)
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const mounted = useRef(true)
 
   const loadProfile = useCallback(async (userId: string | undefined) => {
     if (!userId) {
       setProfile(null)
+      setProfileError(false)
       return
     }
     // El trigger de la base crea el perfil; reintentamos por si hay latencia.
@@ -64,7 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await new Promise((r) => setTimeout(r, 600))
       p = await fetchProfile(userId)
     }
-    if (mounted.current) setProfile(p)
+    if (mounted.current) {
+      setProfile(p)
+      // Si con sesión válida el perfil sigue sin aparecer (falla de red o
+      // fila faltante), lo marcamos: la app ofrece reintentar o cerrar
+      // sesión en vez de quedarse en un cargador infinito.
+      setProfileError(p === null)
+    }
   }, [])
 
   useEffect(() => {
@@ -140,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
     setProfile(null)
+    setProfileError(false)
     setSession(null)
     // Limpia el caché de datos: evita que la próxima sesión en el mismo
     // dispositivo vea (aunque sea por segundos) datos del usuario anterior.
@@ -169,6 +180,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       role: profile?.role ?? null,
       loading,
+      profileError,
       signInWithEmail,
       signInWithGoogle,
       signUp,
@@ -182,6 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       loading,
+      profileError,
       signInWithEmail,
       signInWithGoogle,
       signUp,
