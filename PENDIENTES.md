@@ -5,11 +5,22 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Por revisar
 
-- [ ] **Aplicar la migración 0002 en Supabase**: el archivo
-      `supabase/migrations/0002_assignment_integrity.sql` es nuevo y hay que
-      ejecutarlo en el SQL Editor del proyecto real (igual que se hizo con
-      0001). Agrega el control de cupos en el servidor y cierra la lectura
-      anónima de actividades.
+- [ ] **Aplicar las migraciones 0002 y 0003 en Supabase**: los archivos
+      `supabase/migrations/0002_assignment_integrity.sql` y
+      `supabase/migrations/0003_input_limits.sql` hay que ejecutarlos en el
+      SQL Editor del proyecto real (igual que se hizo con 0001), en orden.
+      0002 agrega el control de cupos en el servidor y cierra la lectura
+      anónima; 0003 agrega límites de longitud, tope de cupos requeridos y
+      protege el email del perfil.
+- [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar
+      un atleta de una actividad se borran primero sus acompañamientos y
+      después la inscripción, en dos llamadas; si falla la segunda quedan
+      borrados los acompañamientos igual. Menor (el admin puede reintentar),
+      se resolvería con una función RPC transaccional.
+- [ ] **Color de los atletas ya existentes**: los atletas creados antes del
+      cambio de hoy siguen con el celeste por defecto (los nuevos ya reciben
+      un color de la paleta). Si molesta, se corrige con un update puntual
+      en la base.
 - [ ] **Autenticación de atletas guía**: Lucas reportó que algo no anda bien
       en el login/registro de atletas guía (a definir el detalle exacto —
       pendiente de descripción más precisa). *Posible causa encontrada y
@@ -17,12 +28,6 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
       consultas a Supabase con el lock interno de auth tomado — un deadlock
       documentado de supabase-js que deja el login colgado en "Iniciando…"
       de forma intermitente. Confirmar con Lucas si el problema persiste.
-- [ ] **Color de los atletas líder**: todos los atletas quedan con el color
-      celeste por defecto (la columna `color` nunca se varía al crearlos).
-      Cosmético; se podría asignar un color de la paleta según el id.
-- [ ] **Focus trap completo en las hojas (Sheet)**: al abrir una hoja el foco
-      se mueve adentro y se restaura al cerrar, pero el Tab todavía puede
-      salir del diálogo. Mejora de accesibilidad de teclado.
 - [ ] **Login con Google**: no está habilitado en Supabase (requiere crear
       credenciales OAuth en Google Cloud Console y configurarlas en
       Authentication → Providers → Google). Mientras tanto, la app muestra
@@ -40,6 +45,35 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Resuelto recientemente
 
+- [x] **Los PDF legales no se abrían en la PWA instalada**: el service worker
+      respondía la app (index.html) a cualquier navegación, incluidos los
+      links a los documentos de T&C en `/legal/`. Ahora quedan excluidos del
+      fallback de navegación.
+- [x] **Límites de entrada en el servidor (migración 0003)**: por API directa
+      un usuario podía guardar textos de tamaño arbitrario (nombre de perfil
+      —que se copia a los acompañamientos y lo ven todos—, campos de
+      tc_acceptances, etc.). Ahora hay checks de longitud en todas las tablas,
+      tope de 20 acompañantes requeridos por cupo (un valor absurdo colgaría
+      el navegador al dibujar las barras) y un guía ya no puede editar su
+      email espejo en `profiles` para hacerse pasar por otro ante el admin.
+- [x] **Alertas de cobertura con cupos imposibles**: el panel del admin
+      contaba actividades pasadas y atletas inactivos en "Cupos por cubrir" y
+      en las alertas — cupos que ningún guía puede cubrir; quedaban alertas
+      fantasma permanentes. La lista de actividades ahora marca "Finalizada"
+      en las pasadas, y el inicio del guía ya no cuenta acompañamientos de
+      actividades pasadas en "Mis acompañamientos".
+- [x] **Cargador infinito si no carga el perfil**: con sesión válida pero sin
+      conexión, la app quedaba clavada en "Preparando tu cuenta…" para
+      siempre. Ahora ofrece "Reintentar" o "Cerrar sesión".
+- [x] **T&C sin duplicados por error de red**: si fallaba la consulta de
+      aceptación se volvía a mostrar el formulario a quien quizá ya lo aceptó
+      (generando filas duplicadas en la auditoría); ahora muestra "No se pudo
+      cargar" con reintento. Ídem KPI de guías del panel y lista de guías en
+      Ajustes, que mostraban 0 / "Sin guías" ante un error.
+- [x] **Focus trap completo en las hojas (Sheet)**: el Tab ya circula sólo
+      dentro del diálogo abierto (y Shift+Tab al revés).
+- [x] **Color de los atletas líder**: los atletas nuevos reciben un color de
+      la paleta según su nombre (antes todos celestes).
 - [x] **Posible deadlock en el login**: ver nota en "Autenticación de atletas
       guía" arriba — la carga del perfil ahora se difiere fuera del callback
       de auth de supabase-js.
