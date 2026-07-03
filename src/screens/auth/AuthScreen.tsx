@@ -16,6 +16,8 @@ function friendlyError(message: string): string {
     return 'Ya existe una cuenta con ese email. Iniciá sesión.'
   if (m.includes('email not confirmed')) return 'Confirmá tu email antes de ingresar (revisá tu correo).'
   if (m.includes('password')) return 'La contraseña debe tener al menos 6 caracteres.'
+  if (m.includes('provider is not enabled'))
+    return 'El inicio con Google todavía no está disponible. Usá tu email y contraseña.'
   return message
 }
 
@@ -97,7 +99,7 @@ function Welcome({ onView }: { onView: (v: View) => void }) {
           try {
             await signInWithGoogle()
           } catch (e) {
-            setError('No se pudo iniciar con Google. Verificá que esté habilitado en Supabase.')
+            setError(friendlyError((e as Error).message))
           }
         }}
         style={{
