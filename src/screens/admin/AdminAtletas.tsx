@@ -119,9 +119,9 @@ export function AdminAtletas() {
 
       <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={editing ? 'Editar atleta' : 'Nuevo atleta'}>
         <FormError>{error}</FormError>
-        <TextField label="Nombre completo *" id="an" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre y apellido" />
-        <TextField label="Deporte" id="as" value={form.sport} onChange={(e) => setForm({ ...form, sport: e.target.value })} placeholder="Atletismo, Natación…" />
-        <TextField label="Categoría" id="ac" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Opcional" />
+        <TextField label="Nombre completo *" id="an" maxLength={120} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre y apellido" />
+        <TextField label="Deporte" id="as" maxLength={60} value={form.sport} onChange={(e) => setForm({ ...form, sport: e.target.value })} placeholder="Atletismo, Natación…" />
+        <TextField label="Categoría" id="ac" maxLength={60} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Opcional" />
         <SelectField label="Género" id="ag" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
           <option value="">Sin especificar</option>
           <option value="F">Femenino</option>

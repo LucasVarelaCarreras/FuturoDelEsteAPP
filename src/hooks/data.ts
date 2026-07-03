@@ -236,13 +236,16 @@ export function useRemoveNeed() {
   })
 }
 
+/** Tope de acompañantes por atleta y actividad (coincide con el check de la base). */
+export const MAX_REQUIRED = 20
+
 export function useSetRequired() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ id, required }: { id: string; required: number }) => {
       const { error } = await supabase
         .from('needs')
-        .update({ required: Math.max(1, required) })
+        .update({ required: Math.min(MAX_REQUIRED, Math.max(1, required)) })
         .eq('id', id)
       if (error) throw error
     },

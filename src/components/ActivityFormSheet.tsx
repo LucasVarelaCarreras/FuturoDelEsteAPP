@@ -53,7 +53,7 @@ export function ActivityFormSheet({ open, onClose, activity }: Props) {
   return (
     <Sheet open={open} onClose={onClose} title={activity ? 'Editar actividad' : 'Nueva actividad'}>
       <FormError>{error}</FormError>
-      <TextField label="Nombre *" id="actn" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej: Carrera 10K Montevideo" />
+      <TextField label="Nombre *" id="actn" maxLength={140} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej: Carrera 10K Montevideo" />
       <SelectField label="Tipo" id="actt" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as ActivityType })}>
         <option value="carrera">Carrera</option>
         <option value="entrenamiento">Entrenamiento</option>
@@ -61,8 +61,8 @@ export function ActivityFormSheet({ open, onClose, activity }: Props) {
       </SelectField>
       <TextField label="Fecha" id="actd" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
       <TextField label="Hora" id="acth" type="time" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} />
-      <TextField label="Lugar" id="actp" value={form.place} onChange={(e) => setForm({ ...form, place: e.target.value })} placeholder="Ubicación" />
-      <TextField label="Descripción" id="actdesc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Opcional" />
+      <TextField label="Lugar" id="actp" maxLength={160} value={form.place} onChange={(e) => setForm({ ...form, place: e.target.value })} placeholder="Ubicación" />
+      <TextField label="Descripción" id="actdesc" maxLength={1000} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Opcional" />
       <Button full loading={save.isPending} onClick={submit} style={{ marginTop: 4 }}>
         {activity ? 'Guardar cambios' : 'Crear actividad'}
       </Button>

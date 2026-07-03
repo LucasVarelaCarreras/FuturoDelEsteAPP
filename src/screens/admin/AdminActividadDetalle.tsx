@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
+  MAX_REQUIRED,
   useActivities,
   useAddGuideAssignment,
   useAddNeed,
@@ -171,7 +172,7 @@ export function AdminActividadDetalle() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <Stepper glyph="minus" onClick={() => setRequired.mutate({ id: need.id, required: need.required - 1 })} disabled={need.required <= 1} />
                       <span style={{ fontWeight: 900, fontSize: 17, color: 'var(--text-heading)', minWidth: 18, textAlign: 'center' }}>{need.required}</span>
-                      <Stepper glyph="plus" onClick={() => setRequired.mutate({ id: need.id, required: need.required + 1 })} />
+                      <Stepper glyph="plus" onClick={() => setRequired.mutate({ id: need.id, required: need.required + 1 })} disabled={need.required >= MAX_REQUIRED} />
                     </div>
                   </div>
 

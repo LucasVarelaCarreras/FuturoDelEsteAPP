@@ -302,7 +302,7 @@ function RegisterForm({ onView }: { onView: (v: View) => void }) {
       <BackLink onView={onView} />
       <h2 style={{ fontSize: 22, marginBottom: 18 }}>Crear cuenta</h2>
       <FormError>{error}</FormError>
-      <TextField label="Nombre completo" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre y apellido" autoComplete="name" />
+      <TextField label="Nombre completo" id="name" maxLength={120} value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre y apellido" autoComplete="name" />
       <TextField label="Email" id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vos@email.com" />
       <TextField label="Contraseña" id="pass" type="password" autoComplete="new-password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Mínimo 6 caracteres" />
       <Button full loading={loading} type="submit" style={{ marginTop: 6 }}>
@@ -414,7 +414,7 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
         </p>
       )}
       {mode === 'register' && (
-        <TextField label="Nombre completo" id="aname" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" autoComplete="name" />
+        <TextField label="Nombre completo" id="aname" maxLength={120} value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" autoComplete="name" />
       )}
       <TextField label="Email del equipo" id="aemail" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="equipo@futurodeleste.org" />
       <TextField label="Contraseña" id="apass" type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••••" />
