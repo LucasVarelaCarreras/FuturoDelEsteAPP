@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Icon, type Glyph } from './Icon'
@@ -6,6 +6,8 @@ import { Avatar } from './ui'
 import { colorForId } from '@/lib/format'
 import { useRealtime } from '@/hooks/useRealtime'
 import { InstallPrompt } from './InstallPrompt'
+import { useToast } from '@/context/ToastContext'
+import { ADMIN_CODE_CHECK_KEY } from '@/screens/auth/AuthScreen'
 
 interface NavItem {
   to: string
@@ -29,7 +31,21 @@ const ADMIN_NAV: NavItem[] = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, role } = useAuth()
   const location = useLocation()
+  const { notify } = useToast()
   useRealtime(Boolean(profile))
+
+  // Si el usuario intentó registrarse como admin con un código de equipo
+  // incorrecto, el servidor lo creó como 'guia' en silencio (por seguridad).
+  // Se lo avisamos una sola vez, en vez de dejarlo sin ninguna explicación.
+  useEffect(() => {
+    if (!profile) return
+    if (!sessionStorage.getItem(ADMIN_CODE_CHECK_KEY)) return
+    sessionStorage.removeItem(ADMIN_CODE_CHECK_KEY)
+    if (profile.role !== 'admin') {
+      notify('El código de equipo no era válido: tu cuenta se creó como Atleta Guía.')
+    }
+  }, [profile, notify])
+
   const nav = role === 'admin' ? ADMIN_NAV : GUIA_NAV
   const showNav = !location.pathname.startsWith('/actividad/')
 

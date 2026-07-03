@@ -12,7 +12,7 @@
  *   2. Recalcular su hash (sha256sum public/legal/archivo.pdf)
  *   3. Subir TERMS_VERSION
  */
-export const TERMS_VERSION = '1.0'
+export const TERMS_VERSION = '2.0'
 
 export const TERMS_TITLE = 'Antes de continuar'
 

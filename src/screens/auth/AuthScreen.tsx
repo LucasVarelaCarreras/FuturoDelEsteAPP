@@ -9,6 +9,15 @@ type View = 'welcome' | 'login' | 'register' | 'admin' | 'forgot'
 
 const emailSchema = z.string().trim().email('Ingresá un email válido.')
 
+/**
+ * Clave de sessionStorage: avisa, tras registrarse como admin, si el
+ * código de equipo NO era válido. El servidor crea la cuenta como 'guia'
+ * en silencio si el código falla (por seguridad no confirma el motivo
+ * en el momento), pero el usuario merece un aviso claro después.
+ * Se consume una sola vez en <AppShell>.
+ */
+export const ADMIN_CODE_CHECK_KEY = 'fde_admin_code_check'
+
 function friendlyError(message: string): string {
   const m = message.toLowerCase()
   if (m.includes('invalid login')) return 'Email o contraseña incorrectos.'
@@ -337,6 +346,9 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
         if (!code.trim()) throw new Error('Ingresá el código de equipo.')
         // El código NO se valida en el cliente (sería visible en el navegador):
         // lo comprueba el servidor contra app_secrets al crear la cuenta.
+        // Guardamos un flag para poder avisar después si el código no era
+        // válido (AppShell lo chequea una vez que el perfil carga).
+        sessionStorage.setItem(ADMIN_CODE_CHECK_KEY, '1')
         await signUp(name, email, pass, 'admin', code.trim())
         setMode('login')
         setInfo(

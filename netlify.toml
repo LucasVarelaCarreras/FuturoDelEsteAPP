@@ -7,3 +7,15 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Cabeceras de seguridad básicas (defensa en profundidad).
+# Nota: no incluye Content-Security-Policy porque la app usa estilos
+# inline extensivamente (style={{...}} de React) y una CSP estricta
+# rompería el renderizado sin poder probarla en el entorno real primero.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
