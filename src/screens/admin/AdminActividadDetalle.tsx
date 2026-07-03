@@ -14,7 +14,7 @@ import {
   useSetRequired,
 } from '@/hooks/data'
 import { useToast } from '@/context/ToastContext'
-import { Avatar, Button, Card, FullScreenLoader } from '@/components/ui'
+import { Avatar, Button, Card, ErrorState, FullScreenLoader, Spinner } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { Sheet } from '@/components/Sheet'
 import { ActivityFormSheet } from '@/components/ActivityFormSheet'
@@ -56,6 +56,18 @@ export function AdminActividadDetalle() {
 
   if (activitiesQ.isLoading || athletesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
+  }
+  if (activitiesQ.isError || athletesQ.isError || needsQ.isError || assignmentsQ.isError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          activitiesQ.refetch()
+          athletesQ.refetch()
+          needsQ.refetch()
+          assignmentsQ.refetch()
+        }}
+      />
+    )
   }
   if (!activity) {
     return (
@@ -262,6 +274,11 @@ export function AdminActividadDetalle() {
 
       {/* Elegir guía para sumar */}
       <Sheet open={!!pickGuideFor} onClose={() => setPickGuideFor(null)} title="Sumar acompañante">
+        {guidesQ.isLoading ? (
+          <div style={{ padding: 24, display: 'flex', justifyContent: 'center' }}>
+            <Spinner />
+          </div>
+        ) : (
         <PickGuideList
           alreadyIds={
             pickGuideFor
@@ -282,6 +299,7 @@ export function AdminActividadDetalle() {
             }
           }}
         />
+        )}
       </Sheet>
     </div>
   )

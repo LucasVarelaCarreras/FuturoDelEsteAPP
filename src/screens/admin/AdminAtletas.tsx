@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAthletes, useDeleteAthlete, useSaveAthlete, useToggleAthleteActive, type AthleteInput } from '@/hooks/data'
 import { useToast } from '@/context/ToastContext'
-import { Avatar, Button, Card, EmptyState, FullScreenLoader } from '@/components/ui'
+import { Avatar, Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Sheet } from '@/components/Sheet'
 import { TextField, SelectField, FormError } from '@/components/fields'
 import { Icon } from '@/components/Icon'
@@ -59,6 +59,7 @@ export function AdminAtletas() {
   }
 
   if (athletesQ.isLoading) return <FullScreenLoader />
+  if (athletesQ.isError) return <ErrorState onRetry={() => athletesQ.refetch()} />
 
   return (
     <div style={{ padding: '18px 16px 8px' }}>

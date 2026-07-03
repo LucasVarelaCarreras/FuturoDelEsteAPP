@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
+import { Icon } from './Icon'
 
 /* ---- Spinner ---- */
 export function Spinner({ size = 22, color = 'var(--color-primary)' }: { size?: number; color?: string }) {
@@ -169,6 +170,18 @@ export function EmptyState({
       {body && <p style={{ fontSize: 14, color: 'var(--text-muted)', maxWidth: 300 }}>{body}</p>}
       {action && <div style={{ marginTop: 8 }}>{action}</div>}
     </div>
+  )
+}
+
+/* ---- Estado de error de carga (con reintento) ---- */
+export function ErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <EmptyState
+      icon={<Icon glyph="alert" size={28} color="var(--fde-danger)" />}
+      title="No se pudo cargar"
+      body="Revisá tu conexión a internet e intentá de nuevo."
+      action={<Button onClick={onRetry}>Reintentar</Button>}
+    />
   )
 }
 

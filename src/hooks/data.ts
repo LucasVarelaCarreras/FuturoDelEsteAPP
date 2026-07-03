@@ -253,6 +253,20 @@ export function useSetRequired() {
 /* ============================================================
    MUTATIONS — ASSIGNMENTS (acompañamientos)
    ============================================================ */
+
+/**
+ * Traduce los errores del servidor (trigger de integridad y restricción
+ * de unicidad) a mensajes claros para el usuario al anotarse.
+ */
+export function assignmentErrorMessage(e: unknown): string {
+  const msg = e instanceof Error ? e.message.toLowerCase() : ''
+  if (msg.includes('duplicate')) return 'Ya estás anotado en esta actividad.'
+  if (msg.includes('cupo_completo')) return 'Ese cupo ya se completó. Elegí otro atleta.'
+  if (msg.includes('atleta_no') || msg.includes('actividad_no'))
+    return 'Ese cupo ya no está disponible.'
+  return 'No se pudo completar. Intentá de nuevo.'
+}
+
 export function useSignUp() {
   const qc = useQueryClient()
   return useMutation({
@@ -336,7 +350,11 @@ export function useAcceptTerms() {
       const hash = await computeTermsHash()
       let ip = ''
       try {
-        const res = await fetch('https://api.ipify.org?format=json')
+        // Timeout corto: si el servicio externo no responde, la aceptación
+        // se registra igual (la IP es un dato accesorio de auditoría).
+        const res = await fetch('https://api.ipify.org?format=json', {
+          signal: AbortSignal.timeout(4000),
+        })
         ip = (await res.json()).ip ?? ''
       } catch {
         ip = ''

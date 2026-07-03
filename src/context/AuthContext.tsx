@@ -10,6 +10,7 @@ import {
 } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { queryClient } from '@/lib/queryClient'
 import type { ProfileRow, UserRole } from '@/types/database'
 import { initialsFrom } from '@/lib/format'
 
@@ -132,6 +133,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
     setProfile(null)
     setSession(null)
+    // Limpia el caché de datos: evita que la próxima sesión en el mismo
+    // dispositivo vea (aunque sea por segundos) datos del usuario anterior.
+    queryClient.clear()
   }, [])
 
   const refreshProfile = useCallback(async () => {

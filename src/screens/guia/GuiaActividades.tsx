@@ -1,10 +1,18 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useActivities, useAssignments, useAthletes, useCancelAssignment, useNeeds, useSignUp } from '@/hooks/data'
+import {
+  assignmentErrorMessage,
+  useActivities,
+  useAssignments,
+  useAthletes,
+  useCancelAssignment,
+  useNeeds,
+  useSignUp,
+} from '@/hooks/data'
 import { useToast } from '@/context/ToastContext'
 import { NeedCard } from '@/components/NeedCard'
 import { Sheet } from '@/components/Sheet'
-import { Button, EmptyState, FullScreenLoader } from '@/components/ui'
+import { Button, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import type { ActivityType, AssignmentRow, NeedRow } from '@/types/database'
 import { formatDateLabel, typeMeta } from '@/lib/format'
@@ -49,6 +57,18 @@ export function GuiaActividades() {
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
   }
+  if (athletesQ.isError || activitiesQ.isError || needsQ.isError || assignmentsQ.isError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          athletesQ.refetch()
+          activitiesQ.refetch()
+          needsQ.refetch()
+          assignmentsQ.refetch()
+        }}
+      />
+    )
+  }
 
   const confirmAthlete = confirmNeed ? athMap.get(confirmNeed.athlete_id) : null
   const confirmActivity = confirmNeed ? activities.find((a) => a.id === confirmNeed.activity_id) : null
@@ -64,8 +84,7 @@ export function GuiaActividades() {
       })
       notify('¡Te anotaste para acompañar!')
     } catch (e) {
-      const msg = (e as Error).message.toLowerCase()
-      notify(msg.includes('duplicate') ? 'Ya estás anotado en esta actividad.' : 'No se pudo completar.')
+      notify(assignmentErrorMessage(e))
     } finally {
       setConfirmNeed(null)
     }

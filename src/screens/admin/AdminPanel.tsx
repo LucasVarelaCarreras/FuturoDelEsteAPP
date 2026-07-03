@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useActivities, useAssignments, useAthletes, useGuides, useNeeds } from '@/hooks/data'
-import { Card, EmptyState, FullScreenLoader } from '@/components/ui'
+import { Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { missingForActivity, uncoveredForActivity } from '@/lib/coverage'
 import { formatDateLabel } from '@/lib/format'
@@ -32,6 +32,18 @@ export function AdminPanel() {
 
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
+  }
+  if (athletesQ.isError || activitiesQ.isError || needsQ.isError || assignmentsQ.isError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          athletesQ.refetch()
+          activitiesQ.refetch()
+          needsQ.refetch()
+          assignmentsQ.refetch()
+        }}
+      />
+    )
   }
 
   const kpis = [

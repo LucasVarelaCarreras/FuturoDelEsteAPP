@@ -33,6 +33,7 @@ export function NeedCard({
   )
   const mineThis = myAssignmentInActivity?.athlete_id === athlete.id
   const mineOther = myAssignmentInActivity && !mineThis
+  const isFull = confirmed >= need.required
 
   return (
     <Card style={{ padding: 15 }}>
@@ -118,6 +119,10 @@ export function NeedCard({
         ) : mineOther ? (
           <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>
             Ya acompañás a otro atleta acá
+          </button>
+        ) : isFull ? (
+          <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>
+            <Icon glyph="check" size={16} color="var(--text-muted)" /> Cupo completo
           </button>
         ) : (
           <button onClick={() => onSign(need)} style={btn('var(--color-primary)', '#fff', 'var(--shadow-brand)')}>

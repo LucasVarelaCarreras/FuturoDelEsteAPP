@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useActivities, useAssignments, useAthletes, useLatestTermsAcceptance } from '@/hooks/data'
-import { Avatar, Card, EmptyState, FullScreenLoader } from '@/components/ui'
+import { Avatar, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { colorForId, formatDateLabel } from '@/lib/format'
 
@@ -26,6 +26,17 @@ export function GuiaPerfil() {
   )
 
   if (activitiesQ.isLoading || athletesQ.isLoading || assignmentsQ.isLoading) return <FullScreenLoader />
+  if (activitiesQ.isError || athletesQ.isError || assignmentsQ.isError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          activitiesQ.refetch()
+          athletesQ.refetch()
+          assignmentsQ.refetch()
+        }}
+      />
+    )
+  }
   if (!profile) return null
 
   return (

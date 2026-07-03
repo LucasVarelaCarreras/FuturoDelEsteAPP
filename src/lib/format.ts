@@ -12,16 +12,6 @@ export function formatDateLabel(iso: string | null): string {
   return `${DIAS[date.getDay()]} ${date.getDate()} ${MESES[date.getMonth()]}`
 }
 
-/** Días desde hoy hasta la fecha dada (negativo = pasado). */
-export function daysUntil(iso: string | null): number | null {
-  if (!iso) return null
-  const [y, m, d] = iso.split('-').map(Number)
-  const target = new Date(y, m - 1, d)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return Math.round((target.getTime() - today.getTime()) / 86400000)
-}
-
 /** Iniciales a partir de un nombre completo. */
 export function initialsFrom(name: string): string {
   const parts = name.trim().split(/\s+/)
@@ -89,8 +79,4 @@ export function statusMeta(confirmed: number, required: number): StatusMeta {
       glyph: 'clock',
     }
   return { key: 2, bg: '#e4f4ec', text: '#15734d', strong: '#1e9e6a', label: 'Completo', glyph: 'check' }
-}
-
-export function coveragePct(confirmed: number, required: number): number {
-  return Math.min(100, Math.round((confirmed / Math.max(1, required)) * 100))
 }

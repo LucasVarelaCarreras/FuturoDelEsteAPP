@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useActivities, useAssignments, useNeeds, useToggleActivityVisible } from '@/hooks/data'
 import { useToast } from '@/context/ToastContext'
-import { Button, Card, EmptyState, FullScreenLoader } from '@/components/ui'
+import { Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { ActivityFormSheet } from '@/components/ActivityFormSheet'
 import { formatDateLabel, typeMeta } from '@/lib/format'
@@ -27,6 +27,17 @@ export function AdminActividades() {
   )
 
   if (activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) return <FullScreenLoader />
+  if (activitiesQ.isError || needsQ.isError || assignmentsQ.isError) {
+    return (
+      <ErrorState
+        onRetry={() => {
+          activitiesQ.refetch()
+          needsQ.refetch()
+          assignmentsQ.refetch()
+        }}
+      />
+    )
+  }
 
   return (
     <div style={{ padding: '18px 16px 8px' }}>

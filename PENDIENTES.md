@@ -5,9 +5,20 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Por revisar
 
+- [ ] **Aplicar la migración 0002 en Supabase**: el archivo
+      `supabase/migrations/0002_assignment_integrity.sql` es nuevo y hay que
+      ejecutarlo en el SQL Editor del proyecto real (igual que se hizo con
+      0001). Agrega el control de cupos en el servidor y cierra la lectura
+      anónima de actividades.
 - [ ] **Autenticación de atletas guía**: Lucas reportó que algo no anda bien
       en el login/registro de atletas guía (a definir el detalle exacto —
       pendiente de descripción más precisa).
+- [ ] **Color de los atletas líder**: todos los atletas quedan con el color
+      celeste por defecto (la columna `color` nunca se varía al crearlos).
+      Cosmético; se podría asignar un color de la paleta según el id.
+- [ ] **Focus trap completo en las hojas (Sheet)**: al abrir una hoja el foco
+      se mueve adentro y se restaura al cerrar, pero el Tab todavía puede
+      salir del diálogo. Mejora de accesibilidad de teclado.
 - [ ] **Login con Google**: no está habilitado en Supabase (requiere crear
       credenciales OAuth en Google Cloud Console y configurarlas en
       Authentication → Providers → Google). Mientras tanto, la app muestra
@@ -25,6 +36,32 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Resuelto recientemente
 
+- [x] **Cupos aplicados en el servidor (migración 0002)**: antes el límite de
+      acompañantes sólo lo validaba la interfaz; por API directa un guía podía
+      anotarse en actividades ocultas, con atletas inactivos, sin inscripción
+      previa, superar el cupo (incluso dos guías a la vez por carrera de
+      concurrencia) o falsificar su nombre (`guide_name`). Ahora un trigger
+      con bloqueo de fila valida todo eso en la base (probado contra
+      PostgreSQL local, incluida la carrera por el último cupo).
+- [x] **Actividades ya no se pueden leer sin iniciar sesión**: la política
+      RLS de lectura no exigía usuario autenticado, y la anon key es pública
+      (viaja en el bundle). Corregido en la migración 0002.
+- [x] **Botón "Acompañar" con cupo completo**: en la pestaña Actividades del
+      guía se ofrecía anotarse aunque el cupo estuviera lleno. Ahora muestra
+      "Cupo completo" deshabilitado, y si dos personas confirman a la vez el
+      servidor rechaza con un mensaje claro.
+- [x] **Caché entre sesiones**: al cerrar sesión no se limpiaba el caché de
+      datos, y otro usuario que iniciara sesión en el mismo dispositivo podía
+      ver por unos segundos datos de la sesión anterior.
+- [x] **Aviso erróneo de "código de equipo inválido"**: si el registro de
+      admin fallaba (p. ej. email ya usado), quedaba un flag colgado que
+      mostraba el aviso en el próximo login de cualquier cuenta.
+- [x] **Estados de error en todas las pantallas**: si fallaba la carga de
+      datos (sin conexión), se mostraban vacíos engañosos ("Sin actividades");
+      ahora aparece "No se pudo cargar" con botón de reintento.
+- [x] **Registro de T&C sin demoras**: la consulta de IP a un servicio
+      externo ahora tiene timeout de 4 s; si no responde, la aceptación se
+      registra igual.
 - [x] **T&C con documentos reales**: se reemplazó el texto genérico por los
       documentos legales reales de la fundación (Deslinde de responsabilidad,
       Cesión de derechos de imagen), con checkbox obligatorio, resumen breve

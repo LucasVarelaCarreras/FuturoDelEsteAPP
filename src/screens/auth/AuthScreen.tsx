@@ -346,10 +346,12 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
         if (!code.trim()) throw new Error('Ingresá el código de equipo.')
         // El código NO se valida en el cliente (sería visible en el navegador):
         // lo comprueba el servidor contra app_secrets al crear la cuenta.
-        // Guardamos un flag para poder avisar después si el código no era
-        // válido (AppShell lo chequea una vez que el perfil carga).
-        sessionStorage.setItem(ADMIN_CODE_CHECK_KEY, '1')
         await signUp(name, email, pass, 'admin', code.trim())
+        // Recién si el alta salió bien guardamos el flag para avisar después
+        // si el código no era válido (AppShell lo chequea al cargar el perfil).
+        // Si se marca antes y el alta falla (p. ej. email ya registrado), el
+        // aviso aparecería por error en el próximo login de otra cuenta.
+        sessionStorage.setItem(ADMIN_CODE_CHECK_KEY, '1')
         setMode('login')
         setInfo(
           'Cuenta creada. Si el código de equipo es correcto, tendrás acceso de administrador al iniciar sesión (revisá tu email si se requiere confirmación).',
