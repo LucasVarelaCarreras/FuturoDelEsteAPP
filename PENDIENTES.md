@@ -5,13 +5,6 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Por revisar
 
-- [ ] **Aplicar las migraciones 0002 y 0003 en Supabase**: los archivos
-      `supabase/migrations/0002_assignment_integrity.sql` y
-      `supabase/migrations/0003_input_limits.sql` hay que ejecutarlos en el
-      SQL Editor del proyecto real (igual que se hizo con 0001), en orden.
-      0002 agrega el control de cupos en el servidor y cierra la lectura
-      anónima; 0003 agrega límites de longitud, tope de cupos requeridos y
-      protege el email del perfil.
 - [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar
       un atleta de una actividad se borran primero sus acompañamientos y
       después la inscripción, en dos llamadas; si falla la segunda quedan
@@ -45,6 +38,7 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Resuelto recientemente
 
+- [x] **Migraciones 0002 y 0003 aplicadas en el Supabase real** por Lucas.
 - [x] **Los PDF legales no se abrían en la PWA instalada**: el service worker
       respondía la app (index.html) a cualquier navegación, incluidos los
       links a los documentos de T&C en `/legal/`. Ahora quedan excluidos del
