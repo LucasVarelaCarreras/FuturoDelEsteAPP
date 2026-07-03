@@ -17,7 +17,36 @@ export function Sheet({ open, onClose, title, children, dismissible = true }: Sh
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && dismissible) onClose()
+      if (e.key === 'Escape' && dismissible) {
+        onClose()
+        return
+      }
+      // Focus trap: el Tab circula dentro de la hoja (diálogo modal).
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusables = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((el) => el.offsetParent !== null)
+        if (focusables.length === 0) {
+          e.preventDefault()
+          panelRef.current.focus()
+          return
+        }
+        const first = focusables[0]
+        const last = focusables[focusables.length - 1]
+        const active = document.activeElement as HTMLElement | null
+        const inside = active ? panelRef.current.contains(active) : false
+        if (e.shiftKey) {
+          if (!inside || active === first) {
+            e.preventDefault()
+            last.focus()
+          }
+        } else if (!inside || active === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKey)
