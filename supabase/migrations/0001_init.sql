@@ -249,6 +249,26 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+-- Evita la escalada de privilegios: un usuario puede editar su propio
+-- perfil (nombre, etc.) pero NO cambiar su rol. Sólo un admin puede
+-- modificar roles. Si un no-admin intenta cambiar el rol, se ignora.
+create or replace function public.protect_profile_role()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role and not public.is_admin() then
+    new.role := old.role;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists trg_protect_profile_role on public.profiles;
+create trigger trg_protect_profile_role before update on public.profiles
+  for each row execute function public.protect_profile_role();
+
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================

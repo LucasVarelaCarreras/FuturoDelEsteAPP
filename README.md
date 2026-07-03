@@ -55,10 +55,14 @@ Completá en `.env`:
 ```
 VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
 VITE_SUPABASE_ANON_KEY=tu-anon-key
-VITE_ADMIN_TEAM_CODE=UN-CODIGO-SECRETO   # requerido para registrar administradores
 ```
 
 (Los valores están en Supabase → **Project Settings → API**.)
+
+> El **código de equipo** para registrar administradores **no** es una variable del
+> cliente (sería visible en el navegador): vive sólo en el servidor, en la tabla
+> `app_secrets`. Cambialo antes de producción:
+> `update public.app_secrets set value = 'TU-CODIGO' where key = 'admin_signup_code';`
 
 ### 3. Instalar y correr
 
@@ -105,9 +109,10 @@ Se abre en modo standalone (sin barras del navegador), con ícono y splash propi
 - La verificación de rol se hace con la función `is_admin()` (SECURITY DEFINER, sin recursión).
 - El **rol admin se otorga en el servidor**: el trigger de alta valida el código de
   equipo contra `app_secrets.admin_signup_code` (tabla sin acceso desde el cliente).
-  No se confía en el metadata del cliente para dar privilegios.
-  > `VITE_ADMIN_TEAM_CODE` debe coincidir con ese secreto. Para cambiarlo:
-  > `update public.app_secrets set value = 'TU-CODIGO' where key = 'admin_signup_code';`
+  El código nunca se envía al bundle del navegador; no se confía en el cliente para
+  otorgar privilegios.
+- **Sin escalada de privilegios**: un usuario puede editar su perfil pero no cambiar
+  su propio rol (trigger `protect_profile_role`); sólo un admin puede modificar roles.
 
 ## 🗂️ Estructura
 

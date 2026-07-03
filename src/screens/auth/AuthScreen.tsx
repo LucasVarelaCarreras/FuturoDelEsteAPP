@@ -7,8 +7,6 @@ import { Icon } from '@/components/Icon'
 
 type View = 'welcome' | 'login' | 'register' | 'admin' | 'forgot'
 
-const ADMIN_CODE = (import.meta.env.VITE_ADMIN_TEAM_CODE as string | undefined) ?? 'FDE2026'
-
 const emailSchema = z.string().trim().email('Ingresá un email válido.')
 
 function friendlyError(message: string): string {
@@ -317,11 +315,13 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
   const [pass, setPass] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setInfo('')
     const parsed = emailSchema.safeParse(email)
     if (!parsed.success) return setError(parsed.error.issues[0].message)
     setLoading(true)
@@ -332,12 +332,14 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
       } else {
         if (!name.trim()) throw new Error('Ingresá tu nombre.')
         if (pass.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres.')
-        if (code.trim().toUpperCase() !== ADMIN_CODE.toUpperCase())
-          throw new Error('Código de equipo incorrecto. Pedilo a la fundación.')
-        // El código también se valida en el servidor (trigger de alta).
+        if (!code.trim()) throw new Error('Ingresá el código de equipo.')
+        // El código NO se valida en el cliente (sería visible en el navegador):
+        // lo comprueba el servidor contra app_secrets al crear la cuenta.
         await signUp(name, email, pass, 'admin', code.trim())
-        setError('')
         setMode('login')
+        setInfo(
+          'Cuenta creada. Si el código de equipo es correcto, tendrás acceso de administrador al iniciar sesión (revisá tu email si se requiere confirmación).',
+        )
         setLoading(false)
         return
       }
@@ -378,6 +380,23 @@ function AdminForm({ onView }: { onView: (v: View) => void }) {
         ))}
       </div>
       <FormError>{error}</FormError>
+      {info && (
+        <p
+          role="status"
+          style={{
+            color: 'var(--fde-pine)',
+            background: 'var(--fde-emerald-50)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '10px 14px',
+            fontSize: 13,
+            fontWeight: 700,
+            marginBottom: 12,
+            lineHeight: 1.5,
+          }}
+        >
+          {info}
+        </p>
+      )}
       {mode === 'register' && (
         <TextField label="Nombre completo" id="aname" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" autoComplete="name" />
       )}

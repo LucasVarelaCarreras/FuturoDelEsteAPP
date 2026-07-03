@@ -130,6 +130,11 @@ export function GuiaActividades() {
                     </div>
                   </div>
                 </div>
+                {act.description && (
+                  <p style={{ fontSize: 13, color: 'var(--text-body)', lineHeight: 1.5, margin: '0 0 10px', paddingLeft: 50 }}>
+                    {act.description}
+                  </p>
+                )}
                 {actNeeds.length === 0 ? (
                   <p style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 50 }}>Todavía no hay atletas inscriptos.</p>
                 ) : (

@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
 interface SheetProps {
@@ -12,6 +12,8 @@ interface SheetProps {
 
 /** Hoja inferior (bottom sheet) accesible con overlay y animación. */
 export function Sheet({ open, onClose, title, children, dismissible = true }: SheetProps) {
+  const panelRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -19,9 +21,16 @@ export function Sheet({ open, onClose, title, children, dismissible = true }: Sh
     }
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKey)
+
+    // Accesibilidad: recordar el foco previo y mover el foco a la hoja.
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const focusTimer = setTimeout(() => panelRef.current?.focus(), 30)
+
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKey)
+      clearTimeout(focusTimer)
+      previouslyFocused?.focus?.()
     }
   }, [open, dismissible, onClose])
 
@@ -45,6 +54,8 @@ export function Sheet({ open, onClose, title, children, dismissible = true }: Sh
       }}
     >
       <div
+        ref={panelRef}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
@@ -56,6 +67,7 @@ export function Sheet({ open, onClose, title, children, dismissible = true }: Sh
           overflowY: 'auto',
           paddingBottom: 'calc(20px + var(--safe-bottom))',
           animation: 'fde-sheet-in 0.26s cubic-bezier(0.22, 1, 0.36, 1)',
+          outline: 'none',
         }}
         className="no-scrollbar"
       >
