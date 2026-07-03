@@ -30,7 +30,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         navigateFallback: '/index.html',
         // Never cache Supabase API/auth responses in the SW — always go to network.
-        navigateFallbackDenylist: [/^\/api/, /supabase/],
+        // /legal: los PDF de T&C se abren por navegación (target=_blank); sin
+        // esta excepción el SW devolvía index.html en lugar del documento.
+        navigateFallbackDenylist: [/^\/api/, /supabase/, /^\/legal\//, /\.pdf$/],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin.includes('supabase'),
