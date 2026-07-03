@@ -4,7 +4,7 @@ import { useActivities, useAssignments, useAthletes, useGuides, useNeeds } from 
 import { Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { missingForActivity, uncoveredForActivity } from '@/lib/coverage'
-import { formatDateLabel } from '@/lib/format'
+import { formatDateLabel, todayIso } from '@/lib/format'
 
 export function AdminPanel() {
   const navigate = useNavigate()
@@ -19,16 +19,30 @@ export function AdminPanel() {
   const needs = needsQ.data ?? []
   const assignments = assignmentsQ.data ?? []
 
+  // Sólo cuentan los cupos que todavía se pueden cubrir: actividades de hoy
+  // en adelante y atletas activos. Las actividades pasadas ya no admiten
+  // anotarse (los guías ni las ven) y los atletas inactivos están ocultos
+  // para los guías, así que alertar por ellos sería ruido imposible de resolver.
+  const openNeeds = useMemo(() => {
+    const activeIds = new Set(athletes.filter((a) => a.active).map((a) => a.id))
+    return needs.filter((n) => activeIds.has(n.athlete_id))
+  }, [needs, athletes])
+
+  const upcoming = useMemo(() => {
+    const today = todayIso()
+    return activities.filter((a) => !a.date || a.date >= today)
+  }, [activities])
+
   const alerts = useMemo(() => {
-    return activities
+    return upcoming
       .map((a) => ({
         activity: a,
-        missing: missingForActivity(needs, assignments, a.id),
-        uncovered: uncoveredForActivity(needs, assignments, a.id),
+        missing: missingForActivity(openNeeds, assignments, a.id),
+        uncovered: uncoveredForActivity(openNeeds, assignments, a.id),
       }))
       .filter((x) => x.missing > 0)
       .sort((a, b) => (a.activity.date ?? '9999').localeCompare(b.activity.date ?? '9999'))
-  }, [activities, needs, assignments])
+  }, [upcoming, openNeeds, assignments])
 
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
@@ -52,7 +66,7 @@ export function AdminPanel() {
     { label: 'Guías registrados', value: guidesQ.data?.length ?? 0, color: 'var(--fde-ocean)' },
     {
       label: 'Cupos por cubrir',
-      value: activities.reduce((s, a) => s + missingForActivity(needs, assignments, a.id), 0),
+      value: upcoming.reduce((s, a) => s + missingForActivity(openNeeds, assignments, a.id), 0),
       color: 'var(--fde-warning)',
     },
   ]

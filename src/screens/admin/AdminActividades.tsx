@@ -1,17 +1,18 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useActivities, useAssignments, useNeeds, useToggleActivityVisible } from '@/hooks/data'
+import { useActivities, useAssignments, useAthletes, useNeeds, useToggleActivityVisible } from '@/hooks/data'
 import { useToast } from '@/context/ToastContext'
 import { Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { ActivityFormSheet } from '@/components/ActivityFormSheet'
-import { formatDateLabel, typeMeta } from '@/lib/format'
+import { formatDateLabel, todayIso, typeMeta } from '@/lib/format'
 import { missingForActivity } from '@/lib/coverage'
 
 export function AdminActividades() {
   const navigate = useNavigate()
   const { notify } = useToast()
   const activitiesQ = useActivities()
+  const athletesQ = useAthletes()
   const needsQ = useNeeds()
   const assignmentsQ = useAssignments()
   const toggleVisible = useToggleActivityVisible()
@@ -26,12 +27,21 @@ export function AdminActividades() {
     [activities],
   )
 
-  if (activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) return <FullScreenLoader />
-  if (activitiesQ.isError || needsQ.isError || assignmentsQ.isError) {
+  // Para el badge "Faltan N" sólo cuentan atletas activos: los inactivos no
+  // se muestran a los guías (y el servidor rechaza anotarse con ellos).
+  const openNeeds = useMemo(() => {
+    const activeIds = new Set((athletesQ.data ?? []).filter((a) => a.active).map((a) => a.id))
+    return needs.filter((n) => activeIds.has(n.athlete_id))
+  }, [needs, athletesQ.data])
+
+  if (activitiesQ.isLoading || athletesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading)
+    return <FullScreenLoader />
+  if (activitiesQ.isError || athletesQ.isError || needsQ.isError || assignmentsQ.isError) {
     return (
       <ErrorState
         onRetry={() => {
           activitiesQ.refetch()
+          athletesQ.refetch()
           needsQ.refetch()
           assignmentsQ.refetch()
         }}
@@ -59,7 +69,8 @@ export function AdminActividades() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {sorted.map((act) => {
             const tm = typeMeta(act.type)
-            const missing = missingForActivity(needs, assignments, act.id)
+            const isPast = Boolean(act.date && act.date < todayIso())
+            const missing = missingForActivity(openNeeds, assignments, act.id)
             return (
               <Card key={act.id} style={{ padding: 14 }}>
                 <button
@@ -85,11 +96,15 @@ export function AdminActividades() {
                       fontWeight: 800,
                       padding: '4px 10px',
                       borderRadius: 'var(--radius-pill)',
-                      background: missing > 0 ? '#fbf0d8' : 'var(--fde-emerald-50)',
-                      color: missing > 0 ? '#8a5d0c' : 'var(--fde-pine)',
+                      background: isPast
+                        ? 'var(--surface-sunken)'
+                        : missing > 0
+                          ? '#fbf0d8'
+                          : 'var(--fde-emerald-50)',
+                      color: isPast ? 'var(--text-muted)' : missing > 0 ? '#8a5d0c' : 'var(--fde-pine)',
                     }}
                   >
-                    {missing > 0 ? `Faltan ${missing}` : 'Completo'}
+                    {isPast ? 'Finalizada' : missing > 0 ? `Faltan ${missing}` : 'Completo'}
                   </span>
                   <button
                     onClick={() => {

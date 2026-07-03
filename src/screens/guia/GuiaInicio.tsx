@@ -51,10 +51,16 @@ export function GuiaInicio() {
       .sort((a, b) => (a.act!.date ?? '9999').localeCompare(b.act!.date ?? '9999'))
   }, [needs, athMap, actMap, assignments])
 
-  const myAssignments = useMemo(
-    () => assignments.filter((a) => a.guide_id === profile?.id),
-    [assignments, profile],
-  )
+  // Sólo los acompañamientos vigentes (de hoy en adelante): los pasados
+  // quedan como historial en Perfil y acá inflarían el contador.
+  const myAssignments = useMemo(() => {
+    const today = todayIso()
+    return assignments.filter((a) => {
+      if (a.guide_id !== profile?.id) return false
+      const act = actMap.get(a.activity_id)
+      return Boolean(act && (!act.date || act.date >= today))
+    })
+  }, [assignments, profile, actMap])
 
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
