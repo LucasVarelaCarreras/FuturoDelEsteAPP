@@ -111,12 +111,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role,
       }
       if (role === 'admin' && adminCode) data.admin_code = adminCode
-      const { error } = await supabase.auth.signUp({
+      const { data: result, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: { data, emailRedirectTo: window.location.origin },
       })
       if (error) throw error
+      // Supabase, por seguridad, no informa si un email ya está registrado:
+      // responde "éxito" pero con identities=[] y sin crear nada nuevo.
+      // Lo detectamos para avisarle claramente al usuario en vez de dejarlo
+      // creer que la cuenta se creó cuando en realidad no pasó nada.
+      if (result.user && result.user.identities && result.user.identities.length === 0) {
+        throw new Error('User already registered')
+      }
     },
     [],
   )
