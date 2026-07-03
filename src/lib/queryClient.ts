@@ -20,6 +20,5 @@ export const qk = {
   needs: ['needs'] as const,
   assignments: ['assignments'] as const,
   guides: ['guides'] as const,
-  settings: ['settings'] as const,
   tc: (userId: string) => ['tc', userId] as const,
 }

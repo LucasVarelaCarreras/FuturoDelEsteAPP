@@ -9,7 +9,7 @@ import type {
   NeedRow,
   ProfileRow,
 } from '@/types/database'
-import { initialsFrom } from '@/lib/format'
+import { colorForId, initialsFrom } from '@/lib/format'
 import { computeTermsHash, TERMS_VERSION } from '@/lib/terms'
 
 /* ============================================================
@@ -104,7 +104,11 @@ export function useSaveAthlete() {
         const { error } = await supabase.from('athletes').update(patch).eq('id', id)
         if (error) throw error
       } else {
-        const { error } = await supabase.from('athletes').insert(patch)
+        // Color de la paleta de marca, determinístico según el nombre
+        // (antes todos los atletas quedaban con el celeste por defecto).
+        const { error } = await supabase
+          .from('athletes')
+          .insert({ ...patch, color: colorForId(patch.name) })
         if (error) throw error
       }
     },
