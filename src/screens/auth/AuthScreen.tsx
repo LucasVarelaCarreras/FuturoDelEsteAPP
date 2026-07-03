@@ -31,6 +31,7 @@ function friendlyError(message: string): string {
 }
 
 export function AuthScreen() {
+  const { authLinkError } = useAuth()
   const [view, setView] = useState<View>('welcome')
   return (
     <div
@@ -45,6 +46,24 @@ export function AuthScreen() {
     >
       <Hero />
       <div style={{ flex: 1, padding: '20px 22px calc(28px + var(--safe-bottom))' }}>
+        {authLinkError && (
+          <p
+            role="alert"
+            style={{
+              color: '#c0392b',
+              background: '#fdecea',
+              borderRadius: 'var(--radius-sm)',
+              padding: '12px 14px',
+              fontSize: 13.5,
+              fontWeight: 700,
+              lineHeight: 1.5,
+              marginTop: 16,
+              marginBottom: 4,
+            }}
+          >
+            {authLinkError}
+          </p>
+        )}
         {view === 'welcome' && <Welcome onView={setView} />}
         {view === 'login' && <LoginForm onView={setView} />}
         {view === 'register' && <RegisterForm onView={setView} />}

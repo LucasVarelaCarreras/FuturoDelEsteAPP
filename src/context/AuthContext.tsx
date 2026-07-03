@@ -35,9 +35,30 @@ interface AuthContextValue {
   resetPassword: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
   passwordRecovery: boolean
+  /** Mensaje si el enlace de email (recuperación/confirmación) vino con error (p. ej. expirado). */
+  authLinkError: string | null
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+
+/**
+ * Si el usuario llega desde un enlace de email inválido o vencido, Supabase
+ * redirige con el error en la URL (#error_code=otp_expired&...). Sin esto,
+ * la persona aterrizaba en la pantalla de login sin ninguna explicación.
+ * Se lee una sola vez al iniciar y se limpia la URL.
+ */
+function readAuthLinkError(): string | null {
+  const hash = window.location.hash.replace(/^#/, '')
+  const params = new URLSearchParams(hash.includes('=') ? hash : '')
+  const query = new URLSearchParams(window.location.search)
+  const code = params.get('error_code') ?? query.get('error_code')
+  const error = params.get('error') ?? query.get('error')
+  if (!code && !error) return null
+  window.history.replaceState(null, '', window.location.pathname)
+  if (code === 'otp_expired')
+    return 'El enlace del email ya expiró o ya fue usado. Pedí uno nuevo desde “¿Olvidaste tu contraseña?”.'
+  return 'No pudimos validar el enlace del email. Pedí uno nuevo e intentá otra vez.'
+}
 
 async function fetchProfile(userId: string): Promise<ProfileRow | null> {
   const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
@@ -54,6 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [profileError, setProfileError] = useState(false)
   const [passwordRecovery, setPasswordRecovery] = useState(false)
+  const [authLinkError, setAuthLinkError] = useState<string | null>(null)
   const mounted = useRef(true)
 
   const loadProfile = useCallback(async (userId: string | undefined) => {
@@ -79,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     mounted.current = true
+    setAuthLinkError(readAuthLinkError())
 
     supabase.auth.getSession().then(async ({ data }) => {
       if (!mounted.current) return
@@ -189,6 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       resetPassword,
       updatePassword,
       passwordRecovery,
+      authLinkError,
     }),
     [
       session,
@@ -203,6 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       resetPassword,
       updatePassword,
       passwordRecovery,
+      authLinkError,
     ],
   )
 
