@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useGuides, useLatestTermsAcceptance } from '@/hooks/data'
-import { Avatar, Card, EmptyState, Spinner } from '@/components/ui'
+import { Avatar, Card, EmptyState, ErrorState, Spinner } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import { Sheet } from '@/components/Sheet'
 import { TERMS_VERSION } from '@/lib/terms'
@@ -35,6 +35,8 @@ export function AdminConfig() {
         <div style={{ padding: 30, display: 'flex', justifyContent: 'center' }}>
           <Spinner />
         </div>
+      ) : guidesQ.isError ? (
+        <ErrorState onRetry={() => guidesQ.refetch()} />
       ) : (guidesQ.data ?? []).length === 0 ? (
         <EmptyState icon={<Icon glyph="users" size={26} color="var(--fde-cyan)" />} title="Sin guías" body="Todavía no hay atletas guía registrados." />
       ) : (

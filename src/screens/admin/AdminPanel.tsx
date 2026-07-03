@@ -44,10 +44,16 @@ export function AdminPanel() {
       .sort((a, b) => (a.activity.date ?? '9999').localeCompare(b.activity.date ?? '9999'))
   }, [upcoming, openNeeds, assignments])
 
-  if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
+  if (
+    athletesQ.isLoading ||
+    activitiesQ.isLoading ||
+    needsQ.isLoading ||
+    assignmentsQ.isLoading ||
+    guidesQ.isLoading
+  ) {
     return <FullScreenLoader />
   }
-  if (athletesQ.isError || activitiesQ.isError || needsQ.isError || assignmentsQ.isError) {
+  if (athletesQ.isError || activitiesQ.isError || needsQ.isError || assignmentsQ.isError || guidesQ.isError) {
     return (
       <ErrorState
         onRetry={() => {
@@ -55,6 +61,7 @@ export function AdminPanel() {
           activitiesQ.refetch()
           needsQ.refetch()
           assignmentsQ.refetch()
+          guidesQ.refetch()
         }}
       />
     )

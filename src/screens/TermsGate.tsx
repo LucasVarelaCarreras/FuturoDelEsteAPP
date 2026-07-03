@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useAcceptTerms, useLatestTermsAcceptance } from '@/hooks/data'
 import { LEGAL_DOCS, TERMS_SUMMARY, TERMS_TITLE, TERMS_VERSION } from '@/lib/terms'
-import { Button, FullScreenLoader } from '@/components/ui'
+import { Button, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 
 /**
@@ -13,12 +13,22 @@ import { Icon } from '@/components/Icon'
  */
 export function TermsGate({ children }: { children: ReactNode }) {
   const { profile, signOut } = useAuth()
-  const { data: latest, isLoading } = useLatestTermsAcceptance(profile?.id)
+  const { data: latest, isLoading, isError, refetch } = useLatestTermsAcceptance(profile?.id)
   const accept = useAcceptTerms()
   const [checked, setChecked] = useState(false)
   const [error, setError] = useState('')
 
   if (isLoading) return <FullScreenLoader label="Cargando…" />
+  // Si no se pudo consultar la aceptación (sin conexión), no mostramos el
+  // formulario de T&C: el usuario probablemente ya aceptó y volver a
+  // pedírselo generaría registros duplicados en la auditoría.
+  if (isError) {
+    return (
+      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ErrorState onRetry={() => refetch()} />
+      </div>
+    )
+  }
 
   const accepted = latest && latest.doc_version === TERMS_VERSION
   if (accepted) return <>{children}</>
