@@ -12,6 +12,12 @@ export function formatDateLabel(iso: string | null): string {
   return `${DIAS[date.getDay()]} ${date.getDate()} ${MESES[date.getMonth()]}`
 }
 
+/** Fecha local de hoy en formato ISO (YYYY-MM-DD), sin desfase de zona horaria. */
+export function todayIso(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 /** Iniciales a partir de un nombre completo. */
 export function initialsFrom(name: string): string {
   const parts = name.trim().split(/\s+/)

@@ -12,7 +12,11 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
       anónima de actividades.
 - [ ] **Autenticación de atletas guía**: Lucas reportó que algo no anda bien
       en el login/registro de atletas guía (a definir el detalle exacto —
-      pendiente de descripción más precisa).
+      pendiente de descripción más precisa). *Posible causa encontrada y
+      corregida*: el callback de `onAuthStateChange` esperaba (`await`)
+      consultas a Supabase con el lock interno de auth tomado — un deadlock
+      documentado de supabase-js que deja el login colgado en "Iniciando…"
+      de forma intermitente. Confirmar con Lucas si el problema persiste.
 - [ ] **Color de los atletas líder**: todos los atletas quedan con el color
       celeste por defecto (la columna `color` nunca se varía al crearlos).
       Cosmético; se podría asignar un color de la paleta según el id.
@@ -36,6 +40,16 @@ Lista de cosas detectadas durante las pruebas, para revisar más adelante
 
 ## Resuelto recientemente
 
+- [x] **Posible deadlock en el login**: ver nota en "Autenticación de atletas
+      guía" arriba — la carga del perfil ahora se difiere fuera del callback
+      de auth de supabase-js.
+- [x] **Actividades pasadas fuera de la vista del guía**: ya no se listan
+      actividades con fecha anterior a hoy en Inicio ni en Actividades (no
+      tiene sentido anotarse a algo que ya ocurrió y tapaban las próximas).
+      El admin sigue viendo todo y el historial propio queda en Perfil.
+- [x] **Copy técnico en el registro**: el mensaje "Si tu proyecto requiere
+      confirmación por email" hablaba en jerga de desarrollador; ahora le
+      habla al usuario.
 - [x] **Cupos aplicados en el servidor (migración 0002)**: antes el límite de
       acompañantes sólo lo validaba la interfaz; por API directa un guía podía
       anotarse en actividades ocultas, con atletas inactivos, sin inscripción

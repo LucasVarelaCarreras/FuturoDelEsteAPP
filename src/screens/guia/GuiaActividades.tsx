@@ -15,7 +15,7 @@ import { Sheet } from '@/components/Sheet'
 import { Button, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
 import type { ActivityType, AssignmentRow, NeedRow } from '@/types/database'
-import { formatDateLabel, typeMeta } from '@/lib/format'
+import { formatDateLabel, todayIso, typeMeta } from '@/lib/format'
 
 const FILTERS: { key: ActivityType | 'all'; label: string }[] = [
   { key: 'all', label: 'Todas' },
@@ -45,14 +45,16 @@ export function GuiaActividades() {
 
   const athMap = useMemo(() => new Map(athletes.map((a) => [a.id, a])), [athletes])
 
-  const visibleActivities = useMemo(
-    () =>
-      activities
-        .filter((a) => a.visible)
-        .filter((a) => filter === 'all' || a.type === filter)
-        .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999')),
-    [activities, filter],
-  )
+  // Sólo actividades visibles y de hoy en adelante: las pasadas no admiten
+  // anotarse y taparían las próximas (el historial propio queda en Perfil).
+  const visibleActivities = useMemo(() => {
+    const today = todayIso()
+    return activities
+      .filter((a) => a.visible)
+      .filter((a) => !a.date || a.date >= today)
+      .filter((a) => filter === 'all' || a.type === filter)
+      .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'))
+  }, [activities, filter])
 
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />

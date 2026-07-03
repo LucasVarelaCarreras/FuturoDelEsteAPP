@@ -16,7 +16,7 @@ import { Button, EmptyState, ErrorState, FullScreenLoader } from '@/components/u
 import { Icon } from '@/components/Icon'
 import type { AssignmentRow, NeedRow } from '@/types/database'
 import { confirmedFor } from '@/lib/coverage'
-import { formatDateLabel } from '@/lib/format'
+import { formatDateLabel, todayIso } from '@/lib/format'
 
 export function GuiaInicio() {
   const { profile } = useAuth()
@@ -39,11 +39,14 @@ export function GuiaInicio() {
   const athMap = useMemo(() => new Map(athletes.map((a) => [a.id, a])), [athletes])
   const actMap = useMemo(() => new Map(activities.map((a) => [a.id, a])), [activities])
 
-  // Cupos abiertos: actividad visible, atleta activo y cobertura incompleta.
+  // Cupos abiertos: actividad visible y no pasada, atleta activo y
+  // cobertura incompleta (no tiene sentido anotarse a algo que ya ocurrió).
   const openRows = useMemo(() => {
+    const today = todayIso()
     return needs
       .map((n) => ({ need: n, ath: athMap.get(n.athlete_id), act: actMap.get(n.activity_id) }))
       .filter((r) => r.ath?.active && r.act?.visible)
+      .filter((r) => !r.act!.date || r.act!.date >= today)
       .filter((r) => confirmedFor(assignments, r.act!.id, r.ath!.id) < r.need.required)
       .sort((a, b) => (a.act!.date ?? '9999').localeCompare(b.act!.date ?? '9999'))
   }, [needs, athMap, actMap, assignments])

@@ -77,12 +77,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (mounted.current) setLoading(false)
     })
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!mounted.current) return
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       setSession(newSession)
-      await loadProfile(newSession?.user.id)
-      if (mounted.current) setLoading(false)
+      // IMPORTANTE: no usar `await` de llamadas a supabase-js dentro de este
+      // callback. Corre con el lock interno de auth tomado y esperar otra
+      // llamada de la librería puede producir un deadlock (login que queda
+      // colgado en "Iniciando…"). Por eso la carga del perfil se difiere.
+      setTimeout(() => {
+        if (!mounted.current) return
+        loadProfile(newSession?.user.id).finally(() => {
+          if (mounted.current) setLoading(false)
+        })
+      }, 0)
     })
 
     return () => {

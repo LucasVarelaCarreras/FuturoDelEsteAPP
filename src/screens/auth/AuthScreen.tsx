@@ -288,7 +288,7 @@ function RegisterForm({ onView }: { onView: (v: View) => void }) {
         </div>
         <h2 style={{ fontSize: 20, marginBottom: 8 }}>¡Cuenta creada!</h2>
         <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 20 }}>
-          Si tu proyecto requiere confirmación por email, revisá tu correo. Luego iniciá sesión.
+          Revisá tu correo: si te llegó un mail de confirmación, confirmá tu cuenta. Después iniciá sesión.
         </p>
         <Button full onClick={() => onView('login')}>
           Ir a iniciar sesión
