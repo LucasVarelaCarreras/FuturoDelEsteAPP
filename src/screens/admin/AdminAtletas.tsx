@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   useAthletes,
   useDeleteAthlete,
@@ -36,6 +37,7 @@ function normalize(s: string): string {
 export function AdminAtletas() {
   const { profile } = useAuth()
   const { notify } = useToast()
+  const navigate = useNavigate()
   const athletesQ = useAthletes()
   const guidesQ = useGuides()
   const favoritesQ = useFavorites()
@@ -233,6 +235,7 @@ export function AdminAtletas() {
           searching={Boolean(query)}
           favByGuide={favByGuide}
           onFavorite={(g) => toggleFavorite('guia', g.id, favByGuide.get(g.id))}
+          onOpen={(g) => navigate(`/atleta-guia/${g.id}`)}
         />
       )}
 
@@ -347,11 +350,13 @@ function GuiaList({
   searching,
   favByGuide,
   onFavorite,
+  onOpen,
 }: {
   guides: ProfileRow[]
   searching: boolean
   favByGuide: Map<string, FavoriteRow>
   onFavorite: (g: ProfileRow) => void
+  onOpen: (g: ProfileRow) => void
 }) {
   if (guides.length === 0) {
     return searching ? (
@@ -371,24 +376,56 @@ function GuiaList({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {guides.map((g) => (
-        <Card key={g.id} style={{ padding: 14 }}>
+        <Card key={g.id} style={{ padding: 14, opacity: g.active ? 1 : 0.55 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Avatar initials={g.initials || 'U'} color={colorForId(g.id)} size={44} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-heading)' }}>{g.full_name}</div>
-              <div
+            <button
+              onClick={() => onOpen(g)}
+              aria-label={`Ver detalle de ${g.full_name}`}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              <Avatar initials={g.initials || 'U'} color={colorForId(g.id)} size={44} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-heading)' }}>{g.full_name}</div>
+                <div
+                  style={{
+                    fontSize: 12.5,
+                    color: 'var(--text-muted)',
+                    fontWeight: 600,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {g.email}
+                </div>
+              </div>
+              <span
                 style={{
-                  fontSize: 12.5,
-                  color: 'var(--text-muted)',
-                  fontWeight: 600,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  flexShrink: 0,
+                  background: g.active ? 'var(--fde-emerald-50)' : 'var(--surface-sunken)',
+                  color: g.active ? 'var(--fde-pine)' : 'var(--text-muted)',
+                  fontSize: 11.5,
+                  fontWeight: 800,
+                  padding: '5px 11px',
+                  borderRadius: 'var(--radius-pill)',
                   whiteSpace: 'nowrap',
                 }}
               >
-                {g.email}
-              </div>
-            </div>
+                {g.active ? 'Activo' : 'Inactivo'}
+              </span>
+              <Icon glyph="chevron" size={18} color="var(--text-muted)" />
+            </button>
             <StarButton name={g.full_name} active={favByGuide.has(g.id)} onClick={() => onFavorite(g)} />
           </div>
         </Card>

@@ -9,6 +9,7 @@ import { AuthScreen } from '@/screens/auth/AuthScreen'
 import { UpdatePassword } from '@/screens/auth/UpdatePassword'
 import { AppShell } from '@/components/AppShell'
 import { TermsGate } from '@/screens/TermsGate'
+import { CuentaDesactivada } from '@/screens/CuentaDesactivada'
 
 const GuiaInicio = lazy(() => import('@/screens/guia/GuiaInicio').then((m) => ({ default: m.GuiaInicio })))
 const GuiaActividades = lazy(() => import('@/screens/guia/GuiaActividades').then((m) => ({ default: m.GuiaActividades })))
@@ -21,6 +22,9 @@ const AdminAtletas = lazy(() => import('@/screens/admin/AdminAtletas').then((m) 
 const AdminActividades = lazy(() => import('@/screens/admin/AdminActividades').then((m) => ({ default: m.AdminActividades })))
 const AdminActividadDetalle = lazy(() =>
   import('@/screens/admin/AdminActividadDetalle').then((m) => ({ default: m.AdminActividadDetalle })),
+)
+const AdminGuiaDetalle = lazy(() =>
+  import('@/screens/admin/AdminGuiaDetalle').then((m) => ({ default: m.AdminGuiaDetalle })),
 )
 const AdminConfig = lazy(() => import('@/screens/admin/AdminConfig').then((m) => ({ default: m.AdminConfig })))
 
@@ -45,6 +49,7 @@ export function App() {
             <Route path="/atletas" element={<AdminAtletas />} />
             <Route path="/actividades" element={<AdminActividades />} />
             <Route path="/actividad/:id" element={<AdminActividadDetalle />} />
+            <Route path="/atleta-guia/:id" element={<AdminGuiaDetalle />} />
             <Route path="/config" element={<AdminConfig />} />
             <Route path="*" element={<Navigate to="/panel" replace />} />
           </Routes>
@@ -52,6 +57,10 @@ export function App() {
       </AppShell>
     )
   }
+
+  // Cuenta desactivada por la coordinación: pantalla de bloqueo en lugar
+  // de la app (el servidor además rechaza inscripciones, migración 0005).
+  if (profile.active === false) return <CuentaDesactivada />
 
   return (
     <TermsGate>

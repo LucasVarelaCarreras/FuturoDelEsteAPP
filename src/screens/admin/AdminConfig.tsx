@@ -1,18 +1,17 @@
-import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useGuides } from '@/hooks/data'
-import { Avatar, Card, EmptyState, ErrorState, Spinner } from '@/components/ui'
+import { Avatar, Card } from '@/components/ui'
 import { Icon } from '@/components/Icon'
-import { Sheet } from '@/components/Sheet'
-import { TcDetail } from '@/components/TcDetail'
 import { TERMS_VERSION } from '@/lib/terms'
 import { colorForId } from '@/lib/format'
-import type { ProfileRow } from '@/types/database'
 
+/**
+ * Ajustes del administrador: su perfil, la versión vigente de los T&C y
+ * el cierre de sesión. La gestión de los Atletas Guía (ficha completa,
+ * estado y registro de aceptación de T&C) vive en Atletas → pestaña
+ * "Atletas Guía" → detalle del guía.
+ */
 export function AdminConfig() {
   const { profile, signOut } = useAuth()
-  const guidesQ = useGuides()
-  const [selected, setSelected] = useState<ProfileRow | null>(null)
 
   if (!profile) return null
 
@@ -31,35 +30,7 @@ export function AdminConfig() {
         </div>
       </Card>
 
-      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Atletas Guía registrados</h2>
-      {guidesQ.isLoading ? (
-        <div style={{ padding: 30, display: 'flex', justifyContent: 'center' }}>
-          <Spinner />
-        </div>
-      ) : guidesQ.isError ? (
-        <ErrorState onRetry={() => guidesQ.refetch()} />
-      ) : (guidesQ.data ?? []).length === 0 ? (
-        <EmptyState icon={<Icon glyph="users" size={26} color="var(--fde-cyan)" />} title="Sin guías" body="Todavía no hay atletas guía registrados." />
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {(guidesQ.data ?? []).map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setSelected(g)}
-              style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', padding: 13, background: 'var(--surface-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-xs)' }}
-            >
-              <Avatar initials={g.initials || 'U'} color={colorForId(g.id)} size={40} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 14.5, color: 'var(--text-heading)' }}>{g.full_name}</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{g.email}</div>
-              </div>
-              <Icon glyph="shield" size={17} color="var(--text-muted)" />
-            </button>
-          ))}
-        </div>
-      )}
-
-      <h2 style={{ fontSize: 16, margin: '24px 0 12px' }}>Términos y Condiciones</h2>
+      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Términos y Condiciones</h2>
       <Card style={{ padding: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5 }}>
           <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>Versión vigente</span>
@@ -75,10 +46,6 @@ export function AdminConfig() {
       </button>
 
       <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text-muted)', marginTop: 18 }}>Fundación Futuro del Este · v1.0.0</p>
-
-      <Sheet open={!!selected} onClose={() => setSelected(null)} title="Aceptación de T&C">
-        {selected && <TcDetail guide={selected} />}
-      </Sheet>
     </div>
   )
 }
