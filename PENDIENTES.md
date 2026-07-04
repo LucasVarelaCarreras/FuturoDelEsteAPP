@@ -13,31 +13,41 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
 - **Atleta Guía**: el voluntario/acompañante. Se registra solo desde la app
   (perfil con `role = 'guia'`).
 
-- [ ] **Logo real**: usar `logo.png` (raíz del repo, es el logo oficial de la
-      fundación) en vez del ícono genérico generado, en: favicon, íconos PWA
-      (192/512/maskable/apple-touch), header de la app, pantalla de login.
-- [ ] **Sacar emojis** de textos de usuario (ej. saludo "Hola, Nahuel 👋" en
-      Inicio del guía, y cualquier otro que se encuentre).
-- [ ] **Terminología en toda la app**: reemplazar cualquier "Atleta" a secas
-      por "Atleta Líder" o "Atleta Guía" según corresponda (títulos, labels,
-      copys, formularios, confirmaciones, etc.).
+- [x] **Logo real**: `scripts/gen-icons.mjs` ahora genera todo desde
+      `logo.png` (el logo oficial): favicon, íconos PWA (192/512, maskable
+      con el logo centrado en zona segura sobre el degradé de marca,
+      apple-touch con fondo blanco), header de la app y pantalla de login.
+      Verificado visualmente con Playwright.
+- [x] **Sacar emojis**: se quitó el 👋 del saludo del Inicio del guía; un
+      barrido de rangos Unicode sobre `src/` confirma que no queda ningún
+      otro emoji en textos de usuario.
+- [x] **Terminología en toda la app**: todo texto visible que decía "Atleta"
+      a secas ahora dice "Atleta Líder" (títulos, botones, toasts,
+      confirmaciones, empty states, aria-labels, pestaña del menú admin).
+      Los textos que ya decían "Atleta Guía" quedaron como estaban.
 - [ ] **Admin → sección Atletas con dos pestañas**: "Atletas Líder" (gestión
       actual, sin cambios funcionales) y "Atletas Guía" (nueva: lista de
       todos los perfiles `role='guia'` registrados). Ambas con buscador por
       nombre. Agregar "favoritos" (marcar con una estrella) en ambas pestañas
       — es una funcionalidad NUEVA, no existía en la demo original, así que
       hay que diseñarla razonablemente (persistir en la base, no sólo local).
-- [ ] **Bug de foco en el campo "Nombre" al crear atleta líder (admin)**: en
-      PC, escribir una letra hace que el input pierda el foco/cursor y haya
-      que volver a hacer clic para escribir la siguiente. El formulario de
-      "Nueva actividad" NO tiene este problema — comparar y aplicar el mismo
-      patrón. Sospecha típica: algo se remonta en cada tecla (definición de
-      componente/función inline que cambia de identidad en cada render, o un
-      `key` mal puesto).
-- [ ] **Landing screen tras registrarse**: confirmar que un Atleta Guía recién
-      registrado cae en "Inicio" y un Administrador recién registrado cae en
-      "Panel" — Lucas percibió que a veces cae en otra pantalla (parecida a
-      "info de usuario"). Reproducir el flujo de alta completo y verificar.
+- [x] **Bug de foco en el campo "Nombre" al crear atleta líder (admin)**:
+      causa raíz encontrada en `<Sheet>`: su efecto de apertura dependía de
+      `onClose` (una arrow function nueva en cada render del padre); como en
+      AdminAtletas el estado del formulario vive en la pantalla, cada tecla
+      re-ejecutaba el efecto, cuya limpieza devolvía el foco al elemento
+      previo. Ahora el efecto depende sólo de `open` (callbacks por ref).
+      Reproducido y verificado con Playwright: antes sólo entraba la primera
+      letra; ahora se tipea la palabra completa sin perder el foco.
+- [x] **Landing screen tras registrarse**: verificado de punta a punta con
+      Playwright contra un stub local de Supabase: un Atleta Guía recién
+      registrado pasa por el gate de T&C y aterriza en "Inicio" (/inicio);
+      un administrador nuevo con código correcto aterriza en "Panel"
+      (/panel). No se reprodujo un aterrizaje en pantalla equivocada. Sí se
+      encontró y corrigió un estado intermedio relacionado: si una recarga
+      de perfil en segundo plano fallaba (corte breve de red al volver a la
+      pestaña), la app pisaba el perfil ya cargado y tiraba al usuario a
+      "No pudimos cargar tu cuenta" — probable origen de lo que Lucas vio.
 - [ ] **Inicio del guía: falta la ubicación de la actividad** — hoy sólo se
       ve fecha/hora en las tarjetas de cupo; agregar el lugar (campo
       `place`), igual que se muestra en otras pantallas.
@@ -53,11 +63,19 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
       de acompañar/cancelar. NO cambiar el diseño visual de las tarjetas de
       atleta en sí (`NeedCard`), que ya está bien — es la organización de
       pantallas la que hay que arreglar.
-- [ ] **Verificar con una prueba real (no sólo leer el código)** que en el
-      detalle de T&C del panel admin, "Dispositivo / navegador" y "Hash del
-      documento" muestren siempre datos reales capturados en el momento de
-      aceptar (no placeholders ni valores por defecto). Documentar cómo se
-      verificó.
+- [x] **Verificar con una prueba real** que el detalle de T&C del admin
+      muestra datos reales: se levantó la app contra un stub local de
+      Supabase (GoTrue + PostgREST en memoria), se registró un Atleta Guía
+      nuevo con Playwright y se aceptaron los T&C — el navegador insertó en
+      `tc_acceptances` su user-agent real y el hash calculado en el momento.
+      Luego, como admin, se abrió Ajustes → guía → "Aceptación de T&C" y se
+      comprobó que "Dispositivo / navegador" mostraba exactamente el
+      user-agent real del navegador y "Hash del documento" el SHA-256
+      combinado de los dos PDF legales (igual al calculado de forma
+      independiente fuera de la app). No hay placeholders: los valores salen
+      de la fila insertada al aceptar. (La IP puede quedar vacía y mostrarse
+      "—" si api.ipify.org no responde en 4 s; es el comportamiento
+      documentado.)
 
 ### Fuera de este loop (requieren decisión/acción manual de Lucas, no tocar)
 
@@ -99,10 +117,8 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
       evitó una CSP estricta porque la app usa estilos inline de React
       extensivamente — habría que definirla con cuidado y probarla en
       producción antes de activarla.
-- [ ] **Logo / identidad visual**: el logo actual (generado como placeholder
-      de marca) no es el definitivo. Reemplazar por el logo real de la
-      fundación cuando esté disponible (afecta: ícono de la app, PWA,
-      pantalla de login, splash).
+- [x] **Logo / identidad visual**: resuelto — ver "Logo real" arriba (todos
+      los assets se generan ahora desde el logo oficial `logo.png`).
 
 ## Resuelto recientemente
 
