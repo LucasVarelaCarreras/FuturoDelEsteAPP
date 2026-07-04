@@ -81,9 +81,11 @@ export function useGuides(enabled = true) {
 }
 
 /**
- * Favoritos del admin en la sección Atletas (Atletas Líder y Guía).
- * RLS: cada admin ve y edita sólo su propia lista; un guía no tiene
- * acceso (la pantalla que los usa es exclusiva del admin).
+ * Favoritos del usuario en la sesión. Lo usan tanto el admin (sección
+ * Atletas: destacar Atletas Líder y Guía) como el Atleta Guía (filtro de
+ * Actividades: destacar los Atletas Líder que suele acompañar).
+ * RLS (migración 0006): cada usuario ve y edita SÓLO su propia lista, sin
+ * importar el rol; nadie ve ni toca los favoritos de otro usuario.
  */
 export function useFavorites(enabled = true) {
   return useQuery({
