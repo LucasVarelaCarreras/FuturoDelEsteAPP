@@ -12,6 +12,13 @@ export function formatDateLabel(iso: string | null): string {
   return `${DIAS[date.getDay()]} ${date.getDate()} ${MESES[date.getMonth()]}`
 }
 
+/** Fecha corta "15 Jul" a partir de un ISO (YYYY-MM-DD), para labels de filtro. */
+export function formatShortDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  if (!y || !m || !d) return iso
+  return `${d} ${MESES[m - 1]}`
+}
+
 /** Fecha local de hoy en formato ISO (YYYY-MM-DD), sin desfase de zona horaria. */
 export function todayIso(): string {
   const d = new Date()
@@ -66,7 +73,7 @@ export function typeMeta(t: ActivityType): TypeMeta {
       tileColor: 'var(--fde-pine)',
     }
   if (t === 'evento')
-    return { glyph: 'star', label: 'Evento especial', tileBg: '#e7f1fa', tileColor: 'var(--fde-ocean)' }
+    return { glyph: 'star', label: 'Evento', tileBg: '#e7f1fa', tileColor: 'var(--fde-ocean)' }
   return { glyph: 'activity', label: 'Carrera', tileBg: 'var(--fde-cyan-50)', tileColor: 'var(--fde-cyan)' }
 }
 

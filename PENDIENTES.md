@@ -209,6 +209,54 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
   de esto en este loop (ni teléfono en el registro, ni cron jobs, ni la
   integración) sin antes acordar el proveedor con Lucas.
 
+## Ronda de fidelidad con la demo v2.2 — iteración 3 (COMPLETA)
+
+Pedido puntual de Lucas: dropdowns de filtro anclados (que no se corten en
+pantallas angostas), los mismos filtros en Actividades del admin, tarjetas de
+Perfil con todos los datos visibles, y unificar "Evento especial" → "Evento".
+Verificado con `npm run build` (typecheck + build limpios) y Playwright real
+a 6 anchos (320/360/375/390/414/430px) con los 3 dropdowns abiertos en ambas
+pantallas de Actividades.
+
+- [x] **Dropdowns de tipo/fecha/Atleta Líder anclados**: se extrajeron los
+      tres filtros a un componente nuevo, `src/components/ActivityFilters.tsx`,
+      donde cada botón vive en un contenedor `position: relative; flex: 1;
+      min-width: 0` y su panel se ancla con `position: absolute` (no
+      `fixed`), evitando que se corte o se desplace del botón en pantallas
+      angostas. Incluye un overlay a pantalla completa (z-index 6) para
+      cerrar el menú abierto al tocar afuera.
+- [x] **Mismos filtros en Actividades del admin**: `AdminActividades` ahora
+      usa el mismo `<ActivityFilters>` que `GuiaActividades` (tipo, rango de
+      fecha, Atleta Líder con estrella de favorito propia del admin, y
+      toggle Favoritos), con `applyActivityFilters` compartido para que el
+      resultado del filtrado sea idéntico entre ambas pantallas.
+- [x] **Tarjetas de Perfil (guía) con datos completos**: `AssignmentCard` en
+      `GuiaPerfil` muestra siempre Atleta Líder, nombre de actividad,
+      fecha+hora y lugar completos (sin truncar), separadas en "Próximos
+      acompañamientos" (con botón Cancelar) e "Historial" (actividades ya
+      pasadas, de solo lectura, atenuadas).
+- [x] **"Evento especial" → "Evento" en toda la app**: el cambio se centralizó
+      en `typeMeta()` (`src/lib/format.ts`), de donde lo toman todos los
+      badges/tarjetas de tipo de actividad; ya no queda ningún texto "Evento
+      especial" en `src/` (confirmado con búsqueda de texto).
+- [x] **Tarea 6 — verificación mobile-first en anchos reales**: Playwright
+      contra un stub local de Supabase abrió los 3 dropdowns (tipo, fecha,
+      Atleta Líder) en Actividades del guía Y del admin, en 6 anchos de
+      viewport (320/360/375/390/414/430px — desde el más angosto usado en
+      la práctica hasta un iPhone grande), midiendo overflow horizontal del
+      documento y elementos que se salen del viewport. Resultado: **36/36
+      combinaciones sin overflow ni superposición**, incluido 320px (más
+      angosto que cualquier celular real en uso: los Android chicos actuales
+      arrancan en ~360px y el iPhone SE en 375px). Conclusión: la UI se
+      sostiene sin roturas en todo el rango mobile real; si la captura que
+      compartió Lucas mostraba un dropdown cortado, no se debió a un ancho de
+      pantalla angosto (ningún celular real es más angosto que lo ya
+      probado) — puede haber sido con una versión anterior del código (antes
+      de anclar los dropdowns en este loop) o un zoom/estado puntual del
+      navegador. Capturas y `report.json` con el detalle de cada corrida
+      quedaron en el entorno de la sesión, no versionados (son artefactos de
+      verificación, no parte de la app).
+
 ## Por revisar
 
 - [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar

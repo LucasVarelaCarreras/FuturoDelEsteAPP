@@ -11,8 +11,8 @@ import { useToast } from '@/context/ToastContext'
 import { Avatar, Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Sheet } from '@/components/Sheet'
 import { Icon } from '@/components/Icon'
-import { colorForId, formatDateLabel } from '@/lib/format'
-import type { AssignmentRow } from '@/types/database'
+import { colorForId, formatDateLabel, todayIso } from '@/lib/format'
+import type { ActivityRow, AssignmentRow, AthleteRow } from '@/types/database'
 
 export function GuiaPerfil() {
   const { profile, signOut } = useAuth()
@@ -50,6 +50,13 @@ export function GuiaPerfil() {
     [assignmentsQ.data, profile, actMap, athMap],
   )
 
+  // Próximos: sin fecha o de hoy en adelante (se puede cancelar). Historial:
+  // actividades ya pasadas — registro de solo lectura, sin botón Cancelar
+  // (cancelar algo que ya pasó no tiene sentido operativo).
+  const today = todayIso()
+  const upcoming = useMemo(() => mine.filter((r) => !r.act!.date || r.act!.date >= today), [mine, today])
+  const history = useMemo(() => mine.filter((r) => r.act!.date && r.act!.date < today), [mine, today])
+
   if (activitiesQ.isLoading || athletesQ.isLoading || assignmentsQ.isLoading) return <FullScreenLoader />
   if (activitiesQ.isError || athletesQ.isError || assignmentsQ.isError) {
     return (
@@ -77,43 +84,26 @@ export function GuiaPerfil() {
         </div>
       </Card>
 
-      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Mis acompañamientos</h2>
-      {mine.length === 0 ? (
+      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Próximos acompañamientos</h2>
+      {upcoming.length === 0 ? (
         <EmptyState icon={<Icon glyph="calendar" size={28} color="var(--fde-cyan)" />} title="Sin acompañamientos" body="Cuando te anotes para acompañar a un Atleta Líder, aparecerá acá." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {mine.map((r) => (
-            <Card key={r.assignment.id} style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Avatar initials={r.ath!.initials} color={r.ath!.color} size={42} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 14.5, color: 'var(--text-heading)' }}>{r.ath!.name}</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {r.act!.name} · {formatDateLabel(r.act!.date)}
-                </div>
-              </div>
-              <button
-                onClick={() => setCancelAssignment(r.assignment)}
-                aria-label={`Cancelar acompañamiento a ${r.ath!.name}`}
-                style={{
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  padding: '8px 12px',
-                  borderRadius: 'var(--radius-pill)',
-                  border: '1.5px solid var(--border-subtle)',
-                  background: 'var(--surface-card)',
-                  color: 'var(--fde-danger)',
-                  fontWeight: 800,
-                  fontSize: 12.5,
-                  cursor: 'pointer',
-                }}
-              >
-                <Icon glyph="x" size={14} color="var(--fde-danger)" /> Cancelar
-              </button>
-            </Card>
+          {upcoming.map((r) => (
+            <AssignmentCard key={r.assignment.id} r={r} onCancel={() => setCancelAssignment(r.assignment)} />
           ))}
         </div>
+      )}
+
+      {history.length > 0 && (
+        <>
+          <h2 style={{ fontSize: 16, margin: '24px 0 12px' }}>Historial</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {history.map((r) => (
+              <AssignmentCard key={r.assignment.id} r={r} muted />
+            ))}
+          </div>
+        </>
       )}
 
       <h2 style={{ fontSize: 16, margin: '24px 0 12px' }}>Términos y Condiciones</h2>
@@ -174,5 +164,70 @@ function Row({ label, value }: { label: string; value: string }) {
       <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>{label}</span>
       <span style={{ fontWeight: 700, textAlign: 'right' }}>{value}</span>
     </div>
+  )
+}
+
+interface MineItem {
+  assignment: AssignmentRow
+  act: ActivityRow | undefined
+  ath: AthleteRow | undefined
+}
+
+/**
+ * Tarjeta de "Mis acompañamientos": muestra Atleta Líder, nombre de
+ * actividad, fecha+hora y lugar SIEMPRE completos (sin truncar con "...":
+ * si no entra en una línea, pasa a la de abajo). El botón Cancelar queda en
+ * su propia fila para no comprimirse en pantallas angostas; en el Historial
+ * (actividades ya pasadas) no se muestra: cancelar algo que ya pasó no
+ * tiene sentido operativo y borraría un registro histórico real.
+ */
+function AssignmentCard({ r, muted, onCancel }: { r: MineItem; muted?: boolean; onCancel?: () => void }) {
+  return (
+    <Card style={{ padding: 14, opacity: muted ? 0.68 : 1 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <Avatar initials={r.ath!.initials} color={r.ath!.color} size={42} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 700 }}>{r.ath!.name}</div>
+          <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--text-heading)', marginTop: 2, lineHeight: 1.25 }}>
+            {r.act!.name}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600, marginTop: 6 }}>
+            <Icon glyph="calendar" size={13} color="var(--text-muted)" />
+            <span>
+              {formatDateLabel(r.act!.date)}
+              {r.act!.time ? ` · ${r.act!.time}` : ''}
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600, marginTop: 3 }}>
+            <Icon glyph="mappin" size={13} color="var(--text-muted)" />
+            <span>{r.act!.place || 'Lugar a definir'}</span>
+          </div>
+        </div>
+      </div>
+      {onCancel && (
+        <button
+          onClick={onCancel}
+          aria-label={`Cancelar acompañamiento a ${r.ath!.name}`}
+          style={{
+            marginTop: 12,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            padding: '9px 12px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1.5px solid var(--border-subtle)',
+            background: 'var(--surface-card)',
+            color: 'var(--fde-danger)',
+            fontWeight: 800,
+            fontSize: 12.5,
+            cursor: 'pointer',
+          }}
+        >
+          <Icon glyph="x" size={14} color="var(--fde-danger)" /> Cancelar
+        </button>
+      )}
+    </Card>
   )
 }
