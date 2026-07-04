@@ -3,6 +3,74 @@
 Lista de cosas detectadas durante las pruebas, para revisar más adelante
 (no bloquean el uso de la app, se van resolviendo de a poco).
 
+## Ronda de correcciones pedida por Lucas (prioridad alta, en curso)
+
+Contexto de negocio importante: hay DOS tipos de "atleta" y el texto de la
+app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
+- **Atleta Líder**: la persona a la que se acompaña. La carga el ADMIN
+  manualmente (tabla `athletes`). NUNCA usar la palabra "discapacidad" en la
+  interfaz.
+- **Atleta Guía**: el voluntario/acompañante. Se registra solo desde la app
+  (perfil con `role = 'guia'`).
+
+- [ ] **Logo real**: usar `logo.png` (raíz del repo, es el logo oficial de la
+      fundación) en vez del ícono genérico generado, en: favicon, íconos PWA
+      (192/512/maskable/apple-touch), header de la app, pantalla de login.
+- [ ] **Sacar emojis** de textos de usuario (ej. saludo "Hola, Nahuel 👋" en
+      Inicio del guía, y cualquier otro que se encuentre).
+- [ ] **Terminología en toda la app**: reemplazar cualquier "Atleta" a secas
+      por "Atleta Líder" o "Atleta Guía" según corresponda (títulos, labels,
+      copys, formularios, confirmaciones, etc.).
+- [ ] **Admin → sección Atletas con dos pestañas**: "Atletas Líder" (gestión
+      actual, sin cambios funcionales) y "Atletas Guía" (nueva: lista de
+      todos los perfiles `role='guia'` registrados). Ambas con buscador por
+      nombre. Agregar "favoritos" (marcar con una estrella) en ambas pestañas
+      — es una funcionalidad NUEVA, no existía en la demo original, así que
+      hay que diseñarla razonablemente (persistir en la base, no sólo local).
+- [ ] **Bug de foco en el campo "Nombre" al crear atleta líder (admin)**: en
+      PC, escribir una letra hace que el input pierda el foco/cursor y haya
+      que volver a hacer clic para escribir la siguiente. El formulario de
+      "Nueva actividad" NO tiene este problema — comparar y aplicar el mismo
+      patrón. Sospecha típica: algo se remonta en cada tecla (definición de
+      componente/función inline que cambia de identidad en cada render, o un
+      `key` mal puesto).
+- [ ] **Landing screen tras registrarse**: confirmar que un Atleta Guía recién
+      registrado cae en "Inicio" y un Administrador recién registrado cae en
+      "Panel" — Lucas percibió que a veces cae en otra pantalla (parecida a
+      "info de usuario"). Reproducir el flujo de alta completo y verificar.
+- [ ] **Inicio del guía: falta la ubicación de la actividad** — hoy sólo se
+      ve fecha/hora en las tarjetas de cupo; agregar el lugar (campo
+      `place`), igual que se muestra en otras pantallas.
+- [ ] **Actividades del guía: reestructurar para que sea igual a la demo
+      original** (`legacy/` tiene los bundles originales si hace falta
+      re-extraerlos). Hoy todo aparece mezclado en una sola pantalla (lista
+      de actividades con las tarjetas de atletas ya expandidas debajo, y la
+      descripción de la actividad se ve como texto suelto y desprolijo). Debe
+      ser: una lista simple de actividades (nombre, fecha, tipo, lugar) y al
+      tocar una se entra a un detalle (pantalla nueva, análoga a
+      `AdminActividadDetalle` pero de sólo lectura para el guía) que muestra
+      los Atletas Líder de esa actividad, su estado de cobertura, y el botón
+      de acompañar/cancelar. NO cambiar el diseño visual de las tarjetas de
+      atleta en sí (`NeedCard`), que ya está bien — es la organización de
+      pantallas la que hay que arreglar.
+- [ ] **Verificar con una prueba real (no sólo leer el código)** que en el
+      detalle de T&C del panel admin, "Dispositivo / navegador" y "Hash del
+      documento" muestren siempre datos reales capturados en el momento de
+      aceptar (no placeholders ni valores por defecto). Documentar cómo se
+      verificó.
+
+### Fuera de este loop (requieren decisión/acción manual de Lucas, no tocar)
+
+- **Login con Google**: no está habilitado en Supabase; requiere que Lucas
+  cree credenciales OAuth en Google Cloud Console con su propia cuenta. No es
+  algo que un agente pueda completar de forma autónoma.
+- **Recordatorio automático por WhatsApp 24hs antes de la actividad**: pedido
+  nuevo de Lucas, requiere elegir y contratar un proveedor externo (API de
+  WhatsApp Business, ej. Twilio/Meta), con costo por mensaje y credenciales
+  propias. Se tratará como proyecto aparte más adelante — NO implementar nada
+  de esto en este loop (ni teléfono en el registro, ni cron jobs, ni la
+  integración) sin antes acordar el proveedor con Lucas.
+
 ## Por revisar
 
 - [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar
