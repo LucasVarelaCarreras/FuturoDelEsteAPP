@@ -12,6 +12,9 @@ import { TermsGate } from '@/screens/TermsGate'
 
 const GuiaInicio = lazy(() => import('@/screens/guia/GuiaInicio').then((m) => ({ default: m.GuiaInicio })))
 const GuiaActividades = lazy(() => import('@/screens/guia/GuiaActividades').then((m) => ({ default: m.GuiaActividades })))
+const GuiaActividadDetalle = lazy(() =>
+  import('@/screens/guia/GuiaActividadDetalle').then((m) => ({ default: m.GuiaActividadDetalle })),
+)
 const GuiaPerfil = lazy(() => import('@/screens/guia/GuiaPerfil').then((m) => ({ default: m.GuiaPerfil })))
 const AdminPanel = lazy(() => import('@/screens/admin/AdminPanel').then((m) => ({ default: m.AdminPanel })))
 const AdminAtletas = lazy(() => import('@/screens/admin/AdminAtletas').then((m) => ({ default: m.AdminAtletas })))
@@ -57,6 +60,7 @@ export function App() {
           <Routes>
             <Route path="/inicio" element={<GuiaInicio />} />
             <Route path="/actividades" element={<GuiaActividades />} />
+            <Route path="/actividad/:id" element={<GuiaActividadDetalle />} />
             <Route path="/perfil" element={<GuiaPerfil />} />
             <Route path="*" element={<Navigate to="/inicio" replace />} />
           </Routes>

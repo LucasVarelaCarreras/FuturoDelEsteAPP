@@ -48,21 +48,29 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
       de perfil en segundo plano fallaba (corte breve de red al volver a la
       pestaña), la app pisaba el perfil ya cargado y tiraba al usuario a
       "No pudimos cargar tu cuenta" — probable origen de lo que Lucas vio.
-- [ ] **Inicio del guía: falta la ubicación de la actividad** — hoy sólo se
-      ve fecha/hora en las tarjetas de cupo; agregar el lugar (campo
-      `place`), igual que se muestra en otras pantallas.
-- [ ] **Actividades del guía: reestructurar para que sea igual a la demo
-      original** (`legacy/` tiene los bundles originales si hace falta
-      re-extraerlos). Hoy todo aparece mezclado en una sola pantalla (lista
-      de actividades con las tarjetas de atletas ya expandidas debajo, y la
-      descripción de la actividad se ve como texto suelto y desprolijo). Debe
-      ser: una lista simple de actividades (nombre, fecha, tipo, lugar) y al
-      tocar una se entra a un detalle (pantalla nueva, análoga a
-      `AdminActividadDetalle` pero de sólo lectura para el guía) que muestra
-      los Atletas Líder de esa actividad, su estado de cobertura, y el botón
-      de acompañar/cancelar. NO cambiar el diseño visual de las tarjetas de
-      atleta en sí (`NeedCard`), que ya está bien — es la organización de
-      pantallas la que hay que arreglar.
+- [x] **Inicio del guía: falta la ubicación de la actividad** — el lugar
+      (`place`, con ícono de mapa) se agregó en `NeedCard`, así que aparece
+      en todas las tarjetas de cupo (Inicio y detalle de actividad).
+      Verificado con Playwright contra el stub local de Supabase: la tarjeta
+      del Inicio muestra "Rambla de Punta del Este" bajo la fecha/hora.
+- [x] **Actividades del guía: reestructurado igual a la demo original**
+      (referencia extraída del bundle en `legacy/index.html`).
+      `GuiaActividades` es ahora una lista simple: por actividad una tarjeta
+      con ícono de tipo, nombre, fecha·hora, lugar y un badge de cobertura
+      agregado ("Completo" / "Faltan N" / "Sin acompañante", calculado con
+      `missingForActivity` sobre los cupos de atletas activos). Se mantienen
+      los filtros por tipo y se sumó el filtro por rango de fechas de la
+      demo. Al tocar una tarjeta se navega a la pantalla nueva
+      `GuiaActividadDetalle` (`/actividad/:id`, ruta del guía en App.tsx):
+      header con el degradé oscuro de marca, tipo, nombre, fecha/hora/lugar
+      y descripción, y debajo "Atletas Líder en esta actividad" con las
+      tarjetas `NeedCard` de siempre (sin rediseñar) y la acción de
+      acompañar/cancelar. Verificado de punta a punta con Playwright contra
+      el stub local: login como guía → lista (lugar y badges correctos, sin
+      tarjetas expandidas ni descripción suelta) → filtros → detalle →
+      anotarse (toast, botón "Te anotaste · Cancelar", el otro Atleta Líder
+      queda deshabilitado) → volver a la lista con el badge actualizado
+      ("Faltan 2" pasa a "Faltan 1").
 - [x] **Verificar con una prueba real** que el detalle de T&C del admin
       muestra datos reales: se levantó la app contra un stub local de
       Supabase (GoTrue + PostgREST en memoria), se registró un Atleta Guía

@@ -92,6 +92,23 @@ export function NeedCard({
           <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
             {formatDateLabel(activity.date)} · {activity.time || 'Hora a definir'}
           </div>
+          {activity.place && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: 12,
+                color: 'var(--text-muted)',
+                fontWeight: 600,
+                marginTop: 2,
+                minWidth: 0,
+              }}
+            >
+              <Icon glyph="mappin" size={12} color="var(--text-muted)" />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activity.place}</span>
+            </div>
+          )}
         </div>
       </div>
 

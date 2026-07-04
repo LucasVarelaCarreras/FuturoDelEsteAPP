@@ -1,21 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
-import {
-  assignmentErrorMessage,
-  useActivities,
-  useAssignments,
-  useAthletes,
-  useCancelAssignment,
-  useNeeds,
-  useSignUp,
-} from '@/hooks/data'
-import { useToast } from '@/context/ToastContext'
-import { NeedCard } from '@/components/NeedCard'
-import { Sheet } from '@/components/Sheet'
-import { Button, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
+import { useNavigate } from 'react-router-dom'
+import { useActivities, useAssignments, useAthletes, useNeeds } from '@/hooks/data'
+import { EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Icon } from '@/components/Icon'
-import type { ActivityType, AssignmentRow, NeedRow } from '@/types/database'
-import { formatDateLabel, todayIso, typeMeta } from '@/lib/format'
+import type { ActivityType } from '@/types/database'
+import { formatDateLabel, statusMeta, todayIso, typeMeta } from '@/lib/format'
+import { missingForActivity } from '@/lib/coverage'
 
 const FILTERS: { key: ActivityType | 'all'; label: string }[] = [
   { key: 'all', label: 'Todas' },
@@ -24,19 +14,23 @@ const FILTERS: { key: ActivityType | 'all'; label: string }[] = [
   { key: 'evento', label: 'Eventos' },
 ]
 
+/**
+ * Lista simple de actividades del guía (como la "Agenda" de la demo
+ * original): cada tarjeta muestra tipo, nombre, fecha/hora, lugar y un
+ * resumen de cobertura; al tocarla se abre el detalle (GuiaActividadDetalle),
+ * donde están los Atletas Líder y la acción de acompañar.
+ */
 export function GuiaActividades() {
-  const { profile } = useAuth()
-  const { notify } = useToast()
+  const navigate = useNavigate()
   const athletesQ = useAthletes()
   const activitiesQ = useActivities()
   const needsQ = useNeeds()
   const assignmentsQ = useAssignments()
-  const signUp = useSignUp()
-  const cancel = useCancelAssignment()
 
   const [filter, setFilter] = useState<ActivityType | 'all'>('all')
-  const [confirmNeed, setConfirmNeed] = useState<NeedRow | null>(null)
-  const [cancelAssignment, setCancelAssignment] = useState<AssignmentRow | null>(null)
+  const [dateOpen, setDateOpen] = useState(false)
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
 
   const athletes = athletesQ.data ?? []
   const activities = activitiesQ.data ?? []
@@ -53,8 +47,10 @@ export function GuiaActividades() {
       .filter((a) => a.visible)
       .filter((a) => !a.date || a.date >= today)
       .filter((a) => filter === 'all' || a.type === filter)
+      .filter((a) => !dateFrom || (a.date ?? '') >= dateFrom)
+      .filter((a) => !dateTo || (a.date ?? '') <= dateTo)
       .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'))
-  }, [activities, filter])
+  }, [activities, filter, dateFrom, dateTo])
 
   if (athletesQ.isLoading || activitiesQ.isLoading || needsQ.isLoading || assignmentsQ.isLoading) {
     return <FullScreenLoader />
@@ -72,43 +68,17 @@ export function GuiaActividades() {
     )
   }
 
-  const confirmAthlete = confirmNeed ? athMap.get(confirmNeed.athlete_id) : null
-  const confirmActivity = confirmNeed ? activities.find((a) => a.id === confirmNeed.activity_id) : null
-
-  const doSign = async () => {
-    if (!confirmNeed || !profile) return
-    try {
-      await signUp.mutateAsync({
-        activityId: confirmNeed.activity_id,
-        athleteId: confirmNeed.athlete_id,
-        guideId: profile.id,
-        guideName: profile.full_name,
-      })
-      notify('¡Te anotaste para acompañar!')
-    } catch (e) {
-      notify(assignmentErrorMessage(e))
-    } finally {
-      setConfirmNeed(null)
-    }
-  }
-
-  const doCancel = async () => {
-    if (!cancelAssignment) return
-    try {
-      await cancel.mutateAsync(cancelAssignment.id)
-      notify('Acompañamiento cancelado')
-    } catch {
-      notify('No se pudo cancelar.')
-    } finally {
-      setCancelAssignment(null)
-    }
-  }
+  const hasDateFilter = Boolean(dateFrom || dateTo)
 
   return (
     <div style={{ padding: '18px 16px 8px' }}>
-      <h1 style={{ fontSize: 23, marginBottom: 14 }}>Actividades</h1>
+      <h1 style={{ fontSize: 23, marginBottom: 2 }}>Actividades</h1>
+      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 14 }}>
+        Carreras, entrenamientos y eventos
+      </p>
 
-      <div className="no-scrollbar" style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 18, paddingBottom: 2 }}>
+      {/* Filtro por tipo (pills) + filtro por rango de fecha */}
+      <div className="no-scrollbar" style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 10, paddingBottom: 2 }}>
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -127,83 +97,148 @@ export function GuiaActividades() {
             {f.label}
           </button>
         ))}
+        <button
+          onClick={() => setDateOpen((o) => !o)}
+          aria-label="Filtrar por fecha"
+          aria-expanded={dateOpen}
+          style={{
+            flex: '0 0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 16px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1.5px solid ' + (hasDateFilter ? 'var(--color-primary)' : 'var(--border-subtle)'),
+            background: hasDateFilter ? 'var(--color-primary)' : 'var(--surface-card)',
+            color: hasDateFilter ? '#fff' : 'var(--text-body)',
+            fontWeight: 800,
+            fontSize: 13,
+          }}
+        >
+          <Icon glyph="calendar" size={14} color={hasDateFilter ? '#fff' : 'var(--text-body)'} /> Fechas
+          <Icon glyph="chevron" size={14} color={hasDateFilter ? '#fff' : 'var(--text-muted)'} />
+        </button>
       </div>
+
+      {dateOpen && (
+        <div
+          style={{
+            background: 'var(--surface-card)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: 'var(--shadow-xs)',
+            padding: 14,
+            marginBottom: 12,
+          }}
+        >
+          <div style={{ display: 'flex', gap: 10 }}>
+            <label style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontSize: 11.5, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 5 }}>Desde</span>
+              <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} style={dateInput} />
+            </label>
+            <label style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontSize: 11.5, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 5 }}>Hasta</span>
+              <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} style={dateInput} />
+            </label>
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <button
+              onClick={() => {
+                setDateFrom('')
+                setDateTo('')
+              }}
+              style={{ flex: 1, padding: 10, borderRadius: 'var(--radius-pill)', border: '1.5px solid var(--border-strong)', background: 'var(--surface-card)', color: 'var(--text-muted)', fontWeight: 800, fontSize: 13 }}
+            >
+              Limpiar
+            </button>
+            <button
+              onClick={() => setDateOpen(false)}
+              style={{ flex: 1, padding: 10, borderRadius: 'var(--radius-pill)', border: 'none', background: 'var(--color-primary)', color: '#fff', fontWeight: 800, fontSize: 13 }}
+            >
+              Listo
+            </button>
+          </div>
+        </div>
+      )}
 
       {visibleActivities.length === 0 ? (
         <EmptyState icon={<Icon glyph="calendar" size={30} color="var(--fde-cyan)" />} title="Sin actividades" body="No hay actividades para este filtro." />
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {visibleActivities.map((act) => {
-            const actNeeds = needs.filter((n) => n.activity_id === act.id && athMap.get(n.athlete_id)?.active)
             const tm = typeMeta(act.type)
+            // Cobertura agregada de la actividad (sólo Atletas Líder activos):
+            // "Completo" si no falta nadie, "Faltan N" o "Sin acompañante".
+            const actNeeds = needs.filter((n) => n.activity_id === act.id && athMap.get(n.athlete_id)?.active)
+            const totalRequired = actNeeds.reduce((sum, n) => sum + n.required, 0)
+            const missing = missingForActivity(actNeeds, assignments, act.id)
+            const cov =
+              totalRequired === 0
+                ? { label: 'Sin Atletas Líder', bg: 'var(--surface-sunken)', text: 'var(--text-muted)' }
+                : statusMeta(totalRequired - missing, totalRequired)
             return (
-              <section key={act.id}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: tm.tileBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 40px' }}>
-                    <Icon glyph={tm.glyph as never} size={20} color={tm.tileColor} />
+              <button
+                key={act.id}
+                onClick={() => navigate(`/actividad/${act.id}`)}
+                style={{
+                  textAlign: 'left',
+                  border: '1px solid var(--border-subtle)',
+                  background: 'var(--surface-card)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: 14,
+                  display: 'flex',
+                  gap: 13,
+                  alignItems: 'center',
+                  boxShadow: 'var(--shadow-sm)',
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ width: 52, height: 52, borderRadius: 15, flexShrink: 0, background: tm.tileBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon glyph={tm.glyph as never} size={23} color={tm.tileColor} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: 15.5, color: 'var(--text-heading)', lineHeight: 1.18 }}>{act.name}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600, marginTop: 5 }}>
+                    <Icon glyph="calendar" size={13} color="var(--text-muted)" />
+                    {formatDateLabel(act.date)} · {act.time || 'Hora a definir'}
                   </div>
-                  <div style={{ minWidth: 0 }}>
-                    <h2 style={{ fontSize: 16, margin: 0 }}>{act.name}</h2>
-                    <div style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
-                      {formatDateLabel(act.date)}
-                      {act.time ? ` · ${act.time}` : ''}
-                      {act.place ? ` · ${act.place}` : ''}
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600, marginTop: 3, minWidth: 0 }}>
+                    <Icon glyph="mappin" size={13} color="var(--text-muted)" />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{act.place || 'Lugar a definir'}</span>
                   </div>
                 </div>
-                {act.description && (
-                  <p style={{ fontSize: 13, color: 'var(--text-body)', lineHeight: 1.5, margin: '0 0 10px', paddingLeft: 50 }}>
-                    {act.description}
-                  </p>
-                )}
-                {actNeeds.length === 0 ? (
-                  <p style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 50 }}>Todavía no hay Atletas Líder inscriptos.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {actNeeds.map((n) => (
-                      <NeedCard
-                        key={n.id}
-                        need={n}
-                        athlete={athMap.get(n.athlete_id)!}
-                        activity={act}
-                        assignments={assignments}
-                        myGuideId={profile!.id}
-                        onSign={setConfirmNeed}
-                        onCancel={setCancelAssignment}
-                      />
-                    ))}
-                  </div>
-                )}
-              </section>
+                <span
+                  style={{
+                    background: cov.bg,
+                    color: cov.text,
+                    fontSize: 11.5,
+                    fontWeight: 800,
+                    padding: '5px 10px',
+                    borderRadius: 'var(--radius-pill)',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                >
+                  {cov.label}
+                </span>
+              </button>
             )
           })}
         </div>
       )}
-
-      <Sheet open={!!confirmNeed} onClose={() => setConfirmNeed(null)} title="Confirmar acompañamiento">
-        {confirmAthlete && confirmActivity && (
-          <div style={{ paddingBottom: 8 }}>
-            <p style={{ fontSize: 14.5, color: 'var(--text-body)', lineHeight: 1.6, marginBottom: 16 }}>
-              Vas a acompañar a <b style={{ color: 'var(--text-heading)' }}>{confirmAthlete.name}</b> en{' '}
-              <b style={{ color: 'var(--text-heading)' }}>{confirmActivity.name}</b>.
-            </p>
-            <Button full loading={signUp.isPending} onClick={doSign}>
-              Confirmar
-            </Button>
-          </div>
-        )}
-      </Sheet>
-
-      <Sheet open={!!cancelAssignment} onClose={() => setCancelAssignment(null)} title="Cancelar acompañamiento">
-        <div style={{ paddingBottom: 8 }}>
-          <p style={{ fontSize: 14.5, color: 'var(--text-body)', lineHeight: 1.6, marginBottom: 16 }}>
-            ¿Seguro que querés cancelar tu acompañamiento?
-          </p>
-          <Button full variant="danger" loading={cancel.isPending} onClick={doCancel}>
-            Sí, cancelar
-          </Button>
-        </div>
-      </Sheet>
     </div>
   )
 }
+
+const dateInput = {
+  width: '100%',
+  minWidth: 0,
+  padding: '10px 12px',
+  borderRadius: 'var(--radius-sm)',
+  border: '1.5px solid var(--border-strong)',
+  fontFamily: 'var(--font-sans)',
+  fontSize: 14,
+  color: 'var(--text-heading)',
+  background: 'var(--surface-card)',
+  outline: 'none',
+} as const
