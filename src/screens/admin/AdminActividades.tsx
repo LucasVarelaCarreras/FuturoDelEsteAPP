@@ -16,7 +16,7 @@ import { Icon } from '@/components/Icon'
 import { ActivityFormSheet } from '@/components/ActivityFormSheet'
 import { ActivityFilters, applyActivityFilters, defaultActivityFilters, hasActiveActivityFilters } from '@/components/ActivityFilters'
 import type { FavoriteRow } from '@/types/database'
-import { formatDateLabel, todayIso, typeMeta } from '@/lib/format'
+import { formatDateLabel, isActivityPast, typeMeta } from '@/lib/format'
 import { missingForActivity } from '@/lib/coverage'
 
 /**
@@ -135,7 +135,7 @@ export function AdminActividades() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {sorted.map((act) => {
             const tm = typeMeta(act.type)
-            const isPast = Boolean(act.date && act.date < todayIso())
+            const isPast = isActivityPast(act.date, act.time)
             const missing = missingForActivity(openNeeds, assignments, act.id)
             return (
               <Card key={act.id} style={{ padding: 14 }}>

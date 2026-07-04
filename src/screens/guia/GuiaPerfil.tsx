@@ -11,7 +11,7 @@ import { useToast } from '@/context/ToastContext'
 import { Avatar, Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
 import { Sheet } from '@/components/Sheet'
 import { Icon } from '@/components/Icon'
-import { colorForId, formatDateLabel, todayIso } from '@/lib/format'
+import { colorForId, formatDateLabel, isActivityPast } from '@/lib/format'
 import type { ActivityRow, AssignmentRow, AthleteRow } from '@/types/database'
 
 export function GuiaPerfil() {
@@ -50,12 +50,12 @@ export function GuiaPerfil() {
     [assignmentsQ.data, profile, actMap, athMap],
   )
 
-  // Próximos: sin fecha o de hoy en adelante (se puede cancelar). Historial:
-  // actividades ya pasadas — registro de solo lectura, sin botón Cancelar
-  // (cancelar algo que ya pasó no tiene sentido operativo).
-  const today = todayIso()
-  const upcoming = useMemo(() => mine.filter((r) => !r.act!.date || r.act!.date >= today), [mine, today])
-  const history = useMemo(() => mine.filter((r) => r.act!.date && r.act!.date < today), [mine, today])
+  // Próximos: sin fecha, o de hoy en adelante y aún sin pasar de horario (se
+  // puede cancelar). Historial: actividades ya pasadas (fecha anterior, o de
+  // hoy pero con horario ya cumplido) — registro de solo lectura, sin botón
+  // Cancelar (cancelar algo que ya pasó no tiene sentido operativo).
+  const upcoming = useMemo(() => mine.filter((r) => !isActivityPast(r.act!.date, r.act!.time)), [mine])
+  const history = useMemo(() => mine.filter((r) => isActivityPast(r.act!.date, r.act!.time)), [mine])
 
   if (activitiesQ.isLoading || athletesQ.isLoading || assignmentsQ.isLoading) return <FullScreenLoader />
   if (activitiesQ.isError || athletesQ.isError || assignmentsQ.isError) {

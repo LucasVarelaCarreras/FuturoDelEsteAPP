@@ -25,6 +25,23 @@ export function todayIso(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+/**
+ * true si la actividad (fecha+hora) ya pasó respecto al momento actual.
+ * Sin fecha, nunca se considera pasada. Con fecha de hoy pero sin hora, se
+ * considera vigente todo el día (no hay forma de saber si ya pasó).
+ */
+export function isActivityPast(date: string | null, time: string | null): boolean {
+  if (!date) return false
+  const today = todayIso()
+  if (date < today) return true
+  if (date > today) return false
+  if (!time) return false
+  const now = new Date()
+  const [h, m] = time.split(':').map(Number)
+  const nowMinutes = now.getHours() * 60 + now.getMinutes()
+  return h * 60 + (m || 0) < nowMinutes
+}
+
 /** Iniciales a partir de un nombre completo. */
 export function initialsFrom(name: string): string {
   const parts = name.trim().split(/\s+/)
