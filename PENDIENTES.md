@@ -3,7 +3,7 @@
 Lista de cosas detectadas durante las pruebas, para revisar más adelante
 (no bloquean el uso de la app, se van resolviendo de a poco).
 
-## Ronda de correcciones pedida por Lucas (prioridad alta, en curso)
+## Ronda de correcciones pedida por Lucas (COMPLETA — sólo queda aplicar la migración 0004 en Supabase, ver abajo)
 
 Contexto de negocio importante: hay DOS tipos de "atleta" y el texto de la
 app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
@@ -25,12 +25,27 @@ app SIEMPRE tiene que distinguir cuál es cuál (nunca decir "atleta" a secas):
       a secas ahora dice "Atleta Líder" (títulos, botones, toasts,
       confirmaciones, empty states, aria-labels, pestaña del menú admin).
       Los textos que ya decían "Atleta Guía" quedaron como estaban.
-- [ ] **Admin → sección Atletas con dos pestañas**: "Atletas Líder" (gestión
-      actual, sin cambios funcionales) y "Atletas Guía" (nueva: lista de
-      todos los perfiles `role='guia'` registrados). Ambas con buscador por
-      nombre. Agregar "favoritos" (marcar con una estrella) en ambas pestañas
-      — es una funcionalidad NUEVA, no existía en la demo original, así que
-      hay que diseñarla razonablemente (persistir en la base, no sólo local).
+- [x] **Admin → sección Atletas con dos pestañas**: hecho y verificado.
+      "Atletas Líder" (la gestión de siempre, sin cambios funcionales) y
+      "Atletas Guía" (lista de todos los perfiles `role='guia'` con nombre y
+      email). Buscador por nombre en ambas, insensible a mayúsculas y tildes.
+      Favoritos con estrella en ambas pestañas, persistidos en la base
+      (migración `0004_athlete_favorites.sql`): cada admin tiene su propia
+      lista y los favoritos se ordenan primero. RLS con el patrón `is_admin()`
+      de las migraciones 0002/0003 — probado contra PostgreSQL 16 local con
+      stubs de `auth.uid()/auth.role()` (22 casos): un guía NO puede
+      favoritearse ni favoritear a nadie ni leer favoritos, anon no tiene ni
+      SELECT, y el admin sólo opera sobre su propia lista. Verificado además
+      con Playwright a 390px contra el stub local de Supabase (14 casos):
+      pestañas, buscador con tildes, marcar/desmarcar, reordenado, y
+      persistencia de los favoritos tras recargar la página. El ítem del menú
+      inferior del admin ahora dice "Atletas" (la sección abarca ambos tipos;
+      cada pestaña nombra el tipo completo). De paso, los KPI del Panel
+      "Atletas activos" y "Guías registrados" pasaron a "Atletas Líder
+      activos" y "Atletas Guía registrados" (terminología).
+      **PENDIENTE MANUAL para Lucas: aplicar la migración 0004 en el Supabase
+      real (igual que se hizo con 0002 y 0003) antes de usar los favoritos;
+      sin eso la pestaña carga pero marcar favoritos da error.**
 - [x] **Bug de foco en el campo "Nombre" al crear atleta líder (admin)**:
       causa raíz encontrada en `<Sheet>`: su efecto de apertura dependía de
       `onClose` (una arrow function nueva en cada render del padre); como en

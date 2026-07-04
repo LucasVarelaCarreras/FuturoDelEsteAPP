@@ -1,66 +1,68 @@
 -- ============================================================
--- Futuro del Este — Favoritos del administrador
+-- Futuro del Este — Favoritos de atletas (sección Atletas del admin)
 --
--- El admin puede marcar con una estrella a Atletas Líder
--- (tabla athletes) y a Atletas Guía (perfiles con role='guia')
--- para encontrarlos rápido en la sección Atletas del panel.
+-- El admin puede marcar con una estrella a Atletas Líder (tabla
+-- athletes) y a Atletas Guía (perfiles con role='guia') para
+-- encontrarlos rápido. Los favoritos son POR ADMIN (cada admin
+-- tiene su propia lista) y viven en la base para que persistan
+-- entre dispositivos y recargas.
 --
--- Diseño y protección (RLS / triggers):
---
--- 1) athletes.favorite — la escritura en athletes ya es sólo de
---    admin por RLS ("athletes_admin_write", migración 0001), así
---    que la columna queda protegida sin políticas nuevas: un guía
---    ni siquiera puede hacer UPDATE sobre la tabla.
---
--- 2) profiles.favorite — acá NO alcanza con las políticas: un guía
---    puede editar su propio perfil ("profiles_update_self"), con lo
---    que podría marcarse a sí mismo como favorito por API directa.
---    Se protege con el mismo patrón que ya usa la migración 0003
---    para el email espejo: el trigger protect_profile_role conserva
---    el valor anterior si quien edita no es admin.
+-- Seguridad: es una funcionalidad exclusiva del admin. Un atleta
+-- guía NO puede marcar ni leer favoritos (ni los suyos): todas las
+-- políticas exigen public.is_admin(), igual que en las migraciones
+-- 0002/0003.
 -- ============================================================
 
--- ------------------------------------------------------------
--- 1) Columnas
--- ------------------------------------------------------------
-alter table public.athletes
-  add column if not exists favorite boolean not null default false;
-alter table public.profiles
-  add column if not exists favorite boolean not null default false;
+create table if not exists public.athlete_favorites (
+  id          uuid primary key default gen_random_uuid(),
+  -- El admin dueño de la marca (cada admin tiene sus favoritos).
+  user_id     uuid not null references public.profiles (id) on delete cascade,
+  -- Exactamente UNO de los dos: Atleta Líder o Atleta Guía.
+  athlete_id  uuid references public.athletes (id) on delete cascade,
+  guide_id    uuid references public.profiles (id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  constraint favorites_exactly_one_target
+    check ((athlete_id is null) <> (guide_id is null))
+);
 
-comment on column public.athletes.favorite is
-  'Marcado como favorito por el administrador (estrella en la sección Atletas).';
-comment on column public.profiles.favorite is
-  'Atleta Guía marcado como favorito por el administrador. Sólo un admin puede cambiarlo (ver protect_profile_role).';
+comment on table public.athlete_favorites is
+  'Favoritos del admin en la sección Atletas (Atletas Líder y Atletas Guía).';
 
--- ------------------------------------------------------------
--- 2) Un no-admin no puede cambiar su rol, su email espejo NI su
---    marca de favorito (el trigger conserva el valor anterior,
---    igual que ya hacía con rol y email desde 0001/0003).
---    El trigger trg_protect_profile_role ya apunta a esta función.
--- ------------------------------------------------------------
-create or replace function public.protect_profile_role()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not public.is_admin() then
-    if new.role is distinct from old.role then
-      new.role := old.role;
-    end if;
-    -- El email de profiles refleja el de auth; si el usuario real cambia
-    -- su email lo hace por auth, no editando esta tabla. Evita que un
-    -- guía se muestre ante el admin con un email ajeno.
-    if new.email is distinct from old.email then
-      new.email := old.email;
-    end if;
-    -- Favorito: es una marca del administrador. Un guía no puede
-    -- marcarse (ni desmarcarse) a sí mismo como favorito.
-    if new.favorite is distinct from old.favorite then
-      new.favorite := old.favorite;
-    end if;
-  end if;
-  return new;
-end $$;
+-- Sin duplicados por admin. Los índices parciales únicos cubren cada
+-- variante (UNIQUE normal no bloquea duplicados cuando la otra columna
+-- es NULL, porque los NULL se consideran distintos entre sí).
+create unique index if not exists favorites_one_per_athlete
+  on public.athlete_favorites (user_id, athlete_id)
+  where athlete_id is not null;
+create unique index if not exists favorites_one_per_guide
+  on public.athlete_favorites (user_id, guide_id)
+  where guide_id is not null;
+
+create index if not exists favorites_user_idx
+  on public.athlete_favorites (user_id);
+
+-- ============================================================
+-- ROW LEVEL SECURITY — sólo admins, y sólo sobre su propia lista.
+-- ============================================================
+alter table public.athlete_favorites enable row level security;
+
+drop policy if exists "favorites_select_own_admin" on public.athlete_favorites;
+create policy "favorites_select_own_admin" on public.athlete_favorites
+  for select using (public.is_admin() and user_id = auth.uid());
+
+drop policy if exists "favorites_insert_own_admin" on public.athlete_favorites;
+create policy "favorites_insert_own_admin" on public.athlete_favorites
+  for insert with check (public.is_admin() and user_id = auth.uid());
+
+drop policy if exists "favorites_delete_own_admin" on public.athlete_favorites;
+create policy "favorites_delete_own_admin" on public.athlete_favorites
+  for delete using (public.is_admin() and user_id = auth.uid());
+
+-- Sin política de UPDATE: un favorito se crea o se borra, no se edita.
+
+-- ============================================================
+-- GRANTS — igual que el resto de las tablas: el privilegio SQL lo
+-- tiene authenticated, pero la seguridad real la aplican las
+-- políticas RLS de arriba (anon no tiene ninguna política aquí).
+-- ============================================================
+grant select, insert, delete on public.athlete_favorites to authenticated;

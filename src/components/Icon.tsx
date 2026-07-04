@@ -209,17 +209,19 @@ interface IconProps {
   size?: number
   color?: string
   strokeWidth?: number
+  /** Relleno del trazo (p. ej. estrella de favorito "llena"). */
+  fill?: string
   style?: CSSProperties
   className?: string
 }
 
-export function Icon({ glyph, size = 22, color = 'currentColor', strokeWidth = 2, style, className }: IconProps) {
+export function Icon({ glyph, size = 22, color = 'currentColor', strokeWidth = 2, fill = 'none', style, className }: IconProps) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill}
       stroke={color}
       strokeWidth={strokeWidth}
       strokeLinecap="round"

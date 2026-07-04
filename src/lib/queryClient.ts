@@ -20,5 +20,6 @@ export const qk = {
   needs: ['needs'] as const,
   assignments: ['assignments'] as const,
   guides: ['guides'] as const,
+  favorites: ['favorites'] as const,
   tc: (userId: string) => ['tc', userId] as const,
 }

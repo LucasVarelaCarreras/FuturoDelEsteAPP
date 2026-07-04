@@ -24,7 +24,8 @@ const GUIA_NAV: NavItem[] = [
 
 const ADMIN_NAV: NavItem[] = [
   { to: '/panel', label: 'Panel', glyph: 'grid' },
-  { to: '/atletas', label: 'Atletas Líder', glyph: 'users' },
+  // La sección incluye las dos pestañas (Atletas Líder y Atletas Guía).
+  { to: '/atletas', label: 'Atletas', glyph: 'users' },
   { to: '/actividades', label: 'Actividades', glyph: 'calendar' },
   { to: '/config', label: 'Ajustes', glyph: 'settings' },
 ]
