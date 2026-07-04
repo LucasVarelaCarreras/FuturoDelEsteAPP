@@ -97,6 +97,53 @@ export function useFavorites(enabled = true) {
   })
 }
 
+/** Datos editables de la ficha de un Atleta Guía (sólo admin). */
+export interface GuideProfileInput {
+  full_name: string
+  phone?: string
+  category?: string
+}
+
+/**
+ * El admin edita la ficha de un Atleta Guía (nombre, teléfono, categoría).
+ * El email no se toca: es un espejo del email de auth y el trigger de la
+ * base lo protege (migración 0003).
+ */
+export function useUpdateGuideProfile() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, input }: { id: string; input: GuideProfileInput }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: input.full_name.trim(),
+          initials: initialsFrom(input.full_name),
+          phone: input.phone?.trim() ?? '',
+          category: input.category?.trim() ?? '',
+        })
+        .eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.guides }),
+  })
+}
+
+/**
+ * El admin activa/desactiva la cuenta de un Atleta Guía. En la base sólo
+ * un admin puede cambiar `active` (trigger de la migración 0005): un guía
+ * no puede desactivarse ni auto-reactivarse.
+ */
+export function useToggleGuideActive() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await supabase.from('profiles').update({ active }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.guides }),
+  })
+}
+
 export function useToggleFavorite() {
   const qc = useQueryClient()
   return useMutation({
@@ -173,33 +220,6 @@ export function useToggleAthleteActive() {
       if (error) throw error
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.athletes }),
-  })
-}
-
-/** Marca / desmarca un Atleta Líder como favorito del admin (estrella). */
-export function useSetAthleteFavorite() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, favorite }: { id: string; favorite: boolean }) => {
-      const { error } = await supabase.from('athletes').update({ favorite }).eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.athletes }),
-  })
-}
-
-/**
- * Marca / desmarca un Atleta Guía como favorito del admin (estrella).
- * En la base sólo un admin puede escribir esta columna (migración 0004).
- */
-export function useSetGuideFavorite() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, favorite }: { id: string; favorite: boolean }) => {
-      const { error } = await supabase.from('profiles').update({ favorite }).eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.guides }),
   })
 }
 
@@ -344,6 +364,8 @@ export function useSetRequired() {
 export function assignmentErrorMessage(e: unknown): string {
   const msg = e instanceof Error ? e.message.toLowerCase() : ''
   if (msg.includes('duplicate')) return 'Ya estás anotado en esta actividad.'
+  if (msg.includes('guia_desactivado'))
+    return 'Tu cuenta fue desactivada por la coordinación. No podés anotarte en actividades.'
   if (msg.includes('cupo_completo')) return 'Ese cupo ya se completó. Elegí otro Atleta Líder.'
   if (msg.includes('atleta_no') || msg.includes('actividad_no'))
     return 'Ese cupo ya no está disponible.'
