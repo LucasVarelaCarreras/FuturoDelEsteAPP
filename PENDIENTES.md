@@ -257,6 +257,50 @@ pantallas de Actividades.
       quedaron en el entorno de la sesión, no versionados (son artefactos de
       verificación, no parte de la app).
 
+## Ronda de fidelidad con la demo v2.2 — iteración 4 (COMPLETA)
+
+Lucas probó la iteración 3 y mandó capturas con 3 bugs reales (no relacionados
+con overflow de viewport, que ya estaba cubierto — eran de stacking, layout y
+lógica de fecha). Verificado con `npm run build` (typecheck + build limpios)
+y Playwright real contra un stub local de Supabase, a 360px y 390px.
+
+- [x] **Dropdown de Fecha/Tipo tapado por la fila de Atleta Líder/Favoritos**:
+      causa real — las dos filas de `ActivityFilters.tsx` tenían el MISMO
+      `zIndex: 7` fijo; al compartir stacking level, la fila 2 (que va después
+      en el DOM) siempre pintaba por encima de cualquier popover abierto en la
+      fila 1, sin importar que ese popover interno tuviera `zIndex: 30` (ese
+      valor no escapa el contexto de apilamiento que ya crea su fila con
+      `position: relative` + `zIndex` propio). Fix: el `zIndex` de cada fila
+      ahora es dinámico según qué menú está abierto (`20` cuando el menú
+      abierto pertenece a esa fila, `7` en reposo), así la fila con el
+      dropdown activo siempre queda por encima de la otra. Verificado con
+      Playwright: los 3 dropdowns (tipo, fecha, Atleta Líder) quedan
+      completamente visibles y por encima de la fila de abajo, en 360px y
+      390px.
+- [x] **Botón "Favoritos" descuadrado (más alto que los demás filtros)**: se
+      sacó la palabra "Favoritos" del botón (queda ícono de estrella + switch;
+      el `aria-label="Filtrar solo favoritos"` ya cubre accesibilidad) y se
+      shrinkeó el switch visual (era 38×22 con thumb de 18, ahora 32×16 con
+      thumb de 12) para que su altura de contenido no supere la del ícono.
+      Resultado: el botón Favoritos mide exactamente lo mismo que "Atleta
+      Líder" al lado (38px, medido con Playwright en ambos anchos), y libera
+      ancho para que "Atleta Líder" (y "Todas"/"Fecha" en la fila de arriba)
+      ya no trunquen su texto a "Atleta ..." en pantallas de 360-390px.
+- [x] **Actividades de hoy ya pasadas de horario seguían en "Próximos"**: una
+      actividad de hoy a las 7:45, corriendo la app ya pasadas esas horas,
+      seguía en "Próximos acompañamientos" del Perfil del guía (con botón
+      Cancelar activo) en vez de pasar a Historial — la comparación sólo
+      miraba el día (`date >= today`), ignorando la hora. Se agregó
+      `isActivityPast(date, time)` en `src/lib/format.ts` (compara fecha+hora
+      reales contra el momento actual; sin hora, la actividad de hoy se
+      considera vigente todo el día) y se usa en `GuiaPerfil.tsx` (split
+      Próximos/Historial) y en `AdminActividades.tsx` (badge "Finalizada").
+      Deliberadamente NO se tocó `GuiaActividades.tsx` ni `GuiaInicio.tsx`
+      (cupos abiertos): esas pantallas filtran por día completo a propósito.
+      Verificado con Playwright: una actividad de hoy a las 07:45 (con la hora
+      real de la sesión bien entrada la noche) aparece en Historial sin botón
+      Cancelar, y en Actividades del admin con badge "Finalizada".
+
 ## Por revisar
 
 - [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar
