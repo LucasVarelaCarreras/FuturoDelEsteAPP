@@ -77,27 +77,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [authLinkError, setAuthLinkError] = useState<string | null>(null)
   const mounted = useRef(true)
+  // Espejo del perfil vigente para decidir dentro de loadProfile sin
+  // depender de un closure viejo (ver comentario de abajo).
+  const profileRef = useRef<ProfileRow | null>(null)
 
-  const loadProfile = useCallback(async (userId: string | undefined) => {
-    if (!userId) {
-      setProfile(null)
-      setProfileError(false)
-      return
-    }
-    // El trigger de la base crea el perfil; reintentamos por si hay latencia.
-    let p = await fetchProfile(userId)
-    if (!p) {
-      await new Promise((r) => setTimeout(r, 600))
-      p = await fetchProfile(userId)
-    }
-    if (mounted.current) {
-      setProfile(p)
-      // Si con sesión válida el perfil sigue sin aparecer (falla de red o
-      // fila faltante), lo marcamos: la app ofrece reintentar o cerrar
-      // sesión en vez de quedarse en un cargador infinito.
-      setProfileError(p === null)
-    }
+  const setProfileSafe = useCallback((p: ProfileRow | null) => {
+    profileRef.current = p
+    setProfile(p)
   }, [])
+
+  const loadProfile = useCallback(
+    async (userId: string | undefined) => {
+      if (!userId) {
+        setProfileSafe(null)
+        setProfileError(false)
+        return
+      }
+      // El trigger de la base crea el perfil; reintentamos por si hay latencia.
+      let p = await fetchProfile(userId)
+      if (!p) {
+        await new Promise((r) => setTimeout(r, 600))
+        p = await fetchProfile(userId)
+      }
+      if (mounted.current) {
+        // loadProfile también corre en eventos posteriores al login
+        // (TOKEN_REFRESHED / SIGNED_IN al volver a la pestaña). Si esa
+        // recarga falla por un corte breve de red pero YA teníamos el
+        // perfil de este mismo usuario, lo conservamos: pisarlo con null
+        // sacaba a la persona de su pantalla y la dejaba en el error de
+        // cuenta ("No pudimos cargar tu cuenta") sin motivo real.
+        const prev = profileRef.current
+        const next = !p && prev && prev.id === userId ? prev : p
+        setProfileSafe(next)
+        // Si con sesión válida el perfil sigue sin aparecer (falla de red o
+        // fila faltante), lo marcamos: la app ofrece reintentar o cerrar
+        // sesión en vez de quedarse en un cargador infinito.
+        setProfileError(next === null)
+      }
+    },
+    [setProfileSafe],
+  )
 
   useEffect(() => {
     mounted.current = true
@@ -172,13 +191,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
-    setProfile(null)
+    setProfileSafe(null)
     setProfileError(false)
     setSession(null)
     // Limpia el caché de datos: evita que la próxima sesión en el mismo
     // dispositivo vea (aunque sea por segundos) datos del usuario anterior.
     queryClient.clear()
-  }, [])
+  }, [setProfileSafe])
 
   const refreshProfile = useCallback(async () => {
     if (session?.user.id) await loadProfile(session.user.id)
