@@ -138,6 +138,7 @@ export function GuiaInicio() {
               athlete={r.ath!}
               activity={r.act!}
               assignments={assignments}
+              athletes={athletes}
               myGuideId={profile!.id}
               onSign={setConfirmNeed}
               onCancel={setCancelAssignment}

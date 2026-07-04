@@ -193,6 +193,7 @@ export function GuiaActividadDetalle() {
                   athlete={athMap.get(n.athlete_id)!}
                   activity={activity}
                   assignments={assignments}
+                  athletes={athletes}
                   myGuideId={profile!.id}
                   onSign={setConfirmNeed}
                   onCancel={setCancelAssignment}

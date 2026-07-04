@@ -9,6 +9,8 @@ interface NeedCardProps {
   athlete: AthleteRow
   activity: ActivityRow
   assignments: AssignmentRow[]
+  /** Todos los Atletas Líder (para nombrar al que ya acompañás en esta actividad). */
+  athletes: AthleteRow[]
   myGuideId: string
   onSign: (need: NeedRow) => void
   onCancel: (assignment: AssignmentRow) => void
@@ -20,6 +22,7 @@ export function NeedCard({
   athlete,
   activity,
   assignments,
+  athletes,
   myGuideId,
   onSign,
   onCancel,
@@ -33,6 +36,12 @@ export function NeedCard({
   )
   const mineThis = myAssignmentInActivity?.athlete_id === athlete.id
   const mineOther = myAssignmentInActivity && !mineThis
+  // Primer nombre del otro Atleta Líder que ya acompañás (como la demo:
+  // "Ya acompañás a Valentina").
+  const otherAthlete = mineOther
+    ? athletes.find((a) => a.id === myAssignmentInActivity.athlete_id)
+    : undefined
+  const otherFirstName = otherAthlete?.name.trim().split(/\s+/)[0]
   const isFull = confirmed >= need.required
 
   return (
@@ -135,7 +144,7 @@ export function NeedCard({
           </button>
         ) : mineOther ? (
           <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>
-            Ya acompañás a otro Atleta Líder acá
+            {otherFirstName ? `Ya acompañás a ${otherFirstName}` : 'Ya acompañás a otro Atleta Líder acá'}
           </button>
         ) : isFull ? (
           <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>
