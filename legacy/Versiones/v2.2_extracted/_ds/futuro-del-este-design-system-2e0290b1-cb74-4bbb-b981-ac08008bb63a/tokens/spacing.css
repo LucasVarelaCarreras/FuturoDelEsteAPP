@@ -1,0 +1,50 @@
+/* ============================================================
+   Futuro del Este — Spacing, radii, shadows, motion
+   8px soft grid. Generous, breathable layouts (the brand
+   leans airy: lots of white space around the wave marks).
+   ============================================================ */
+:root {
+  /* Spacing scale (4px base) */
+  --space-0:  0;
+  --space-1:  0.25rem;  /* 4  */
+  --space-2:  0.5rem;   /* 8  */
+  --space-3:  0.75rem;  /* 12 */
+  --space-4:  1rem;     /* 16 */
+  --space-5:  1.5rem;   /* 24 */
+  --space-6:  2rem;     /* 32 */
+  --space-7:  2.5rem;   /* 40 */
+  --space-8:  3rem;     /* 48 */
+  --space-9:  4rem;     /* 64 */
+  --space-10: 5rem;     /* 80 */
+  --space-12: 7rem;     /* 112 */
+
+  /* Radii — the brand is round & soft (pill buttons, rounded cards) */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+  --radius-2xl: 36px;
+  --radius-pill:999px;
+  --radius-circle:50%;
+
+  /* Shadows — soft, cool-tinted, low-contrast */
+  --shadow-xs: 0 1px 2px rgba(17, 37, 50, 0.06);
+  --shadow-sm: 0 2px 8px rgba(17, 37, 50, 0.07);
+  --shadow-md: 0 8px 24px rgba(17, 37, 50, 0.09);
+  --shadow-lg: 0 18px 48px rgba(17, 37, 50, 0.12);
+  --shadow-brand: 0 12px 28px rgba(1, 154, 196, 0.28);
+  --ring-focus: 0 0 0 3px rgba(1, 154, 196, 0.30);
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-narrow: 760px;
+  --header-height: 72px;
+
+  /* Motion — gentle, no bounce; calm & accessible */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --dur-fast:   140ms; /* @kind other */
+  --dur-base:   220ms; /* @kind other */
+  --dur-slow:   400ms; /* @kind other */
+}

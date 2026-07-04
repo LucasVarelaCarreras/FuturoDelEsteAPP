@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/tokens/colors.css">
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/tokens/typography.css">
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/tokens/base.css">
+<link rel="stylesheet" href="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/styles.css">
+<script src="_ds/futuro-del-este-design-system-2e0290b1-cb74-4bbb-b981-ac08008bb63a/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  .scrollarea::-webkit-scrollbar { width: 0; height: 0; }
+  .scrollarea { scrollbar-width: none; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #019AC4; outline-offset: 2px; border-radius: 6px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes shimmer { 0% { background-position: -260px 0; } 100% { background-position: 260px 0; } }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes sheetIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes pop { 0% { transform: scale(.5); opacity: 0; } 65% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+  .screen { animation: fadeUp .3s cubic-bezier(.4,0,.2,1); }
+  .skel { background: linear-gradient(90deg, #E7EEF2 25%, #F3F8FB 50%, #E7EEF2 75%); background-size: 520px 100%; animation: shimmer 1.25s infinite linear; border-radius: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#01B8A4"></stop><stop offset="0.5" stop-color="#019AC4"></stop><stop offset="1" stop-color="#01608F"></stop></linearGradient></defs><rect width="100" height="100" rx="22" fill="#E2F3F9"></rect><circle cx="50" cy="50" r="27" fill="url(#tg)"></circle><g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M30 44q5 -5 10 0t10 0t10 0"></path><path d="M30 52q5 -5 10 0t10 0t10 0"></path><path d="M30 60q5 -5 10 0t10 0t10 0"></path></g></svg></template>
+<div style="min-height:100vh;width:100%;background:radial-gradient(circle at 50% 0%, #E2F3F9, #DCE7EC 65%);display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 0 40px;font-family:var(--font-sans);">
+
+  <sc-if value="{{ demoBar }}" hint-placeholder-val="{{ true }}">
+    <div role="group" aria-label="Cambiar rol de demostración" style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border-subtle);border-radius:999px;padding:6px;box-shadow:var(--shadow-sm);">
+      <span style="font-size:11px;font-weight:800;color:var(--text-muted);padding-left:10px;letter-spacing:.06em;">DEMO</span>
+      <button onClick="{{ setGuia }}" aria-pressed="{{ isGuia }}" style="border:none;cursor:pointer;border-radius:999px;padding:7px 16px;font-family:var(--font-sans);font-weight:800;font-size:13px;background:{{ roleGuiaActive }};color:{{ roleGuiaText }};transition:all .15s ease;">Acompañante</button>
+      <button onClick="{{ setAdmin }}" aria-pressed="{{ isAdmin }}" style="border:none;cursor:pointer;border-radius:999px;padding:7px 16px;font-family:var(--font-sans);font-weight:800;font-size:13px;background:{{ roleAdminActive }};color:{{ roleAdminText }};transition:all .15s ease;">Coordinación</button>
+    </div>
+  </sc-if>
+
+  <div style="width:412px;height:880px;background:var(--surface-page);border-radius:46px;box-shadow:0 40px 90px rgba(17,37,50,0.28),0 0 0 11px #0d1b26,0 0 0 13px #2a3b47;overflow:hidden;position:relative;display:flex;flex-direction:column;">
+
+    <!-- status bar -->
+    <div style="height:48px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 8px;background:{{ statusBarBg }};color:{{ statusBarColor }};font-size:14px;font-weight:800;letter-spacing:.01em;position:relative;z-index:30;">
+      <span>9:41</span>
+      <span style="display:flex;gap:7px;align-items:center;">
+        <svg width="18" height="13" viewBox="0 0 18 13" fill="currentColor" aria-hidden="true"><rect x="0" y="9" width="3" height="4" rx="1"></rect><rect x="5" y="6" width="3" height="7" rx="1"></rect><rect x="10" y="3" width="3" height="10" rx="1"></rect><rect x="15" y="0" width="3" height="13" rx="1"></rect></svg>
+        <svg width="17" height="13" viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1 4.2a11 11 0 0 1 15 0"></path><path d="M3.6 7a7.2 7.2 0 0 1 9.8 0"></path><path d="M6.2 9.7a3.4 3.4 0 0 1 4.6 0"></path><circle cx="8.5" cy="11.8" r="0.6" fill="currentColor" stroke="none"></circle></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none" aria-hidden="true"><rect x="0.6" y="0.6" width="21" height="11.8" rx="3" stroke="currentColor" stroke-width="1.2" opacity="0.5"></rect><rect x="2.2" y="2.2" width="16" height="8.6" rx="1.6" fill="currentColor"></rect><rect x="23" y="4" width="2" height="5" rx="1" fill="currentColor" opacity="0.5"></rect></svg>
+      </span>
+    </div>
+
+    <!-- screen -->
+    <div class="scrollarea" style="flex:1;overflow-y:auto;position:relative;">
+
+      <!-- ============ AUTH / LOGIN ============ -->
+      <sc-if value="{{ showAuth }}" hint-placeholder-val="{{ true }}">
+        <div class="screen" style="min-height:100%;display:flex;flex-direction:column;background:var(--gradient-deep);">
+          <div style="position:relative;overflow:hidden;padding:46px 28px 34px;text-align:center;color:#fff;">
+            <div style="position:absolute;left:0;right:0;bottom:0;opacity:0.16;pointer-events:none;"><x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.WaveDivider" fill="#ffffff" height="46" hint-size="100%,46px"></x-import></div>
+            <div style="position:relative;display:flex;justify-content:center;"><x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.Logo" variant="mark" size="66" tone="white" hint-size="66px,66px"></x-import></div>
+            <h1 style="position:relative;margin:18px 0 6px;font-size:30px;font-weight:800;letter-spacing:-0.01em;color:#fff;">Acompañá</h1>
+            <p style="position:relative;margin:0 auto;max-width:280px;font-size:14px;line-height:1.5;color:rgba(255,255,255,0.82);">Sumate a acompañar atletas de la Fundación Futuro del Este.</p>
+            <p style="position:relative;margin:11px 0 0;font-size:12px;font-weight:800;letter-spacing:.02em;color:rgba(255,255,255,0.62);">Sustentabilidad + Accesibilidad</p>
+          </div>
+          <div style="flex:1;background:var(--surface-page);border-top-left-radius:30px;border-top-right-radius:30px;padding:26px 24px 30px;">
+
+            <sc-if value="{{ authWelcome }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <h2 style="margin:0 0 4px;font-size:19px;font-weight:800;color:var(--text-heading);">Ingresá a tu cuenta</h2>
+                <p style="margin:0 0 20px;font-size:13.5px;color:var(--text-muted);">Elegí cómo querés continuar.</p>
+                <button onClick="{{ loginGoogle }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;padding:14px;border-radius:999px;border:1.5px solid var(--border-strong);background:#fff;font-family:var(--font-sans);font-weight:800;font-size:15px;color:var(--text-strong);cursor:pointer;margin-bottom:11px;" style-hover="background:var(--surface-sunken);">
+                  <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.3-.4-3.5z"></path><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 5.1 29.6 3 24 3 16 3 9.1 7.6 6.3 14.7z"></path><path fill="#4CAF50" d="M24 45c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 36 26.7 37 24 37c-5.3 0-9.7-2.6-11.3-7l-6.5 5C9 40.4 15.9 45 24 45z"></path><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.3 45 30.7 45 24c0-1.2-.1-2.3-.4-3.5z"></path></svg>
+                  Continuar con Google
+                </button>
+                <button onClick="{{ gotoEmail }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:999px;border:none;background:var(--color-primary);font-family:var(--font-sans);font-weight:800;font-size:15px;color:#fff;cursor:pointer;box-shadow:var(--shadow-brand);"><dc-import name="Icon" glyph="inbox" size="18" color="#ffffff" hint-size="18px,18px"></dc-import>Continuar con email</button>
+                <div style="display:flex;align-items:center;gap:12px;margin:20px 0;"><span style="flex:1;height:1px;background:var(--border-subtle);"></span><span style="font-size:12px;color:var(--text-muted);font-weight:700;">¿Primera vez?</span><span style="flex:1;height:1px;background:var(--border-subtle);"></span></div>
+                <button onClick="{{ gotoRegister }}" style="width:100%;padding:13px;border-radius:999px;border:1.5px solid var(--color-primary);background:#fff;font-family:var(--font-sans);font-weight:800;font-size:15px;color:var(--fde-cyan-700);cursor:pointer;">Crear una cuenta</button>
+                <button onClick="{{ gotoAdmin }}" style="width:100%;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border:none;background:none;font-family:var(--font-sans);font-weight:800;font-size:13px;color:var(--text-muted);cursor:pointer;"><dc-import name="Icon" glyph="shield" size="15" color="var(--text-muted)" hint-size="15px,15px"></dc-import>Soy del equipo de coordinación</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ authEmail }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <button onClick="{{ gotoWelcome }}" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;"><dc-import name="Icon" glyph="back" size="15" color="var(--text-muted)" hint-size="15px,15px"></dc-import>Volver</button>
+                <h2 style="margin:0 0 18px;font-size:19px;font-weight:800;color:var(--text-heading);">Ingresar con email</h2>
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Email</label>
+                <input value="{{ draftEmail }}" onInput="{{ setDraftEmail }}" type="email" placeholder="tu@correo.com" aria-label="Email" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Contraseña</label>
+                <input value="{{ draftPass }}" onInput="{{ setDraftPass }}" type="password" placeholder="••••••••" aria-label="Contraseña" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin:-4px 0 10px;">{{ authErrorMsg }}</div></sc-if>
+                <button onClick="{{ submitEmail }}" style="width:100%;margin-top:6px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Ingresar</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ authRegister }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <button onClick="{{ gotoWelcome }}" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;"><dc-import name="Icon" glyph="back" size="15" color="var(--text-muted)" hint-size="15px,15px"></dc-import>Volver</button>
+                <h2 style="margin:0 0 18px;font-size:19px;font-weight:800;color:var(--text-heading);">Crear cuenta</h2>
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Nombre</label>
+                <input value="{{ draftName }}" onInput="{{ setDraftName }}" placeholder="Nombre y apellido" aria-label="Nombre" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Email</label>
+                <input value="{{ draftEmail }}" onInput="{{ setDraftEmail }}" type="email" placeholder="tu@correo.com" aria-label="Email" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Contraseña</label>
+                <input value="{{ draftPass }}" onInput="{{ setDraftPass }}" type="password" placeholder="Mínimo 6 caracteres" aria-label="Contraseña" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin:-4px 0 10px;">{{ authErrorMsg }}</div></sc-if>
+                <button onClick="{{ submitRegister }}" style="width:100%;margin-top:6px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Crear cuenta</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ authAdmin }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <button onClick="{{ gotoWelcome }}" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;"><dc-import name="Icon" glyph="back" size="15" color="var(--text-muted)" hint-size="15px,15px"></dc-import>Volver</button>
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px;"><dc-import name="Icon" glyph="shield" size="20" color="var(--fde-navy)" hint-size="20px,20px"></dc-import><h2 style="margin:0;font-size:19px;font-weight:800;color:var(--text-heading);">Acceso del equipo</h2></div>
+                <p style="margin:0 0 18px;font-size:13px;color:var(--text-muted);line-height:1.5;">Las cuentas de coordinación las crea la fundación. Ingresá tu email y el código que te dieron.</p>
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Email del equipo</label>
+                <input value="{{ draftEmail }}" onInput="{{ setDraftEmail }}" type="email" placeholder="nombre@futurodeleste.org" aria-label="Email del equipo" style="width:100%;margin-bottom:14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+                <label style="font-size:13px;font-weight:800;color:var(--text-heading);display:block;margin-bottom:6px;">Código de equipo</label>
+                <input value="{{ draftCode }}" onInput="{{ setDraftCode }}" placeholder="Código de invitación" aria-label="Código de equipo" style="width:100%;margin-bottom:8px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;letter-spacing:.06em;">
+                <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Para la demo, usá el código <b style="color:var(--fde-cyan-700);">FDE2026</b>.</div>
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin:-4px 0 10px;">{{ authErrorMsg }}</div></sc-if>
+                <button onClick="{{ submitAdmin }}" style="width:100%;margin-top:6px;padding:15px;border-radius:999px;border:none;background:var(--fde-navy);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;">Ingresar al panel</button>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SKELETON ============ -->
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="background:var(--gradient-deep);padding:20px 22px 30px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;">
+            <div class="skel" style="height:24px;width:120px;background:rgba(255,255,255,0.25);"></div>
+            <div class="skel" style="height:30px;width:80%;margin-top:18px;background:rgba(255,255,255,0.25);"></div>
+            <div class="skel" style="height:36px;width:180px;margin-top:16px;border-radius:999px;background:rgba(255,255,255,0.25);"></div>
+          </div>
+          <div style="padding:22px 18px;display:flex;flex-direction:column;gap:14px;">
+            <div class="skel" style="height:148px;"></div>
+            <div class="skel" style="height:148px;"></div>
+            <div class="skel" style="height:148px;"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ INICIO ============ -->
+      <sc-if value="{{ showInicio }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="position:relative;overflow:hidden;background:var(--gradient-deep);padding:18px 22px 24px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;">
+            <div style="position:absolute;left:0;right:0;bottom:0;opacity:0.12;pointer-events:none;">
+              <x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.WaveDivider" fill="#ffffff" height="44" hint-size="100%,44px"></x-import>
+            </div>
+            <div style="position:relative;display:flex;justify-content:space-between;align-items:center;">
+              <x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.Logo" variant="lockup-horizontal" size="30" tone="white" hint-size="170px,38px"></x-import>
+              <button onClick="{{ openNotifs }}" aria-label="Notificaciones" style="position:relative;width:40px;height:40px;border:none;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;">
+                <dc-import name="Icon" glyph="bell" size="19" color="#ffffff" hint-size="19px,19px"></dc-import>
+                <sc-if value="{{ notifUnread }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;right:7px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#FF6B6B;border:1.5px solid var(--fde-ocean);font-size:9.5px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;">{{ notifCount }}</span></sc-if>
+              </button>
+            </div>
+            <p style="position:relative;margin:18px 0 2px;font-size:14px;color:rgba(255,255,255,0.72);">Hola, {{ userName }}</p>
+            <h1 style="position:relative;margin:0;font-size:25px;font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#fff;">¿A quién acompañás hoy?</h1>
+            <div style="position:relative;margin-top:16px;display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:9px 15px;">
+              <span style="width:9px;height:9px;border-radius:50%;background:#FF8585;box-shadow:0 0 0 4px rgba(255,107,107,0.28);"></span>
+              <span style="font-size:13px;font-weight:700;"><b style="font-weight:900;">{{ needCount }}</b> atletas esperan acompañante</span>
+            </div>
+          </div>
+
+          <!-- filter -->
+          <div role="tablist" aria-label="Filtrar" style="display:flex;gap:7px;padding:16px 18px 4px;">
+            <button role="tab" aria-selected="{{ fAll }}" onClick="{{ setFilterAll }}" style="flex:1;border:1px solid {{ fAllBorder }};background:{{ fAllBg }};color:{{ fAllColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:9px 6px;border-radius:999px;cursor:pointer;transition:all .15s ease;">Todos</button>
+            <button role="tab" aria-selected="{{ fUrgent }}" onClick="{{ setFilterUrgent }}" style="flex:1;border:1px solid {{ fUrgBorder }};background:{{ fUrgBg }};color:{{ fUrgColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:9px 6px;border-radius:999px;cursor:pointer;transition:all .15s ease;">Urgentes</button>
+            <button role="tab" aria-selected="{{ fWeek }}" onClick="{{ setFilterWeek }}" style="flex:1;border:1px solid {{ fWeekBorder }};background:{{ fWeekBg }};color:{{ fWeekColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:9px 6px;border-radius:999px;cursor:pointer;transition:all .15s ease;">Esta semana</button>
+          </div>
+          <div style="padding:8px 18px 0;font-size:12.5px;color:var(--text-muted);font-weight:700;">{{ filterCountLabel }}</div>
+
+          <div style="display:flex;flex-direction:column;gap:14px;padding:12px 18px 24px;">
+            <sc-for list="{{ needsList }}" as="item" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:13px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:46px;height:46px;border-radius:50%;background:{{ item.athColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;">{{ item.athInitials }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-weight:800;font-size:16.5px;color:var(--text-strong);line-height:1.1;">{{ item.athName }}</div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);margin-top:4px;">
+                      <dc-import name="Icon" glyph="{{ item.glyph }}" size="14" color="var(--text-muted)" hint-size="14px,14px"></dc-import>{{ item.actName }}
+                    </div>
+                  </div>
+                  <span style="display:flex;align-items:center;gap:5px;background:{{ item.statusBg }};color:{{ item.statusText }};font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;white-space:nowrap;">
+                    <dc-import name="Icon" glyph="{{ item.statusGlyph }}" size="13" color="{{ item.statusText }}" hint-size="13px,13px"></dc-import>{{ item.statusLabel }}
+                  </span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--text-muted);">
+                  <span style="display:flex;align-items:center;gap:5px;"><dc-import name="Icon" glyph="calendar" size="14" color="var(--text-muted)" hint-size="14px,14px"></dc-import>{{ item.dateLabel }} · {{ item.time }}</span>
+                  <span style="display:flex;align-items:center;gap:5px;min-width:0;"><dc-import name="Icon" glyph="mappin" size="14" color="var(--text-muted)" hint-size="14px,14px"></dc-import>{{ item.place }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:11px;background:var(--surface-sunken);border-radius:13px;padding:11px 13px;">
+                  <span style="font-size:12px;color:var(--text-muted);font-weight:800;">Acompañantes</span>
+                  <div style="display:flex;gap:5px;flex:1;">
+                    <sc-for list="{{ item.slots }}" as="d" hint-placeholder-count="3">
+                      <span style="width:11px;height:11px;border-radius:50%;background:{{ d.bg }};border:1.5px solid {{ d.border }};"></span>
+                    </sc-for>
+                  </div>
+                  <span style="font-size:13px;font-weight:900;color:{{ item.statusText }};">{{ item.missingLabel }}</span>
+                </div>
+                <button onClick="{{ item.onAction }}" disabled="{{ item.btnDisabled }}" style="width:100%;padding:14px;border-radius:999px;font-family:var(--font-sans);font-weight:800;font-size:15px;border:1.5px solid {{ item.btnBorder }};background:{{ item.btnBg }};color:{{ item.btnColor }};cursor:{{ item.btnCursor }};box-shadow:{{ item.btnShadow }};transition:transform .12s ease;" style-active="transform:scale(0.975);">{{ item.btnLabel }}</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ needsEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:40px 24px;">
+                <div style="width:66px;height:66px;border-radius:50%;background:var(--fde-emerald-50);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                  <dc-import name="Icon" glyph="checkcircle" size="30" color="var(--fde-pine)" hint-size="30px,30px"></dc-import>
+                </div>
+                <div style="font-size:17px;font-weight:800;color:var(--text-heading);">{{ emptyTitle }}</div>
+                <div style="font-size:13.5px;color:var(--text-muted);margin-top:6px;line-height:1.5;">{{ emptySub }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CUENTA DESACTIVADA ============ -->
+      <sc-if value="{{ showDisabled }}" hint-placeholder-val="{{ false }}">
+        <div class="screen" style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 30px;">
+          <div style="width:86px;height:86px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin-bottom:22px;"><dc-import name="Icon" glyph="alert" size="40" color="var(--fde-danger)" hint-size="40px,40px"></dc-import></div>
+          <h1 style="margin:0 0 12px;font-size:23px;font-weight:800;color:var(--text-heading);letter-spacing:-0.01em;">Cuenta desactivada</h1>
+          <p style="margin:0;font-size:14.5px;color:var(--text-body);line-height:1.6;max-width:300px;">Tu cuenta de acompañante fue desactivada por la coordinación de la fundación. No podés anotarte en actividades ni acceder a la aplicación.</p>
+          <p style="margin:14px 0 0;font-size:13px;color:var(--text-muted);line-height:1.55;max-width:300px;">Si creés que es un error, comunicate con el equipo de Futuro del Este.</p>
+          <button onClick="{{ logout }}" style="margin-top:30px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--fde-navy);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:15px;padding:14px 28px;border-radius:999px;cursor:pointer;">Cerrar sesión</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ AGENDA ============ -->
+      <sc-if value="{{ showAgenda }}" hint-placeholder-val="{{ false }}">
+        <div class="screen" style="padding:8px 18px 24px;">
+          <h1 style="font-size:24px;font-weight:800;color:var(--text-heading);margin:16px 4px 4px;letter-spacing:-0.01em;">Agenda</h1>
+          <p style="margin:0 4px 14px;font-size:14px;color:var(--text-muted);">Carreras, entrenamientos y eventos</p>
+
+          <sc-if value="{{ agMenuOpen }}" hint-placeholder-val="{{ false }}"><div onClick="{{ agCloseMenu }}" style="position:fixed;inset:0;z-index:6;"></div></sc-if>
+          <div style="display:flex;gap:9px;margin:0 4px 8px;position:relative;z-index:7;">
+            <div style="position:relative;flex:1;min-width:0;">
+              <button onClick="{{ agToggleTypeMenu }}" aria-label="Filtrar por tipo" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ agTypePillBg }};border:1.5px solid {{ agTypePillBorder }};color:{{ agTypePillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:10px 12px;border-radius:14px;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;"><dc-import name="Icon" glyph="filter" size="15" color="currentColor" hint-size="15px,15px"></dc-import><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ agTypeLabel }}</span></span>
+                <dc-import name="Icon" glyph="chevron" size="16" color="currentColor" hint-size="16px,16px"></dc-import>
+              </button>
+              <sc-if value="{{ agTypeMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 7px);left:0;right:0;background:#fff;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:0 14px 38px rgba(17,37,50,0.18);padding:6px;z-index:30;">
+                  <sc-for list="{{ agTypeOpts }}" as="o" hint-placeholder-count="4">
+                    <button onClick="{{ o.onPick }}" style="width:100%;display:flex;align-items:center;gap:9px;background:{{ o.rowBg }};border:none;color:{{ o.rowColor }};font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:10px 10px;border-radius:11px;cursor:pointer;text-align:left;">
+                      <dc-import name="Icon" glyph="{{ o.glyph }}" size="16" color="currentColor" hint-size="16px,16px"></dc-import><span style="flex:1;min-width:0;">{{ o.label }}</span>
+                      <sc-if value="{{ o.active }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" glyph="check" size="16" color="var(--fde-cyan)" hint-size="16px,16px"></dc-import></sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <div style="position:relative;flex:1;min-width:0;">
+              <button onClick="{{ agToggleDateMenu }}" aria-label="Filtrar por fecha" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ agDatePillBg }};border:1.5px solid {{ agDatePillBorder }};color:{{ agDatePillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:10px 12px;border-radius:14px;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;"><dc-import name="Icon" glyph="calendar" size="15" color="currentColor" hint-size="15px,15px"></dc-import><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ agDateLabel }}</span></span>
+                <dc-import name="Icon" glyph="chevron" size="16" color="currentColor" hint-size="16px,16px"></dc-import>
+              </button>
+              <sc-if value="{{ agDateMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 7px);right:0;width:248px;max-width:80vw;background:#fff;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:0 14px 38px rgba(17,37,50,0.18);padding:14px;z-index:30;">
+                  <div style="font-size:11.5px;font-weight:800;color:var(--text-muted);margin-bottom:5px;">Desde</div>
+                  <input type="date" value="{{ agDateFrom }}" onChange="{{ agSetFrom }}" aria-label="Fecha inicial" style="width:100%;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;background:#fff;">
+                  <div style="font-size:11.5px;font-weight:800;color:var(--text-muted);margin:12px 0 5px;">Hasta</div>
+                  <input type="date" value="{{ agDateTo }}" onChange="{{ agSetTo }}" aria-label="Fecha final" style="width:100%;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;background:#fff;">
+                  <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button onClick="{{ agClearDates }}" style="flex:1;padding:10px;border-radius:999px;border:1.5px solid var(--border-strong);background:#fff;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;">Limpiar</button>
+                    <button onClick="{{ agCloseMenu }}" style="flex:1;padding:10px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;">Listo</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          <sc-if value="{{ agAnyFilter }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ agClearFilters }}" style="align-self:flex-start;display:flex;align-items:center;gap:5px;margin:0 4px 12px;background:none;border:none;color:var(--fde-cyan-700);font-family:var(--font-sans);font-weight:800;font-size:12.5px;cursor:pointer;"><dc-import name="Icon" glyph="x" size="14" color="var(--fde-cyan-700)" hint-size="14px,14px"></dc-import>Limpiar filtros</button>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ agendaList }}" as="item" hint-placeholder-count="4">
+              <button onClick="{{ item.onOpen }}" style="text-align:left;border:1px solid var(--border-subtle);background:#fff;border-radius:18px;padding:14px;display:flex;gap:13px;align-items:center;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .12s ease, box-shadow .15s ease;" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-md);" style-active="transform:scale(0.99);">
+                <div style="width:52px;height:52px;border-radius:15px;flex-shrink:0;background:{{ item.tileBg }};display:flex;align-items:center;justify-content:center;">
+                  <dc-import name="Icon" glyph="{{ item.glyph }}" size="23" color="{{ item.tileColor }}" hint-size="23px,23px"></dc-import>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:800;font-size:15.5px;color:var(--text-heading);line-height:1.18;">{{ item.name }}</div>
+                  <div style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-muted);margin-top:5px;"><dc-import name="Icon" glyph="calendar" size="13" color="var(--text-muted)" hint-size="13px,13px"></dc-import>{{ item.dateLabel }} · {{ item.time }}</div>
+                  <div style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-muted);margin-top:3px;"><dc-import name="Icon" glyph="mappin" size="13" color="var(--text-muted)" hint-size="13px,13px"></dc-import>{{ item.place }}</div>
+                </div>
+                <span style="background:{{ item.covBg }};color:{{ item.covText }};font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap;">{{ item.covLabel }}</span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ agendaEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:44px 24px;">
+                <div style="width:66px;height:66px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="calendar" size="28" color="var(--fde-cyan)" hint-size="28px,28px"></dc-import></div>
+                <div style="font-size:17px;font-weight:800;color:var(--text-heading);">Sin actividades</div>
+                <div style="font-size:13.5px;color:var(--text-muted);margin-top:6px;line-height:1.5;">Todavía no hay actividades programadas.<br>Volvé pronto.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ DETALLE (acompañante) ============ -->
+      <sc-if value="{{ showDetailGuia }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="position:relative;overflow:hidden;background:var(--gradient-deep);padding:16px 20px 26px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;">
+            <button onClick="{{ back }}" aria-label="Volver" style="background:rgba(255,255,255,0.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="back" size="19" color="#ffffff" hint-size="19px,19px"></dc-import></button>
+            <div style="display:inline-flex;margin-top:16px;align-items:center;gap:7px;background:rgba(255,255,255,0.16);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;"><dc-import name="Icon" glyph="{{ detailGlyph }}" size="14" color="#ffffff" hint-size="14px,14px"></dc-import>{{ detailType }}</div>
+            <h1 style="margin:12px 0 0;font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#fff;">{{ detailActName }}</h1>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:rgba(255,255,255,0.85);">
+              <div style="display:flex;align-items:center;gap:8px;"><dc-import name="Icon" glyph="calendar" size="15" color="rgba(255,255,255,0.85)" hint-size="15px,15px"></dc-import>{{ detailDate }} · {{ detailTime }}</div>
+              <div style="display:flex;align-items:center;gap:8px;"><dc-import name="Icon" glyph="mappin" size="15" color="rgba(255,255,255,0.85)" hint-size="15px,15px"></dc-import>{{ detailPlace }}</div>
+            </div>
+            <p style="margin:14px 0 0;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,0.78);">{{ detailDesc }}</p>
+          </div>
+
+          <div style="padding:20px 18px 6px;">
+            <h2 style="margin:0;font-size:17px;font-weight:800;color:var(--text-heading);">Atletas en esta actividad</h2>
+            <p style="margin:5px 0 0;font-size:12.5px;color:var(--text-muted);line-height:1.45;">Podés acompañar a un solo atleta por actividad.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;padding:14px 18px 28px;">
+            <sc-for list="{{ detailAthletes }}" as="item" hint-placeholder-count="2">
+              <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:20px;padding:16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:44px;height:44px;border-radius:50%;background:{{ item.athColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">{{ item.athInitials }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-weight:800;font-size:15.5px;color:var(--text-strong);">{{ item.athName }}</div>
+                    <div style="font-size:12.5px;color:var(--text-muted);margin-top:2px;">{{ item.confirmed }} de {{ item.required }} acompañantes</div>
+                  </div>
+                  <span style="display:flex;align-items:center;gap:5px;background:{{ item.statusBg }};color:{{ item.statusText }};font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;white-space:nowrap;"><dc-import name="Icon" glyph="{{ item.statusGlyph }}" size="13" color="{{ item.statusText }}" hint-size="13px,13px"></dc-import>{{ item.statusLabel }}</span>
+                </div>
+                <sc-if value="{{ item.hasNote }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-body);background:var(--surface-sunken);border-radius:11px;padding:9px 11px;"><dc-import name="Icon" glyph="flag" size="14" color="var(--fde-cyan-700)" hint-size="14px,14px"></dc-import><span>{{ item.note }}</span></div>
+                </sc-if>
+                <div style="display:flex;gap:6px;">
+                  <sc-for list="{{ item.slots }}" as="d" hint-placeholder-count="3">
+                    <span style="height:7px;flex:1;border-radius:999px;background:{{ d.bar }};"></span>
+                  </sc-for>
+                </div>
+                <button onClick="{{ item.onAction }}" disabled="{{ item.btnDisabled }}" style="width:100%;padding:13px;border-radius:999px;font-family:var(--font-sans);font-weight:800;font-size:15px;border:1.5px solid {{ item.btnBorder }};background:{{ item.btnBg }};color:{{ item.btnColor }};cursor:{{ item.btnCursor }};box-shadow:{{ item.btnShadow }};transition:transform .12s ease;" style-active="transform:scale(0.975);">{{ item.btnLabel }}</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ detailEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:36px 24px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="users" size="26" color="var(--text-muted)" hint-size="26px,26px"></dc-import></div>
+                <div style="font-size:16px;font-weight:800;color:var(--text-heading);">Sin atletas asignados</div>
+                <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">Esta actividad todavía no tiene atletas.</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ PERFIL ============ -->
+      <sc-if value="{{ showPerfil }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="position:relative;overflow:hidden;background:var(--gradient-deep);padding:24px 22px 28px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;text-align:center;">
+            <div style="position:absolute;left:0;right:0;bottom:0;opacity:0.1;pointer-events:none;"><x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.WaveDivider" fill="#ffffff" height="40" hint-size="100%,40px"></x-import></div>
+            <div style="position:relative;width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,0.16);border:2px solid rgba(255,255,255,0.35);margin:6px auto 0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;">{{ userInitials }}</div>
+            <h1 style="position:relative;margin:14px 0 2px;font-size:21px;font-weight:800;color:#fff;">{{ userName }}</h1>
+            <p style="position:relative;margin:0;font-size:13.5px;color:rgba(255,255,255,0.72);">{{ userEmail }}</p>
+            <div style="position:relative;margin-top:18px;display:flex;gap:10px;justify-content:center;">
+              <div style="background:rgba(255,255,255,0.13);border-radius:14px;padding:11px 20px;"><div style="font-size:22px;font-weight:900;">{{ myCount }}</div><div style="font-size:11px;color:rgba(255,255,255,0.78);font-weight:700;">Próximos</div></div>
+              <div style="background:rgba(255,255,255,0.13);border-radius:14px;padding:11px 20px;"><div style="font-size:22px;font-weight:900;">{{ doneCount }}</div><div style="font-size:11px;color:rgba(255,255,255,0.78);font-weight:700;">Acompañados</div></div>
+            </div>
+          </div>
+
+          <div style="padding:20px 18px 6px;"><h2 style="margin:0;font-size:17px;font-weight:800;color:var(--text-heading);">Mis próximos acompañamientos</h2></div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:12px 18px 24px;">
+            <sc-for list="{{ myList }}" as="item" hint-placeholder-count="1">
+              <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:18px;padding:14px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;border-radius:14px;background:{{ item.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="{{ item.glyph }}" size="20" color="{{ item.tileColor }}" hint-size="20px,20px"></dc-import></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:flex-start;gap:5px;font-size:12px;color:var(--fde-cyan-700);font-weight:800;line-height:1.35;"><dc-import name="Icon" glyph="heart" size="13" color="var(--fde-cyan-700)" hint-size="13px,13px"></dc-import><span style="flex:1;min-width:0;">Acompañás a {{ item.athName }}</span></div>
+                  <div style="font-weight:800;font-size:14.5px;color:var(--text-heading);line-height:1.2;margin-top:3px;">{{ item.actName }}</div>
+                  <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">{{ item.dateLabel }} · {{ item.time }}</div>
+                </div>
+                <button onClick="{{ item.onCancel }}" aria-label="Cancelar acompañamiento" style="background:var(--surface-sunken);border:none;color:var(--fde-danger);font-weight:800;font-size:12.5px;padding:8px 13px;border-radius:999px;cursor:pointer;">Cancelar</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ myEmpty }}" hint-placeholder-val="{{ true }}">
+              <div style="text-align:center;padding:36px 24px;background:#fff;border:1px dashed var(--border-strong);border-radius:20px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="heart" size="26" color="var(--fde-cyan)" hint-size="26px,26px"></dc-import></div>
+                <div style="font-size:16px;font-weight:800;color:var(--text-heading);">Todavía no te anotaste</div>
+                <div style="font-size:13px;color:var(--text-muted);margin:6px 0 16px;line-height:1.5;">Mirá quién necesita acompañante y sumate en segundos.</div>
+                <button onClick="{{ goInicio }}" style="background:var(--color-primary);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:14px;padding:11px 20px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-brand);">Ver atletas</button>
+              </div>
+            </sc-if>
+            <button onClick="{{ logout }}" style="width:100%;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1px solid var(--border-subtle);color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;padding:13px;border-radius:14px;cursor:pointer;"><dc-import name="Icon" glyph="back" size="16" color="var(--text-muted)" hint-size="16px,16px"></dc-import>Cerrar sesión</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ADMIN · PANEL ============ -->
+      <sc-if value="{{ showAdminPanel }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="position:relative;overflow:hidden;background:var(--gradient-deep);padding:18px 22px 24px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;">
+            <div style="position:absolute;left:0;right:0;bottom:0;opacity:0.1;pointer-events:none;"><x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.WaveDivider" fill="#ffffff" height="40" hint-size="100%,40px"></x-import></div>
+            <div style="position:relative;display:flex;justify-content:space-between;align-items:center;">
+              <x-import component-from-global-scope="FuturoDelEsteDesignSystem_2e0290.Logo" variant="lockup-horizontal" size="30" tone="white" hint-size="170px,38px"></x-import>
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;"><dc-import name="Icon" glyph="shield" size="14" color="#ffffff" hint-size="14px,14px"></dc-import>Coordinación</span>
+                <button onClick="{{ openNotifs }}" aria-label="Notificaciones" style="position:relative;width:38px;height:38px;border:none;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;">
+                  <dc-import name="Icon" glyph="bell" size="18" color="#ffffff" hint-size="18px,18px"></dc-import>
+                  <sc-if value="{{ notifUnread }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:5px;right:6px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#FF6B6B;border:1.5px solid var(--fde-navy);font-size:9.5px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;">{{ notifCount }}</span></sc-if>
+                </button>
+              </div>
+            </div>
+            <p style="position:relative;margin:18px 0 2px;font-size:14px;color:rgba(255,255,255,0.72);">Hola, {{ adminName }}</p>
+            <h1 style="position:relative;margin:0;font-size:24px;font-weight:800;letter-spacing:-0.01em;color:#fff;">Panel de cobertura</h1>
+          </div>
+
+          <sc-if value="{{ hasDeficit }}" hint-placeholder-val="{{ true }}">
+            <div style="margin:16px 18px 0;display:flex;align-items:center;gap:11px;background:#FDECEA;border:1px solid #F5C6C0;border-radius:16px;padding:13px 15px;">
+              <dc-import name="Icon" glyph="alert" size="20" color="#C0392B" hint-size="20px,20px"></dc-import>
+              <div style="flex:1;font-size:13px;color:#9A2A1E;line-height:1.4;"><b>{{ kpiNoCoverage }} atletas</b> sin acompañante en {{ kpiDeficit }} actividades.</div>
+            </div>
+          </sc-if>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:16px 18px;">
+            <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:16px;padding:15px;box-shadow:var(--shadow-xs);"><div style="font-size:28px;font-weight:900;color:var(--fde-cyan);line-height:1;">{{ kpiActivities }}</div><div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-top:6px;">Actividades</div></div>
+            <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:16px;padding:15px;box-shadow:var(--shadow-xs);"><div style="font-size:28px;font-weight:900;color:var(--fde-emerald);line-height:1;">{{ kpiAthletes }}</div><div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-top:6px;">Atletas activos</div></div>
+            <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:16px;padding:15px;box-shadow:var(--shadow-xs);"><div style="font-size:28px;font-weight:900;color:var(--fde-ocean);line-height:1;">{{ kpiGuides }}</div><div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-top:6px;">Acompañantes</div></div>
+            <div style="background:{{ kpiAlertBg }};border:1px solid {{ kpiAlertBorder }};border-radius:16px;padding:15px;"><div style="font-size:28px;font-weight:900;color:{{ kpiAlertColor }};line-height:1;">{{ kpiDeficit }}</div><div style="font-size:12px;color:{{ kpiAlertColor }};font-weight:800;margin-top:6px;">Actividades sin resolver</div></div>
+          </div>
+
+          <div style="padding:0 18px 6px;"><h2 style="margin:0;font-size:17px;font-weight:800;color:var(--text-heading);">Cobertura por actividad</h2></div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:12px 18px 28px;">
+            <sc-for list="{{ coverageList }}" as="item" hint-placeholder-count="4">
+              <button onClick="{{ item.onOpen }}" style="text-align:left;background:#fff;border:1px solid var(--border-subtle);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm);cursor:pointer;display:flex;flex-direction:column;gap:11px;transition:transform .12s ease, box-shadow .15s ease;" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-md);" style-active="transform:scale(0.99);">
+                <div style="display:flex;align-items:center;gap:11px;">
+                  <div style="width:40px;height:40px;border-radius:12px;background:{{ item.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="{{ item.glyph }}" size="19" color="{{ item.tileColor }}" hint-size="19px,19px"></dc-import></div>
+                  <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:14.5px;color:var(--text-heading);line-height:1.15;">{{ item.name }}</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">{{ item.dateLabel }} · {{ item.confirmed }}/{{ item.required }} acompañantes</div></div>
+                  <span style="background:{{ item.covBg }};color:{{ item.covText }};font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap;">{{ item.covLabel }}</span>
+                </div>
+                <div style="height:7px;border-radius:999px;background:var(--fde-mist);overflow:hidden;"><div style="height:100%;border-radius:999px;background:{{ item.covStrong }};width:{{ item.pct }};transition:width .4s ease;"></div></div>
+              </button>
+            </sc-for>
+          </div>
+          <div style="padding:0 18px 24px;"><button onClick="{{ logout }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1px solid var(--border-subtle);color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;padding:13px;border-radius:14px;cursor:pointer;"><dc-import name="Icon" glyph="back" size="16" color="var(--text-muted)" hint-size="16px,16px"></dc-import>Cerrar sesión</button></div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ADMIN · ATLETAS ============ -->
+      <sc-if value="{{ showAdminAtletas }}" hint-placeholder-val="{{ false }}">
+        <div class="screen" style="padding:8px 18px 28px;">
+          <h1 style="font-size:24px;font-weight:800;color:var(--text-heading);margin:18px 4px 14px;letter-spacing:-0.01em;">Usuarios</h1>
+          <div role="tablist" aria-label="Tipo de usuario" style="display:flex;gap:6px;background:var(--surface-sunken);border-radius:14px;padding:5px;margin:0 4px 16px;">
+            <button onClick="{{ setSegAtletas }}" role="tab" aria-selected="{{ segUserAtletas }}" style="flex:1;border:none;cursor:pointer;border-radius:10px;padding:9px;font-family:var(--font-sans);font-weight:800;font-size:13.5px;background:{{ segAtletasBg }};color:{{ segAtletasColor }};box-shadow:{{ segAtletasShadow }};">Atletas</button>
+            <button onClick="{{ setSegGuias }}" role="tab" aria-selected="{{ segUserGuias }}" style="flex:1;border:none;cursor:pointer;border-radius:10px;padding:9px;font-family:var(--font-sans);font-weight:800;font-size:13.5px;background:{{ segGuiasBg }};color:{{ segGuiasColor }};box-shadow:{{ segGuiasShadow }};">Guías</button>
+          </div>
+
+          <sc-if value="{{ segUserAtletas }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:0 4px 14px;">
+            <span style="font-size:12.5px;font-weight:700;color:var(--text-muted);">Atletas de la fundación</span>
+            <button onClick="{{ openAddAtleta }}" style="display:flex;align-items:center;gap:6px;background:var(--color-primary);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:9px 15px 9px 13px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-brand);"><dc-import name="Icon" glyph="plus" size="16" color="#ffffff" hint-size="16px,16px"></dc-import>Atleta</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <sc-for list="{{ atletasList }}" as="item" hint-placeholder-count="5">
+              <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:16px;padding:13px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;opacity:{{ item.opacity }};">
+                <div style="width:44px;height:44px;border-radius:50%;background:{{ item.athColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">{{ item.athInitials }}</div>
+                <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text-strong);">{{ item.name }}</div><div style="font-size:12.5px;color:var(--text-muted);">{{ item.sport }} · {{ item.activeLabel }}</div></div>
+                <button onClick="{{ item.onToggle }}" style="background:{{ item.toggleBg }};border:none;color:{{ item.toggleColor }};font-family:var(--font-sans);font-weight:800;font-size:12px;padding:7px 12px;border-radius:999px;cursor:pointer;">{{ item.toggleLabel }}</button>
+                <button onClick="{{ item.onEdit }}" aria-label="Editar atleta" style="background:none;border:none;color:var(--text-muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:8px;" style-hover="background:var(--fde-cyan-50);color:var(--color-primary);"><dc-import name="Icon" glyph="edit" size="17" color="currentColor" hint-size="17px,17px"></dc-import></button>
+                <button onClick="{{ item.onDelete }}" aria-label="Eliminar atleta" style="background:none;border:none;color:var(--text-muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:8px;" style-hover="background:#FDECEA;color:var(--fde-danger);"><dc-import name="Icon" glyph="trash" size="17" color="currentColor" hint-size="17px,17px"></dc-import></button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ atletasEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:40px 24px;background:#fff;border:1px dashed var(--border-strong);border-radius:20px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="users" size="26" color="var(--fde-cyan)" hint-size="26px,26px"></dc-import></div>
+                <div style="font-size:16px;font-weight:800;color:var(--text-heading);">Sin atletas</div>
+                <div style="font-size:13px;color:var(--text-muted);margin:6px 0 16px;">Agregá el primer atleta de la fundación.</div>
+                <button onClick="{{ openAddAtleta }}" style="background:var(--color-primary);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:14px;padding:11px 20px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-brand);">Agregar atleta</button>
+              </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ segUserGuias }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;margin:0 4px 14px;">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;color:var(--text-muted);pointer-events:none;"><dc-import name="Icon" glyph="search" size="18" color="currentColor" hint-size="18px,18px"></dc-import></span>
+            <input value="{{ guideSearch }}" onInput="{{ setGuideSearch }}" placeholder="Buscar guía por nombre" aria-label="Buscar guía por nombre" style="width:100%;padding:12px 40px 12px 42px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;background:#fff;box-sizing:border-box;">
+            <sc-if value="{{ guideSearchActive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearGuideSearch }}" aria-label="Limpiar búsqueda" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--surface-sunken);border:none;color:var(--text-muted);width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="x" size="14" color="currentColor" stroke="2.5" hint-size="14px,14px"></dc-import></button></sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <sc-for list="{{ guidesList }}" as="item" hint-placeholder-count="6">
+              <button onClick="{{ item.onOpen }}" style="background:#fff;border:1px solid var(--border-subtle);border-radius:16px;padding:13px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;opacity:{{ item.opacity }};cursor:pointer;text-align:left;font-family:var(--font-sans);width:100%;" style-hover="border-color:var(--border-strong);">
+                <div style="width:44px;height:44px;border-radius:50%;background:{{ item.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">{{ item.initials }}</div>
+                <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text-strong);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</div><div style="font-size:12.5px;color:var(--text-muted);">{{ item.catLabel }}</div></div>
+                <span style="flex-shrink:0;background:{{ item.statusBg }};color:{{ item.statusColor }};font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px;white-space:nowrap;">{{ item.activeLabel }}</span>
+                <dc-import name="Icon" glyph="chevron" size="18" color="var(--text-muted)" hint-size="18px,18px"></dc-import>
+              </button>
+            </sc-for>
+            <sc-if value="{{ guidesEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:40px 24px;background:#fff;border:1px dashed var(--border-strong);border-radius:20px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="search" size="26" color="var(--fde-cyan)" hint-size="26px,26px"></dc-import></div>
+                <div style="font-size:16px;font-weight:800;color:var(--text-heading);">Sin resultados</div>
+                <div style="font-size:13px;color:var(--text-muted);margin:6px 0 0;">No encontramos guías con ese nombre.</div>
+              </div>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ============ ADMIN · DETALLE GUÍA ============ -->
+      <sc-if value="{{ showGuideDetail }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="background:var(--gradient-deep);padding:16px 20px 26px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <button onClick="{{ closeGuideDetail }}" aria-label="Volver" style="background:rgba(255,255,255,0.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="back" size="19" color="#ffffff" hint-size="19px,19px"></dc-import></button>
+              <button onClick="{{ gdEdit }}" aria-label="Editar guía" style="background:rgba(255,255,255,0.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="edit" size="17" color="#ffffff" hint-size="17px,17px"></dc-import></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:14px;">
+              <div style="width:64px;height:64px;border-radius:50%;background:{{ gdColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;flex-shrink:0;border:2px solid rgba(255,255,255,0.35);">{{ gdInitials }}</div>
+              <div style="min-width:0;">
+                <h1 style="margin:0;font-size:22px;font-weight:800;line-height:1.15;color:#fff;">{{ gdName }}</h1>
+                <div style="margin-top:7px;display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.16);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800;">{{ gdStatusLabel }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:18px 18px 6px;"><h2 style="margin:0;font-size:16px;font-weight:800;color:var(--text-heading);">Información del guía</h2></div>
+          <div style="padding:12px 18px 8px;">
+            <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:18px;box-shadow:var(--shadow-sm);overflow:hidden;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:12.5px;font-weight:700;color:var(--text-muted);flex-shrink:0;">Email</span><span style="font-size:13.5px;font-weight:700;color:var(--text-strong);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ gdEmail }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:12.5px;font-weight:700;color:var(--text-muted);flex-shrink:0;">Teléfono</span><span style="font-size:13.5px;font-weight:700;color:var(--text-strong);">{{ gdPhone }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:12.5px;font-weight:700;color:var(--text-muted);flex-shrink:0;">Fecha de registro</span><span style="font-size:13.5px;font-weight:700;color:var(--text-strong);">{{ gdJoined }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:12.5px;font-weight:700;color:var(--text-muted);flex-shrink:0;">Categoría</span><span style="font-size:13.5px;font-weight:700;color:var(--text-strong);">{{ gdCat }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;"><span style="font-size:12.5px;font-weight:700;color:var(--text-muted);flex-shrink:0;">Estado</span><span style="background:{{ gdStatusBg }};color:{{ gdStatusColor }};font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px;">{{ gdStatusLabel }}</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;padding:10px 18px 28px;">
+            <button onClick="{{ gdEdit }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid var(--border-strong);color:var(--text-heading);font-family:var(--font-sans);font-weight:800;font-size:14px;padding:13px;border-radius:999px;cursor:pointer;"><dc-import name="Icon" glyph="edit" size="17" color="currentColor" hint-size="17px,17px"></dc-import>Editar</button>
+            <button onClick="{{ gdToggle }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:{{ gdToggleBg }};border:none;color:{{ gdToggleColor }};font-family:var(--font-sans);font-weight:800;font-size:14px;padding:13px;border-radius:999px;cursor:pointer;">{{ gdToggleLabel }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ADMIN · ACTIVIDADES ============ -->
+      <sc-if value="{{ showAdminActividades }}" hint-placeholder-val="{{ false }}">
+        <div class="screen" style="padding:8px 18px 28px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 4px 16px;">
+            <h1 style="font-size:24px;font-weight:800;color:var(--text-heading);margin:0;letter-spacing:-0.01em;">Actividades</h1>
+            <button onClick="{{ openAddActividad }}" style="display:flex;align-items:center;gap:6px;background:var(--color-primary);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:9px 15px 9px 13px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-brand);"><dc-import name="Icon" glyph="plus" size="16" color="#ffffff" hint-size="16px,16px"></dc-import>Actividad</button>
+          </div>
+
+          <sc-if value="{{ actMenuOpen }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeActMenu }}" style="position:fixed;inset:0;z-index:6;"></div></sc-if>
+          <div style="display:flex;gap:9px;margin:0 4px 8px;position:relative;z-index:7;">
+            <div style="position:relative;flex:1;min-width:0;">
+              <button onClick="{{ toggleTypeMenu }}" aria-label="Filtrar por tipo" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ typePillBg }};border:1.5px solid {{ typePillBorder }};color:{{ typePillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:10px 12px;border-radius:14px;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;"><dc-import name="Icon" glyph="filter" size="15" color="currentColor" hint-size="15px,15px"></dc-import><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ typeLabel }}</span></span>
+                <dc-import name="Icon" glyph="chevron" size="16" color="currentColor" hint-size="16px,16px"></dc-import>
+              </button>
+              <sc-if value="{{ typeMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 7px);left:0;right:0;background:#fff;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:0 14px 38px rgba(17,37,50,0.18);padding:6px;z-index:30;">
+                  <sc-for list="{{ typeOpts }}" as="o" hint-placeholder-count="4">
+                    <button onClick="{{ o.onPick }}" style="width:100%;display:flex;align-items:center;gap:9px;background:{{ o.rowBg }};border:none;color:{{ o.rowColor }};font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:10px 10px;border-radius:11px;cursor:pointer;text-align:left;">
+                      <dc-import name="Icon" glyph="{{ o.glyph }}" size="16" color="currentColor" hint-size="16px,16px"></dc-import><span style="flex:1;min-width:0;">{{ o.label }}</span>
+                      <sc-if value="{{ o.active }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" glyph="check" size="16" color="var(--fde-cyan)" hint-size="16px,16px"></dc-import></sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <div style="position:relative;flex:1;min-width:0;">
+              <button onClick="{{ toggleDateMenu }}" aria-label="Filtrar por fecha" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ datePillBg }};border:1.5px solid {{ datePillBorder }};color:{{ datePillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:10px 12px;border-radius:14px;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;"><dc-import name="Icon" glyph="calendar" size="15" color="currentColor" hint-size="15px,15px"></dc-import><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ dateLabel }}</span></span>
+                <dc-import name="Icon" glyph="chevron" size="16" color="currentColor" hint-size="16px,16px"></dc-import>
+              </button>
+              <sc-if value="{{ dateMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 7px);right:0;width:248px;max-width:80vw;background:#fff;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:0 14px 38px rgba(17,37,50,0.18);padding:14px;z-index:30;">
+                  <div style="font-size:11.5px;font-weight:800;color:var(--text-muted);margin-bottom:5px;">Desde</div>
+                  <input type="date" value="{{ actDateFrom }}" onChange="{{ setActDateFrom }}" aria-label="Fecha inicial" style="width:100%;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;background:#fff;">
+                  <div style="font-size:11.5px;font-weight:800;color:var(--text-muted);margin:12px 0 5px;">Hasta</div>
+                  <input type="date" value="{{ actDateTo }}" onChange="{{ setActDateTo }}" aria-label="Fecha final" style="width:100%;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;background:#fff;">
+                  <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button onClick="{{ clearActDates }}" style="flex:1;padding:10px;border-radius:999px;border:1.5px solid var(--border-strong);background:#fff;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;">Limpiar</button>
+                    <button onClick="{{ closeActMenu }}" style="flex:1;padding:10px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:13px;cursor:pointer;">Listo</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:9px;margin:0 4px 10px;position:relative;z-index:6;">
+            <div style="position:relative;flex:1;min-width:0;">
+              <button onClick="{{ toggleAthMenu }}" aria-label="Filtrar por atleta" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:{{ athPillBg }};border:1.5px solid {{ athPillBorder }};color:{{ athPillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:10px 12px;border-radius:14px;cursor:pointer;">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;"><dc-import name="Icon" glyph="user" size="15" color="currentColor" hint-size="15px,15px"></dc-import><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ athFilterLabel }}</span></span>
+                <dc-import name="Icon" glyph="chevron" size="16" color="currentColor" hint-size="16px,16px"></dc-import>
+              </button>
+              <sc-if value="{{ athMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 7px);left:0;right:0;background:#fff;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:0 14px 38px rgba(17,37,50,0.18);padding:6px;z-index:30;max-height:264px;overflow-y:auto;">
+                  <button onClick="{{ clearAthFilter }}" style="width:100%;display:flex;align-items:center;gap:9px;background:{{ athAllRowBg }};border:none;color:{{ athAllRowColor }};font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:10px 10px;border-radius:11px;cursor:pointer;text-align:left;">
+                    <dc-import name="Icon" glyph="users" size="16" color="currentColor" hint-size="16px,16px"></dc-import><span style="flex:1;min-width:0;">Todos los atletas</span>
+                    <sc-if value="{{ athFilterAllActive }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" glyph="check" size="16" color="var(--fde-cyan)" hint-size="16px,16px"></dc-import></sc-if>
+                  </button>
+                  <div style="height:1px;background:var(--border-subtle);margin:5px 8px;"></div>
+                  <sc-for list="{{ athFilterOpts }}" as="o" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;background:{{ o.rowBg }};border-radius:11px;">
+                      <button onClick="{{ o.onPick }}" style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:none;border:none;color:{{ o.rowColor }};font-family:var(--font-sans);font-weight:800;font-size:13.5px;padding:10px 4px 10px 10px;border-radius:11px;cursor:pointer;text-align:left;">
+                        <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.name }}</span>
+                        <sc-if value="{{ o.selected }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" glyph="check" size="16" color="var(--fde-cyan)" hint-size="16px,16px"></dc-import></sc-if>
+                      </button>
+                      <button onClick="{{ o.onToggleFav }}" aria-label="{{ o.favLabel }}" aria-pressed="{{ o.isFav }}" style="flex-shrink:0;width:34px;height:34px;margin:0 5px 0 2px;border-radius:50%;border:none;background:{{ o.starBg }};color:{{ o.starColor }};display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" glyph="star" size="16" color="currentColor" fill="{{ o.starFill }}" hint-size="16px,16px"></dc-import></button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <button onClick="{{ toggleFavOnly }}" aria-pressed="{{ favOnlyOn }}" aria-label="Filtrar solo favoritos" style="flex-shrink:0;display:flex;align-items:center;gap:9px;background:{{ favPillBg }};border:1.5px solid {{ favPillBorder }};color:{{ favPillColor }};font-family:var(--font-sans);font-weight:800;font-size:13px;padding:9px 11px;border-radius:14px;cursor:pointer;">
+              <dc-import name="Icon" glyph="star" size="15" color="currentColor" hint-size="15px,15px"></dc-import>
+              <span>Favoritos</span>
+              <span style="width:38px;height:22px;border-radius:999px;background:{{ favTrackBg }};position:relative;flex-shrink:0;transition:background .18s ease;"><span style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transform:{{ favKnobShift }};transition:transform .18s ease;"></span></span>
+            </button>
+          </div>
+          <sc-if value="{{ anyActFilter }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ clearActFilters }}" style="align-self:flex-start;display:flex;align-items:center;gap:5px;margin:0 4px 12px;background:none;border:none;color:var(--fde-cyan-700);font-family:var(--font-sans);font-weight:800;font-size:12.5px;cursor:pointer;"><dc-import name="Icon" glyph="x" size="14" color="var(--fde-cyan-700)" hint-size="14px,14px"></dc-import>Limpiar filtros</button>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ actividadesList }}" as="item" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border-subtle);border-radius:18px;padding:12px 13px;box-shadow:var(--shadow-sm);opacity:{{ item.cardOpacity }};">
+                <button onClick="{{ item.onToggleVisible }}" aria-label="{{ item.checkAria }}" aria-pressed="{{ item.visible }}" style="flex-shrink:0;width:26px;height:26px;border-radius:8px;border:2px solid {{ item.checkBorder }};background:{{ item.checkBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;"><sc-if value="{{ item.visible }}" hint-placeholder-val="{{ true }}"><dc-import name="Icon" glyph="check" size="16" color="#ffffff" hint-size="16px,16px"></dc-import></sc-if></button>
+                <button onClick="{{ item.onOpen }}" style="flex:1;min-width:0;text-align:left;background:none;border:none;cursor:pointer;display:flex;gap:11px;align-items:center;padding:0;font-family:var(--font-sans);">
+                  <div style="width:46px;height:46px;border-radius:13px;background:{{ item.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="{{ item.glyph }}" size="21" color="{{ item.tileColor }}" hint-size="21px,21px"></dc-import></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:7px;"><div style="font-weight:800;font-size:15px;color:var(--text-heading);line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</div><sc-if value="{{ item.hidden }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;font-size:10.5px;font-weight:800;color:var(--text-muted);background:var(--surface-sunken);padding:2px 7px;border-radius:999px;">Oculta</span></sc-if></div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">{{ item.dateLabel }} · {{ item.time }}</div>
+                  </div>
+                  <dc-import name="Icon" glyph="chevron" size="18" color="var(--text-muted)" hint-size="18px,18px"></dc-import>
+                </button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ actividadesEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:40px 24px;background:#fff;border:1px dashed var(--border-strong);border-radius:20px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="calendar" size="26" color="var(--fde-cyan)" hint-size="26px,26px"></dc-import></div>
+                <div style="font-size:16px;font-weight:800;color:var(--text-heading);">Sin actividades</div>
+                <div style="font-size:13px;color:var(--text-muted);margin:6px 0 16px;">Creá la primera carrera, entrenamiento o evento.</div>
+                <button onClick="{{ openAddActividad }}" style="background:var(--color-primary);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:14px;padding:11px 20px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-brand);">Crear actividad</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ADMIN · DETALLE ============ -->
+      <sc-if value="{{ showDetailAdmin }}" hint-placeholder-val="{{ false }}">
+        <div class="screen">
+          <div style="background:var(--gradient-deep);padding:16px 20px 24px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;color:#fff;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <button onClick="{{ back }}" aria-label="Volver" style="background:rgba(255,255,255,0.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="back" size="19" color="#ffffff" hint-size="19px,19px"></dc-import></button>
+              <div style="display:flex;gap:8px;">
+                <button onClick="{{ editActivity }}" aria-label="Editar actividad" style="background:rgba(255,255,255,0.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="edit" size="17" color="#ffffff" hint-size="17px,17px"></dc-import></button>
+                <button onClick="{{ askDeleteActivity }}" aria-label="Eliminar actividad" style="background:rgba(255,107,107,0.22);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="trash" size="17" color="#ffffff" hint-size="17px,17px"></dc-import></button>
+              </div>
+            </div>
+            <div style="display:inline-flex;margin-top:14px;align-items:center;gap:7px;background:rgba(255,255,255,0.16);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;"><dc-import name="Icon" glyph="{{ detailGlyph }}" size="14" color="#ffffff" hint-size="14px,14px"></dc-import>{{ detailType }}</div>
+            <h1 style="margin:12px 0 0;font-size:23px;font-weight:800;line-height:1.15;color:#fff;">{{ detailActName }}</h1>
+            <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:rgba(255,255,255,0.85);">
+              <span style="display:flex;align-items:center;gap:6px;"><dc-import name="Icon" glyph="calendar" size="14" color="rgba(255,255,255,0.85)" hint-size="14px,14px"></dc-import>{{ detailDate }} · {{ detailTime }}</span>
+              <span style="display:flex;align-items:center;gap:6px;"><dc-import name="Icon" glyph="mappin" size="14" color="rgba(255,255,255,0.85)" hint-size="14px,14px"></dc-import>{{ detailPlace }}</span>
+            </div>
+          </div>
+          <div style="padding:18px 18px 6px;"><h2 style="margin:0;font-size:16px;font-weight:800;color:var(--text-heading);">Acompañantes por atleta</h2><p style="margin:5px 0 0;font-size:12px;color:var(--text-muted);line-height:1.45;">Ajustá cuántos necesita cada atleta y sumá o quitá acompañantes.</p></div>
+          <div style="display:flex;flex-direction:column;gap:14px;padding:14px 18px 18px;">
+            <sc-for list="{{ adminDetailAthletes }}" as="item" hint-placeholder-count="2">
+              <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:18px;padding:15px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:13px;">
+                <div style="display:flex;align-items:center;gap:11px;">
+                  <div style="width:42px;height:42px;border-radius:50%;background:{{ item.athColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">{{ item.athInitials }}</div>
+                  <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text-strong);">{{ item.athName }}</div><div style="display:flex;align-items:center;gap:5px;font-size:12px;color:{{ item.statusText }};font-weight:700;margin-top:1px;"><dc-import name="Icon" glyph="{{ item.statusGlyph }}" size="12" color="{{ item.statusText }}" hint-size="12px,12px"></dc-import>{{ item.statusLabel }}</div></div>
+                  <button onClick="{{ item.onRemoveAthlete }}" aria-label="Quitar atleta de la actividad" style="background:none;border:none;color:var(--text-muted);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:8px;" style-hover="background:#FDECEA;color:var(--fde-danger);"><dc-import name="Icon" glyph="trash" size="16" color="currentColor" hint-size="16px,16px"></dc-import></button>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-sunken);border-radius:13px;padding:8px 10px;">
+                  <span style="font-size:12.5px;font-weight:800;color:var(--text-heading);">Necesita</span>
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <button onClick="{{ item.onDec }}" aria-label="Menos acompañantes" style="width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:var(--text-heading);cursor:pointer;box-shadow:var(--shadow-xs);display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="minus" size="16" color="currentColor" hint-size="16px,16px"></dc-import></button>
+                    <span style="font-size:15px;font-weight:900;color:var(--text-strong);min-width:50px;text-align:center;">{{ item.confirmed }}/{{ item.required }}</span>
+                    <button onClick="{{ item.onInc }}" aria-label="Más acompañantes" style="width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:var(--text-heading);cursor:pointer;box-shadow:var(--shadow-xs);display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="plus" size="16" color="currentColor" hint-size="16px,16px"></dc-import></button>
+                  </div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:7px;">
+                  <sc-for list="{{ item.guides }}" as="g" hint-placeholder-count="1">
+                    <span style="display:inline-flex;align-items:center;gap:6px;background:var(--fde-cyan-50);color:var(--fde-cyan-700);font-size:12px;font-weight:700;padding:5px 7px 5px 11px;border-radius:999px;">{{ g.name }} <button onClick="{{ g.onRemove }}" aria-label="Quitar acompañante" style="border:none;background:rgba(1,102,132,0.12);color:var(--fde-cyan-700);width:18px;height:18px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><dc-import name="Icon" glyph="x" size="11" color="currentColor" stroke="2.5" hint-size="11px,11px"></dc-import></button></span>
+                  </sc-for>
+                  <sc-if value="{{ item.noGuides }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:12px;color:var(--text-muted);font-style:italic;padding:5px 0;">Sin acompañantes asignados</span>
+                  </sc-if>
+                </div>
+                <button onClick="{{ item.onAddGuide }}" style="display:flex;align-items:center;gap:6px;align-self:flex-start;background:transparent;border:1.5px dashed var(--border-strong);color:var(--fde-cyan-700);font-family:var(--font-sans);font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;cursor:pointer;"><dc-import name="Icon" glyph="userplus" size="15" color="var(--fde-cyan-700)" hint-size="15px,15px"></dc-import>Sumar acompañante</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ adminDetailEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;padding:30px 24px;background:#fff;border:1px dashed var(--border-strong);border-radius:18px;">
+                <div style="font-size:15px;font-weight:800;color:var(--text-heading);">Sin atletas en esta actividad</div>
+                <div style="font-size:12.5px;color:var(--text-muted);margin-top:5px;">Agregá atletas para empezar a coordinar acompañantes.</div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="padding:0 18px 28px;">
+            <button onClick="{{ openAddAthleteToActivity }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--fde-navy);border:none;color:#fff;font-family:var(--font-sans);font-weight:800;font-size:15px;padding:14px;border-radius:999px;cursor:pointer;"><dc-import name="Icon" glyph="userplus" size="18" color="#ffffff" hint-size="18px,18px"></dc-import>Agregar atleta a la actividad</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ appReady }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:2px 0 18px;">
+          
+          <span style="font-size:11px;font-weight:700;color:rgba(1,154,196,0.55);">Llegaste al final</span>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <!-- bottom nav -->
+    <sc-if value="{{ navGuia }}" hint-placeholder-val="{{ true }}">
+      <div role="navigation" style="height:68px;flex-shrink:0;background:#fff;border-top:1px solid var(--border-subtle);display:flex;align-items:stretch;padding-bottom:8px;z-index:5;">
+        <button onClick="{{ goInicio }}" aria-label="Inicio" aria-current="{{ inicioCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ inicioColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="home" size="22" color="{{ inicioColor }}" hint-size="22px,22px"></dc-import>Inicio</button>
+        <button onClick="{{ goAgenda }}" aria-label="Agenda" aria-current="{{ agendaCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ agendaColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="calendar" size="22" color="{{ agendaColor }}" hint-size="22px,22px"></dc-import>Agenda</button>
+        <button onClick="{{ goPerfil }}" aria-label="Perfil" aria-current="{{ perfilCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ perfilColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="user" size="22" color="{{ perfilColor }}" hint-size="22px,22px"></dc-import>Perfil</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ navAdmin }}" hint-placeholder-val="{{ false }}">
+      <div role="navigation" style="height:68px;flex-shrink:0;background:#fff;border-top:1px solid var(--border-subtle);display:flex;align-items:stretch;padding-bottom:8px;z-index:5;">
+        <button onClick="{{ goPanel }}" aria-label="Panel" aria-current="{{ panelCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ panelColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="grid" size="22" color="{{ panelColor }}" hint-size="22px,22px"></dc-import>Panel</button>
+        <button onClick="{{ goAtletas }}" aria-label="Usuarios" aria-current="{{ atletasCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ atletasColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="users" size="22" color="{{ atletasColor }}" hint-size="22px,22px"></dc-import>Usuarios</button>
+        <button onClick="{{ goActividades }}" aria-label="Actividades" aria-current="{{ actividadesCur }}" style="flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:{{ actividadesColor }};font-family:var(--font-sans);font-weight:800;font-size:11px;"><dc-import name="Icon" glyph="calendar" size="22" color="{{ actividadesColor }}" hint-size="22px,22px"></dc-import>Activid.</button>
+      </div>
+    </sc-if>
+
+    <!-- ============ TÉRMINOS Y CONDICIONES (alta) ============ -->
+    <sc-if value="{{ showTyc }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:24;background:#fff;display:flex;flex-direction:column;animation:fadeUp .3s cubic-bezier(.4,0,.2,1);">
+
+        <sc-if value="{{ tycSummaryOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;overflow-y:auto;padding:32px 24px 18px;">
+            <div style="width:72px;height:72px;border-radius:50%;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;margin:6px auto 18px;"><dc-import name="Icon" glyph="shield" size="32" color="var(--color-primary)" hint-size="32px,32px"></dc-import></div>
+            <h1 style="margin:0;font-size:21px;font-weight:800;color:var(--text-heading);text-align:center;letter-spacing:-0.01em;">Términos y condiciones</h1>
+            <p style="margin:9px auto 0;max-width:322px;font-size:13.5px;color:var(--text-muted);text-align:center;line-height:1.55;">Antes de empezar, leé y aceptá los términos para sumarte como acompañante de Fundación Futuro del Este.</p>
+
+            <div style="display:flex;flex-direction:column;gap:16px;margin:26px 2px 0;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:32px;height:32px;border-radius:9px;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="heart" size="17" color="var(--color-primary)" hint-size="17px,17px"></dc-import></div>
+                <div><div style="font-size:14px;font-weight:800;color:var(--text-strong);">Aptitud física</div><div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:2px;">Declarás estar en condiciones de participar y te comprometés a presentar tu ficha médica o carné de salud.</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:32px;height:32px;border-radius:9px;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="alert" size="17" color="var(--color-primary)" hint-size="17px,17px"></dc-import></div>
+                <div><div style="font-size:14px;font-weight:800;color:var(--text-strong);">Riesgos de la actividad</div><div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:2px;">Asumís los riesgos propios de las actividades deportivas y liberás de responsabilidad a la fundación, sus voluntarios y organizadores.</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:32px;height:32px;border-radius:9px;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="users" size="17" color="var(--color-primary)" hint-size="17px,17px"></dc-import></div>
+                <div><div style="font-size:14px;font-weight:800;color:var(--text-strong);">Uso de imagen</div><div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:2px;">Autorizás a la fundación a usar de forma gratuita las fotos, videos, voz y nombre de las actividades para su difusión y redes.</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:32px;height:32px;border-radius:9px;background:var(--fde-cyan-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="sparkles" size="17" color="var(--color-primary)" hint-size="17px,17px"></dc-import></div>
+                <div><div style="font-size:14px;font-weight:800;color:var(--text-strong);">Valores</div><div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:2px;">Te comprometés a representar los valores y el propósito de la fundación mientras seas parte del programa.</div></div>
+              </div>
+            </div>
+
+            <button onClick="{{ openTycFull }}" style="margin:24px auto 2px;display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:none;color:var(--fde-cyan-700);font-family:var(--font-sans);font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Ver términos y condiciones completos<dc-import name="Icon" glyph="chevron" size="15" color="currentColor" hint-size="15px,15px"></dc-import></button>
+
+            <p style="margin:16px auto 0;max-width:332px;font-size:11.5px;color:var(--text-muted);text-align:center;line-height:1.55;">Al tocar «Aceptar y continuar» confirmás que leíste y aceptás el Deslinde de responsabilidad y la Cesión de derechos de imagen de Fundación Futuro del Este.</p>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);padding:14px 22px 20px;background:#fff;">
+            <button onClick="{{ acceptTyc }}" style="width:100%;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Aceptar y continuar</button>
+            <button onClick="{{ declineTyc }}" style="width:100%;margin-top:8px;padding:11px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:13.5px;cursor:pointer;">Ahora no</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tycFullOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid var(--border-subtle);">
+            <button onClick="{{ closeTycFull }}" aria-label="Volver" style="background:var(--surface-sunken);border:none;color:var(--text-heading);width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="back" size="19" color="currentColor" hint-size="19px,19px"></dc-import></button>
+            <h2 style="margin:0;font-size:17px;font-weight:800;color:var(--text-heading);">Términos y condiciones</h2>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:20px 22px 18px;">
+            <h3 style="margin:0;font-size:16px;font-weight:800;color:var(--text-heading);">Deslinde de responsabilidad</h3>
+            <div style="font-size:11px;font-weight:800;color:var(--fde-cyan-700);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 11px;">Programa Bienestar · Escuela de Atleta Guía</div>
+            <p style="margin:0;font-size:12.5px;color:var(--text-body);line-height:1.7;text-align:justify;">Declaro estar médicamente apto/a y adecuadamente informado para participar de esta actividad deportiva. Aceptaré cualquier decisión del referente del Programa relativa a mi desempeño y participación que cuide mi seguridad. Asumo todos los riesgos asociados con participar en este Programa incluyendo, pero no limitado a: caídas; contacto con los participantes; consecuencias del clima (temperatura y/o humedad, entre otros); tránsito vehicular y condiciones del camino; todos los riesgos conocidos y apreciados por mí. Habiendo leído esta declaración, conociendo estos hechos y considerando su aceptación al participar, yo, en mi nombre y el de cualquier persona que actúe en mi representación, libero a los organizadores de la actividad, voluntarios, referentes, directivos, técnicos y Sponsors, así como a sus representantes y sucesores de todo reclamo y responsabilidad de cualquier tipo que surja de mi participación en este Programa, aunque esta responsabilidad pueda deberse a negligencia de las personas nombradas en esta declaración, así como de cualquier extravío, robo y/o hurto que pudiera sufrir los días de entrenamiento o en las carreras que participe. Asimismo, tomo conocimiento que el procedimiento de premiación por división de categorías depende exclusivamente del organizador de la competencia de la que formemos parte, y no está comprendido dentro de las responsabilidades de la Fundación Futuro del Este. Comprendo que los talles de remeras están sujetos al stock disponible al momento de ingresar al equipo. También es necesario adjuntar o presentar Ficha Médica de Aptitud Física o el Carné de Salud Básico. Además, mientras esté activo en el proyecto y siendo parte de las actividades que organice o promueva Fundación Futuro del Este, me comprometo a representar sus valores y propósito.</p>
+            <div style="height:1px;background:var(--border-subtle);margin:24px 0;"></div>
+            <h3 style="margin:0;font-size:16px;font-weight:800;color:var(--text-heading);">Cesión de derechos y uso de imagen</h3>
+            <div style="font-size:11px;font-weight:800;color:var(--fde-cyan-700);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 11px;">A favor de Fundación Futuro del Este · RUT 220072360019</div>
+            <p style="margin:0;font-size:12.5px;color:var(--text-body);line-height:1.7;text-align:justify;">Quien suscribe cede el derecho a difundir y utilizar todas las imágenes (fotografía y video), su voz y el derecho a usar su nombre —que surgen de la actividad realizada con Fundación Futuro del Este— para la promoción de acciones, folletos, redes sociales, panfletos, presentaciones, talleres, etc., y autoriza a la Fundación Futuro del Este, RUT 220072360019, a fijar, reproducir y comunicar públicamente dicha participación, en todos los medios habidos y por haber y por el plazo y condiciones establecidos en la legislación uruguaya, reservándose los derechos morales de acuerdo a la normativa vigente. Lo que implica, además de su derecho de inclusión, el de enajenar, reproducir, distribuir, publicar, traducir, doblar, adaptar y transformar, comunicar o poner a disposición del público la misma, en cualquier forma o procedimiento, en cualquier formato, conocido o por conocerse (a vía de ejemplo: televisión, video, cine, CD, Internet, teléfonos, etc.), sin limitaciones temporales, incluyendo Internet para todos los medios de emisión y/o las redes sociales existentes o por existir. Esto es hasta su entrada en el dominio público y dentro y fuera del territorio nacional, es decir, sin limitaciones geográficas. Esta cesión y autorización es gratuita e irrevocable y se concede a Fundación Futuro del Este. Todas las referencias que en la presente se realizan a Fundación Futuro del Este en calidad de cesionaria de derechos y autorizaciones otorgadas incluyen, indistintamente, a todo tercero al que la Fundación Futuro del Este le ceda derechos de difusión sobre las imágenes, obras y/o contenidos, o parte de estos.</p>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);padding:14px 22px 20px;">
+            <button onClick="{{ acceptTyc }}" style="width:100%;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Aceptar y continuar</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+    <!-- toast -->
+    <sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="position:absolute;left:50%;bottom:84px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:9px;background:var(--fde-navy);color:#fff;padding:11px 18px;border-radius:999px;box-shadow:0 12px 30px rgba(17,37,50,0.32);font-size:13.5px;font-weight:700;white-space:nowrap;animation:toastIn .26s cubic-bezier(.4,0,.2,1);">
+        <dc-import name="Icon" glyph="check" size="16" color="var(--fde-aqua)" stroke="2.5" hint-size="16px,16px"></dc-import>{{ toast }}
+      </div>
+    </sc-if>
+
+    <!-- ============ SHEET OVERLAY ============ -->
+    <sc-if value="{{ showSheet }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(17,37,50,0.5);z-index:20;display:flex;align-items:flex-end;backdrop-filter:blur(2px);">
+        <div onClick="{{ stop }}" style="width:100%;max-height:84%;overflow-y:auto;background:#fff;border-top-left-radius:28px;border-top-right-radius:28px;padding:10px 22px 28px;box-shadow:0 -10px 40px rgba(17,37,50,0.2);animation:sheetIn .3s cubic-bezier(.4,0,.2,1);">
+          <div style="width:42px;height:5px;border-radius:999px;background:var(--border-strong);margin:0 auto 18px;"></div>
+
+          <sc-if value="{{ sheetConfirm }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:{{ sheetAthColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;margin:0 auto 14px;">{{ sheetAthInitials }}</div>
+              <h2 style="margin:0;font-size:20px;font-weight:800;color:var(--text-heading);">Acompañar a {{ sheetAthName }}</h2>
+              <p style="margin:8px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">{{ sheetActName }}<br>{{ sheetActDate }}</p>
+              <button onClick="{{ confirmSign }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);" style-active="transform:scale(0.98);">Confirmar acompañamiento</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetConflict }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#FBF0D8;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="alert" size="30" color="#9A6A0E" hint-size="30px,30px"></dc-import></div>
+              <h2 style="margin:0;font-size:20px;font-weight:800;color:var(--text-heading);">Ya estás en esta actividad</h2>
+              <p style="margin:10px 0 0;font-size:14px;color:var(--text-body);line-height:1.55;">Ya acompañás a <b>{{ conflictOther }}</b>. Solo podés acompañar a <b>un atleta por actividad</b>.</p>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Entendido</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetSuccess }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:70px;height:70px;border-radius:50%;background:#E4F4EC;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:pop .4s cubic-bezier(.4,0,.2,1);"><dc-import name="Icon" glyph="checkcircle" size="36" color="#1E9E6A" stroke="2.2" hint-size="36px,36px"></dc-import></div>
+              <h2 style="margin:0;font-size:21px;font-weight:800;color:var(--text-heading);">¡Listo!</h2>
+              <p style="margin:8px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">Vas a acompañar a <b>{{ successAthName }}</b>.<br>Gracias por sumarte.</p>
+              <button onClick="{{ goMyList }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Ver mis acompañamientos</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cerrar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetConfirmCancel }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="alert" size="28" color="#C0392B" hint-size="28px,28px"></dc-import></div>
+              <h2 style="margin:0;font-size:19px;font-weight:800;color:var(--text-heading);">¿Cancelar acompañamiento?</h2>
+              <p style="margin:9px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">Dejarás de acompañar a <b>{{ cancelAthName }}</b>. El cupo quedará libre para otra persona.</p>
+              <button onClick="{{ doCancel }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--fde-danger);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;">Sí, cancelar</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Volver</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetPickAthlete }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 4px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">Agregar atleta</h2>
+              <p style="margin:0 0 16px;font-size:13px;color:var(--text-muted);text-align:center;">Elegí un atleta para sumar a esta actividad.</p>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <sc-for list="{{ pickList }}" as="item" hint-placeholder-count="3">
+                  <button onClick="{{ item.onPick }}" style="display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:1px solid var(--border-subtle);border-radius:14px;padding:11px;cursor:pointer;" style-hover="border-color:var(--fde-cyan);background:var(--fde-cyan-50);">
+                    <div style="width:40px;height:40px;border-radius:50%;background:{{ item.athColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ item.athInitials }}</div>
+                    <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:14.5px;color:var(--text-strong);">{{ item.name }}</div><div style="font-size:12px;color:var(--text-muted);">{{ item.sport }}</div></div>
+                    <dc-import name="Icon" glyph="plus" size="18" color="var(--fde-cyan)" hint-size="18px,18px"></dc-import>
+                  </button>
+                </sc-for>
+                <sc-if value="{{ pickEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13.5px;">Todos los atletas activos ya están en esta actividad.</div>
+                </sc-if>
+              </div>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:14px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cerrar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetPickGuide }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 4px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">Sumar acompañante</h2>
+              <p style="margin:0 0 16px;font-size:13px;color:var(--text-muted);text-align:center;">Elegí un acompañante para {{ pickGuideAthName }}. Los que ya están en esta actividad aparecen en gris.</p>
+              <div style="display:flex;flex-direction:column;gap:9px;max-height:46vh;overflow-y:auto;">
+                <sc-for list="{{ guidePickList }}" as="item" hint-placeholder-count="4">
+                  <button onClick="{{ item.onPick }}" disabled="{{ item.busy }}" style="display:flex;align-items:center;gap:12px;text-align:left;background:{{ item.cardBg }};border:1px solid {{ item.cardBorder }};border-radius:14px;padding:11px;cursor:{{ item.cursor }};opacity:{{ item.cardOpacity }};">
+                    <div style="width:40px;height:40px;border-radius:50%;background:{{ item.avatarBg }};color:{{ item.avatarColor }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ item.initials }}</div>
+                    <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:14.5px;color:{{ item.nameColor }};">{{ item.name }}</div><div style="font-size:12px;font-weight:700;color:{{ item.statusColor }};">{{ item.statusLabel }}</div></div>
+                    <sc-if value="{{ item.busy }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" glyph="check" size="17" color="var(--text-muted)" hint-size="17px,17px"></dc-import></sc-if>
+                    <sc-if value="{{ item.free }}" hint-placeholder-val="{{ true }}"><dc-import name="Icon" glyph="plus" size="18" color="var(--fde-cyan)" hint-size="18px,18px"></dc-import></sc-if>
+                  </button>
+                </sc-for>
+              </div>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:14px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cerrar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetConfirmRemoveAth }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="trash" size="26" color="#C0392B" hint-size="26px,26px"></dc-import></div>
+              <h2 style="margin:0;font-size:19px;font-weight:800;color:var(--text-heading);">¿Quitar a {{ removeAthName }}?</h2>
+              <p style="margin:9px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">Se quitará de esta actividad junto con sus acompañantes asignados.</p>
+              <button onClick="{{ doRemoveAthlete }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--fde-danger);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;">Quitar de la actividad</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetConfirmDelAct }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="trash" size="26" color="#C0392B" hint-size="26px,26px"></dc-import></div>
+              <h2 style="margin:0;font-size:19px;font-weight:800;color:var(--text-heading);">¿Eliminar actividad?</h2>
+              <p style="margin:9px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">Se eliminará <b>{{ delActName }}</b> con todos sus atletas y acompañantes. Esta acción no se puede deshacer.</p>
+              <button onClick="{{ doDeleteActivity }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--fde-danger);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;">Eliminar actividad</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetConfirmDelAth }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><dc-import name="Icon" glyph="trash" size="26" color="#C0392B" hint-size="26px,26px"></dc-import></div>
+              <h2 style="margin:0;font-size:19px;font-weight:800;color:var(--text-heading);">¿Eliminar a {{ delAthName }}?</h2>
+              <p style="margin:9px 0 0;font-size:14px;color:var(--text-body);line-height:1.5;">Se eliminará el atleta y se quitará de todas las actividades.</p>
+              <button onClick="{{ doDeleteAthlete }}" style="width:100%;margin-top:22px;padding:15px;border-radius:999px;border:none;background:var(--fde-danger);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;">Eliminar atleta</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:13px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetAddAtleta }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">{{ atletaSheetTitle }}</h2>
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Nombre</label>
+              <input value="{{ draftName }}" onInput="{{ setDraftName }}" placeholder="Nombre y apellido" aria-label="Nombre del atleta" style="width:100%;margin:6px 0 14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Disciplina</label>
+              <input value="{{ draftSport }}" onInput="{{ setDraftSport }}" placeholder="Atletismo, Natación…" aria-label="Disciplina" style="width:100%;margin:6px 0 14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Categoría</label>
+              <input value="{{ draftCategory }}" onInput="{{ setDraftCategory }}" placeholder="Ej: Sub-18, Máster…" aria-label="Categoría" style="width:100%;margin:6px 0 14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Género</label>
+              <select value="{{ draftGender }}" onChange="{{ setDraftGender }}" aria-label="Género" style="width:100%;margin:6px 0 8px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;color:var(--text-strong);outline:none;background:#fff;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23667%22 stroke-width=%222.4%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22&gt;&lt;path d=%22m6 9 6 6 6-6%22/&gt;&lt;/svg&gt;');background-repeat:no-repeat;background-position:right 13px center;">
+                <option value="">Seleccionar…</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
+              <sc-if value="{{ draftError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin-bottom:8px;">{{ draftErrorMsg }}</div></sc-if>
+              <button onClick="{{ saveAtleta }}" style="width:100%;margin-top:10px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">{{ saveAtletaLabel }}</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:12px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetEditGuide }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">Editar guía</h2>
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Nombre</label>
+              <input value="{{ draftName }}" onInput="{{ setDraftName }}" placeholder="Nombre y apellido" aria-label="Nombre del guía" style="width:100%;margin:6px 0 14px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <label style="font-size:13px;font-weight:800;color:var(--text-heading);">Teléfono</label>
+              <input value="{{ draftPhone }}" onInput="{{ setDraftPhone }}" type="tel" placeholder="+598 99 123 456" aria-label="Teléfono del guía" style="width:100%;margin:6px 0 8px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <sc-if value="{{ draftError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin-bottom:8px;">{{ draftErrorMsg }}</div></sc-if>
+              <button onClick="{{ saveGuide }}" style="width:100%;margin-top:10px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">Guardar cambios</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:12px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetAddActividad }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">{{ actSheetTitle }}</h2>
+              <input value="{{ draftName }}" onInput="{{ setDraftName }}" placeholder="Nombre de la actividad" aria-label="Nombre de la actividad" style="width:100%;margin:0 0 11px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <div style="display:flex;gap:8px;margin-bottom:11px;">
+                <button onClick="{{ setTypeCarrera }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:13px;border:1.5px solid {{ typeCarreraBorder }};background:{{ typeCarreraBg }};color:{{ typeCarreraColor }};font-family:var(--font-sans);font-weight:800;font-size:12px;cursor:pointer;"><dc-import name="Icon" glyph="activity" size="19" color="{{ typeCarreraColor }}" hint-size="19px,19px"></dc-import>Carrera</button>
+                <button onClick="{{ setTypeEntrenamiento }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:13px;border:1.5px solid {{ typeEntreBorder }};background:{{ typeEntreBg }};color:{{ typeEntreColor }};font-family:var(--font-sans);font-weight:800;font-size:12px;cursor:pointer;"><dc-import name="Icon" glyph="dumbbell" size="19" color="{{ typeEntreColor }}" hint-size="19px,19px"></dc-import>Entren.</button>
+                <button onClick="{{ setTypeEvento }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:13px;border:1.5px solid {{ typeEventoBorder }};background:{{ typeEventoBg }};color:{{ typeEventoColor }};font-family:var(--font-sans);font-weight:800;font-size:12px;cursor:pointer;"><dc-import name="Icon" glyph="star" size="19" color="{{ typeEventoColor }}" hint-size="19px,19px"></dc-import>Evento</button>
+              </div>
+              <div style="margin-bottom:11px;display:flex;flex-direction:column;gap:5px;">
+                <span style="font-size:11.5px;font-weight:800;color:var(--text-muted);padding-left:2px;">Fecha</span>
+                <input type="date" value="{{ draftDateISO }}" onChange="{{ setDraftDateISO }}" aria-label="Fecha" style="width:100%;min-width:0;padding:12px 13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;color:var(--text-strong);outline:none;background:#fff;">
+              </div>
+              <div style="margin-bottom:11px;display:flex;flex-direction:column;gap:5px;">
+                <span style="font-size:11.5px;font-weight:800;color:var(--text-muted);padding-left:2px;">Hora</span>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <select value="{{ draftHourH }}" onChange="{{ setHourH }}" aria-label="Hora" style="flex:1;min-width:0;padding:12px 13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;color:var(--text-strong);outline:none;background:#fff;cursor:pointer;appearance:menulist;-webkit-appearance:menulist;">
+                    <sc-for list="{{ hourOptions }}" as="opt" hint-placeholder-count="4">
+                      <option value="{{ opt.value }}">{{ opt.label }}</option>
+                    </sc-for>
+                  </select>
+                  <span style="font-weight:800;font-size:16px;color:var(--text-muted);">:</span>
+                  <select value="{{ draftMin }}" onChange="{{ setMin }}" aria-label="Minutos" style="flex:1;min-width:0;padding:12px 13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;color:var(--text-strong);outline:none;background:#fff;cursor:pointer;appearance:menulist;-webkit-appearance:menulist;">
+                    <sc-for list="{{ minuteOptions }}" as="opt" hint-placeholder-count="4">
+                      <option value="{{ opt.value }}">{{ opt.label }}</option>
+                    </sc-for>
+                  </select>
+                </div>
+              </div>
+              <input value="{{ draftPlace }}" onInput="{{ setDraftPlace }}" placeholder="Lugar" aria-label="Lugar" style="width:100%;margin:0 0 8px;padding:13px;border-radius:14px;border:1.5px solid var(--border-strong);font-family:var(--font-sans);font-size:15px;outline:none;">
+              <sc-if value="{{ draftError }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:var(--fde-danger);font-weight:700;margin-bottom:8px;">{{ draftErrorMsg }}</div></sc-if>
+              <button onClick="{{ saveActividad }}" style="width:100%;margin-top:10px;padding:15px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow-brand);">{{ actSaveLabel }}</button>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:8px;padding:12px;border-radius:999px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-weight:800;font-size:14px;cursor:pointer;">Cancelar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ sheetNotifs }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0 0 14px;font-size:20px;font-weight:800;color:var(--text-heading);text-align:center;">Notificaciones</h2>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ notifList }}" as="n" hint-placeholder-count="3">
+                  <div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--border-subtle);border-radius:14px;padding:12px;">
+                    <div style="width:38px;height:38px;border-radius:50%;background:{{ n.iconBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><dc-import name="Icon" glyph="{{ n.glyph }}" size="18" color="{{ n.iconColor }}" hint-size="18px,18px"></dc-import></div>
+                    <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:14px;color:var(--text-heading);line-height:1.25;">{{ n.title }}</div><div style="font-size:12.5px;color:var(--text-muted);margin-top:2px;line-height:1.4;">{{ n.body }}</div></div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ notifEmpty }}" hint-placeholder-val="{{ true }}">
+                  <div style="text-align:center;padding:28px 20px;"><div style="width:56px;height:56px;border-radius:50%;background:var(--fde-emerald-50);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><dc-import name="Icon" glyph="checkcircle" size="26" color="var(--fde-pine)" hint-size="26px,26px"></dc-import></div><div style="font-size:15px;font-weight:800;color:var(--text-heading);">Estás al día</div><div style="font-size:13px;color:var(--text-muted);margin-top:5px;">No tenés notificaciones nuevas.</div></div>
+                </sc-if>
+              </div>
+              <button onClick="{{ closeSheet }}" style="width:100%;margin-top:16px;padding:14px;border-radius:999px;border:none;background:var(--color-primary);color:#fff;font-family:var(--font-sans);font-weight:800;font-size:15px;cursor:pointer;box-shadow:var(--shadow-brand);">Cerrar</button>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:412,&quot;height&quot;:940},&quot;startRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;guia&quot;,&quot;admin&quot;],&quot;default&quot;:&quot;guia&quot;,&quot;tsType&quot;:&quot;'guia'|'admin'&quot;},&quot;showDemoBar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      authed: false,
+      authView: 'welcome',
+      authError: '',
+      notifSeen: false,
+      tycAccepted: false,
+      pendingTyc: false,
+      tycFull: false,
+      role: (props && props.startRole) || 'guia',
+      tab: ((props && props.startRole) === 'admin') ? 'panel' : 'inicio',
+      filter: 'all',
+      actTypeFilter: 'all',
+      actDateFrom: '',
+      actDateTo: '',
+      actMenu: null,
+      actAthFilter: 'all',
+      favOnly: false,
+      favAthletes: [],
+      agType: 'all',
+      agFrom: '',
+      agTo: '',
+      agMenu: null,
+      openActivity: null,
+      openGuide: null,
+      userSeg: 'atletas',
+      guideSearch: '',
+      sheet: null,
+      draft: {},
+      guideSeq: 1,
+      toast: null,
+      user: { id: 'u1', name: 'Lucía', email: 'lucia.mendez@gmail.com', initials: 'LM' },
+      adminName: 'Nadia',
+      athletes: [
+        { id: 'a1', name: 'Juan Pérez', initials: 'JP', color: 'var(--fde-cyan)', sport: 'Atletismo', active: true },
+        { id: 'a2', name: 'María Rodríguez', initials: 'MR', color: 'var(--fde-emerald)', sport: 'Atletismo', active: true },
+        { id: 'a3', name: 'Diego Sosa', initials: 'DS', color: 'var(--fde-ocean)', sport: 'Atletismo', active: true },
+        { id: 'a4', name: 'Valentina Castro', initials: 'VC', color: 'var(--fde-aqua)', sport: 'Natación', active: true },
+        { id: 'a5', name: 'Martín Olivera', initials: 'MO', color: 'var(--fde-blue)', sport: 'Atletismo', active: true },
+        { id: 'a6', name: 'Camila Núñez', initials: 'CN', color: 'var(--fde-pine)', sport: 'Atletismo', active: true },
+      ],
+      activities: [
+        { id: 'act1', name: 'Carrera 10K Montevideo', type: 'carrera', dateLabel: 'Dom 21 Jun', time: '08:00', place: 'Rambla de Montevideo', desc: 'Carrera de 10 km por la rambla. Cada atleta necesita relevos de acompañantes por tramos.', sortKey: '2026-06-21', visible: true },
+        { id: 'act2', name: 'Entrenamiento Parque Batlle', type: 'entrenamiento', dateLabel: 'Jue 18 Jun', time: '17:30', place: 'Parque Batlle, Montevideo', desc: 'Entrenamiento semanal de pista y resistencia.', sortKey: '2026-06-18', visible: true },
+        { id: 'act3', name: 'Maratón Punta del Este', type: 'carrera', dateLabel: 'Dom 05 Jul', time: '07:30', place: 'Parada 5, Playa Mansa', desc: 'Media maratón inclusiva sobre la costa de Punta del Este.', sortKey: '2026-07-05', visible: true },
+        { id: 'act4', name: 'Jornada Inclusiva Playa Brava', type: 'evento', dateLabel: 'Sáb 28 Jun', time: '10:00', place: 'Playa Brava, Punta del Este', desc: 'Jornada recreativa y deportiva en la playa, abierta a toda la comunidad.', sortKey: '2026-06-28', visible: true },
+        { id: 'act5', name: 'Entrenamiento Natación', type: 'entrenamiento', dateLabel: 'Vie 19 Jun', time: '16:00', place: 'Piscina Campus, Maldonado', desc: 'Entrenamiento de natación adaptada en piscina climatizada.', sortKey: '2026-06-19', visible: true },
+      ],
+      needs: [
+        { id: 'n1', activityId: 'act1', athleteId: 'a1', required: 3, note: 'Relevo por tramos · km 0–3 / 3–7 / 7–10' },
+        { id: 'n2', activityId: 'act1', athleteId: 'a2', required: 2, note: '' },
+        { id: 'n3', activityId: 'act1', athleteId: 'a3', required: 1, note: '' },
+        { id: 'n4', activityId: 'act2', athleteId: 'a2', required: 2, note: '' },
+        { id: 'n5', activityId: 'act2', athleteId: 'a4', required: 1, note: '' },
+        { id: 'n6', activityId: 'act3', athleteId: 'a1', required: 2, note: 'Relevo · km 0–10 / 10–21' },
+        { id: 'n7', activityId: 'act3', athleteId: 'a5', required: 2, note: '' },
+        { id: 'n8', activityId: 'act4', athleteId: 'a6', required: 1, note: '' },
+        { id: 'n9', activityId: 'act4', athleteId: 'a3', required: 1, note: '' },
+        { id: 'n10', activityId: 'act5', athleteId: 'a4', required: 1, note: '' },
+      ],
+      assignments: [
+        { id: 'as1', activityId: 'act1', athleteId: 'a1', userId: 'g-pablo', name: 'Pablo R.' },
+        { id: 'as2', activityId: 'act1', athleteId: 'a3', userId: 'g-sofia', name: 'Sofía L.' },
+        { id: 'as3', activityId: 'act2', athleteId: 'a4', userId: 'u1', name: 'Lucía Méndez' },
+        { id: 'as4', activityId: 'act3', athleteId: 'a1', userId: 'g-andres', name: 'Andrés M.' },
+        { id: 'as5', activityId: 'act4', athleteId: 'a3', userId: 'g-sofia', name: 'Sofía L.' },
+      ],
+      registeredGuides: 24,
+      guides: [
+        { id: 'u1', name: 'Lucía Méndez', initials: 'LM', email: 'lucia.mendez@gmail.com', phone: '+598 99 123 456', joined: '12 mar 2025', cat: 'Avanzado', active: true },
+        { id: 'g-pablo', name: 'Pablo Rivas', initials: 'PR', email: 'pablo.rivas@gmail.com', phone: '+598 99 234 567', joined: '03 abr 2025', cat: 'Avanzado', active: true },
+        { id: 'g-sofia', name: 'Sofía Lema', initials: 'SL', email: 'sofia.lema@gmail.com', phone: '+598 98 345 678', joined: '21 abr 2025', cat: 'Intermedio', active: true },
+        { id: 'g-andres', name: 'Andrés Mora', initials: 'AM', email: 'andres.mora@gmail.com', phone: '+598 99 456 789', joined: '09 may 2025', cat: 'Intermedio', active: true },
+        { id: 'g-marcos', name: 'Marcos Tort', initials: 'MT', email: 'marcos.tort@gmail.com', phone: '+598 97 567 890', joined: '18 may 2025', cat: 'Inicial', active: false },
+        { id: 'g-carla', name: 'Carla Vidal', initials: 'CV', email: 'carla.vidal@gmail.com', phone: '+598 99 678 901', joined: '02 jun 2025', cat: 'Avanzado', active: true },
+        { id: 'g-nico', name: 'Nicolás Ferro', initials: 'NF', email: 'nicolas.ferro@gmail.com', phone: '+598 98 789 012', joined: '15 jun 2025', cat: 'Intermedio', active: true },
+        { id: 'g-rosa', name: 'Rosa Bentancor', initials: 'RB', email: 'rosa.bentancor@gmail.com', phone: '+598 99 890 123', joined: '28 jun 2025', cat: 'Inicial', active: true },
+        { id: 'g-javier', name: 'Javier Lacalle', initials: 'JL', email: 'javier.lacalle@gmail.com', phone: '+598 97 901 234', joined: '07 jul 2025', cat: 'Avanzado', active: false },
+        { id: 'g-flor', name: 'Florencia Díaz', initials: 'FD', email: 'florencia.diaz@gmail.com', phone: '+598 98 012 345', joined: '19 jul 2025', cat: 'Intermedio', active: true },
+      ],
+      done: 7,
+    };
+    this.today = new Date('2026-06-17');
+    try {
+      const raw = localStorage.getItem('fde_acompana_v1');
+      if (raw) { const p = JSON.parse(raw); if (p && typeof p === 'object') Object.assign(this.state, p); }
+    } catch (e) {}
+  }
+
+  componentDidMount() { this._load = setTimeout(() => this.setState({ loading: false }), 650); }
+  componentWillUnmount() { clearTimeout(this._load); clearTimeout(this._toast); }
+  componentDidUpdate() { this.persist(); }
+  persist() {
+    try {
+      const S = this.state;
+      localStorage.setItem('fde_acompana_v1', JSON.stringify({
+        athletes: S.athletes, activities: S.activities, needs: S.needs, assignments: S.assignments,
+        guideSeq: S.guideSeq, done: S.done, registeredGuides: S.registeredGuides, guides: S.guides, favAthletes: S.favAthletes,
+        authed: S.authed, role: S.role, user: S.user, adminName: S.adminName, notifSeen: S.notifSeen, tycAccepted: S.tycAccepted,
+      }));
+    } catch (e) {}
+  }
+
+  // ---- helpers ----
+  act(id) { return this.state.activities.find(a => a.id === id); }
+  ath(id) { return this.state.athletes.find(a => a.id === id); }
+  conf(actId, athId) { return this.state.assignments.filter(x => x.activityId === actId && x.athleteId === athId).length; }
+  myAthlete(actId) { const a = this.state.assignments.find(x => x.userId === 'u1' && x.activityId === actId); return a ? a.athleteId : null; }
+  daysUntil(sortKey) { return Math.round((new Date(sortKey) - this.today) / 86400000); }
+  formatDateLabel(iso) {
+    if (!iso) return '';
+    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const parts = iso.split('-'); const d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    return dias[d.getDay()] + ' ' + d.getDate() + ' ' + meses[d.getMonth()];
+  }
+  notify(text) { if (this._toast) clearTimeout(this._toast); this.setState({ toast: text }); this._toast = setTimeout(() => this.setState({ toast: null }), 2400); }
+  typeMeta(t) {
+    if (t === 'carrera') return { glyph: 'activity', label: 'Carrera', tileBg: 'var(--fde-cyan-50)', tileColor: 'var(--fde-cyan)' };
+    if (t === 'entrenamiento') return { glyph: 'dumbbell', label: 'Entrenamiento', tileBg: 'var(--fde-emerald-50)', tileColor: 'var(--fde-pine)' };
+    return { glyph: 'star', label: 'Evento especial', tileBg: '#E7F1FA', tileColor: 'var(--fde-ocean)' };
+  }
+  statusMeta(c, r) {
+    if (c === 0) return { key: 0, bg: '#FDECEA', text: '#C0392B', strong: '#D9534F', label: 'Sin acompañante', glyph: 'alert' };
+    if (c < r) return { key: 1, bg: '#FBF0D8', text: '#8A5D0C', strong: '#E8A21C', label: 'Faltan ' + (r - c), glyph: 'clock' };
+    return { key: 2, bg: '#E4F4EC', text: '#15734D', strong: '#1E9E6A', label: 'Completo', glyph: 'check' };
+  }
+  pct(c, r) { return Math.min(100, Math.round((c / Math.max(1, r)) * 100)) + '%'; }
+  slots(c, r, strong) {
+    const out = [];
+    for (let i = 0; i < r; i++) out.push({ bg: i < c ? strong : 'transparent', border: i < c ? strong : 'var(--border-strong)', bar: i < c ? strong : 'var(--fde-mist)' });
+    return out;
+  }
+
+  guiaRow(n) {
+    const a = this.act(n.activityId), t = this.ath(n.athleteId);
+    const c = this.conf(n.activityId, n.athleteId), r = n.required;
+    const sm = this.statusMeta(c, r), tm = this.typeMeta(a.type);
+    const mine = this.myAthlete(n.activityId);
+    const mineThis = mine === n.athleteId;
+    const mineOther = mine && mine !== n.athleteId ? this.ath(mine) : null;
+    let btn;
+    if (mineThis) btn = { btnLabel: 'Te anotaste · Cancelar', btnBg: '#E4F4EC', btnColor: '#15734D', btnBorder: '#E4F4EC', btnDisabled: false, btnCursor: 'pointer', btnShadow: 'none', onAction: () => this.askCancel(n.activityId, n.athleteId) };
+    else if (mineOther) btn = { btnLabel: 'Ya acompañás a ' + mineOther.name.split(' ')[0], btnBg: 'var(--surface-sunken)', btnColor: 'var(--text-muted)', btnBorder: 'var(--surface-sunken)', btnDisabled: true, btnCursor: 'not-allowed', btnShadow: 'none', onAction: () => {} };
+    else btn = { btnLabel: 'Acompañar', btnBg: 'var(--color-primary)', btnColor: '#fff', btnBorder: 'var(--color-primary)', btnDisabled: false, btnCursor: 'pointer', btnShadow: 'var(--shadow-brand)', onAction: () => this.askSign(n.activityId, n.athleteId) };
+    return {
+      key: n.id, athName: t.name, athInitials: t.initials, athColor: t.color,
+      actName: a.name, actId: a.id, athId: t.id, glyph: tm.glyph,
+      dateLabel: a.dateLabel, time: a.time, place: a.place,
+      required: r, confirmed: c, missing: Math.max(0, r - c),
+      missingLabel: c >= r ? 'Completo' : 'Faltan ' + (r - c),
+      slots: this.slots(c, r, sm.strong),
+      statusBg: sm.bg, statusText: sm.text, statusStrong: sm.strong, statusLabel: sm.label, statusKey: sm.key, statusGlyph: sm.glyph,
+      hasNote: !!n.note, note: n.note, ...btn,
+    };
+  }
+
+  // ---- guide actions ----
+  askSign(actId, athId) {
+    const mine = this.state.assignments.find(x => x.userId === 'u1' && x.activityId === actId);
+    if (mine && mine.athleteId === athId) return;
+    if (mine) { this.setState({ sheet: { kind: 'conflict', activityId: actId, athleteId: athId, otherId: mine.athleteId } }); return; }
+    this.setState({ sheet: { kind: 'confirm', activityId: actId, athleteId: athId } });
+  }
+  confirmSign() {
+    const s = this.state.sheet; if (!s) return;
+    const as = this.state.assignments.concat([{ id: 'u' + Date.now(), activityId: s.activityId, athleteId: s.athleteId, userId: 'u1', name: 'Lucía Méndez' }]);
+    this.setState({ assignments: as, sheet: { ...s, kind: 'success' } });
+  }
+  askCancel(actId, athId) { this.setState({ sheet: { kind: 'confirmCancel', activityId: actId, athleteId: athId } }); }
+  doCancel() {
+    const s = this.state.sheet; if (!s) return;
+    this.setState({ assignments: this.state.assignments.filter(x => !(x.userId === 'u1' && x.activityId === s.activityId && x.athleteId === s.athleteId)), sheet: null });
+    this.notify('Acompañamiento cancelado');
+  }
+  closeSheet() { this.setState({ sheet: null, draft: {} }); }
+  stop(e) { e.stopPropagation(); }
+  setActType(t) { this.setState({ actTypeFilter: t, actMenu: null }); }
+  setActAth(id) { this.setState({ actAthFilter: id, actMenu: null }); }
+  toggleFavOnly() { this.setState({ favOnly: !this.state.favOnly }); }
+  toggleFavAthlete(id) {
+    const favs = this.state.favAthletes || [];
+    const next = favs.indexOf(id) !== -1 ? favs.filter(x => x !== id) : favs.concat([id]);
+    this.setState({ favAthletes: next });
+  }
+  toggleActMenu(which) { this.setState({ actMenu: this.state.actMenu === which ? null : which }); }
+  actVisible(id) { const a = this.act(id); return !a || a.visible !== false; }
+  athActive(id) { const a = this.ath(id); return !!(a && a.active); }
+  toggleActVisible(id) {
+    const a = this.act(id); if (!a) return;
+    const nowVisible = a.visible === false;
+    this.setState({ activities: this.state.activities.map(x => x.id === id ? { ...x, visible: nowVisible } : x) });
+    this.notify(nowVisible ? 'Actividad visible para acompañantes' : 'Actividad oculta para acompañantes');
+  }
+  closeActMenu() { this.setState({ actMenu: null }); }
+  setAgType(t) { this.setState({ agType: t, agMenu: null }); }
+  toggleAgMenu(which) { this.setState({ agMenu: this.state.agMenu === which ? null : which }); }
+  closeAgMenu() { this.setState({ agMenu: null }); }
+  setAgFrom(v) { this.setState({ agFrom: v }); }
+  setAgTo(v) { this.setState({ agTo: v }); }
+  clearAgDates() { this.setState({ agFrom: '', agTo: '' }); }
+  setActDateFrom(v) { this.setState({ actDateFrom: v }); }
+  setActDateTo(v) { this.setState({ actDateTo: v }); }
+  clearActDates() { this.setState({ actDateFrom: '', actDateTo: '' }); }
+
+  // ---- admin: coverage edits ----
+  setRequired(needId, delta) {
+    this.setState({ needs: this.state.needs.map(n => n.id === needId ? { ...n, required: Math.max(1, n.required + delta) } : n) });
+  }
+  addGuide(actId, athId) {
+    const seq = this.state.guideSeq;
+    this.setState({ assignments: this.state.assignments.concat([{ id: 'm' + Date.now(), activityId: actId, athleteId: athId, userId: 'm' + seq, name: 'Acompañante ' + seq }]), guideSeq: seq + 1 });
+    this.notify('Acompañante sumado');
+  }
+  openPickGuide(actId, athId) { this.setState({ sheet: { kind: 'pickGuide', activityId: actId, athleteId: athId } }); }
+  addGuideUser(g) {
+    const s = this.state.sheet; if (!s) return;
+    this.setState({ assignments: this.state.assignments.concat([{ id: 'm' + Date.now(), activityId: s.activityId, athleteId: s.athleteId, userId: g.id, name: g.name }]), sheet: null });
+    this.notify('Acompañante sumado');
+  }
+  removeGuide(asId) { this.setState({ assignments: this.state.assignments.filter(x => x.id !== asId) }); this.notify('Acompañante quitado'); }
+
+  // ---- admin: athlete-in-activity ----
+  openAddAthleteToActivity() { this.setState({ sheet: { kind: 'pickAthlete', activityId: this.state.openActivity } }); }
+  addNeed(actId, athId) {
+    if (this.state.needs.some(n => n.activityId === actId && n.athleteId === athId)) return;
+    this.setState({ needs: this.state.needs.concat([{ id: 'n' + Date.now(), activityId: actId, athleteId: athId, required: 1, note: '' }]), sheet: null });
+    this.notify('Atleta agregado');
+  }
+  askRemoveAthlete(needId) { const n = this.state.needs.find(x => x.id === needId); this.setState({ sheet: { kind: 'confirmRemoveAth', needId, athleteId: n.athleteId } }); }
+  doRemoveAthlete() {
+    const s = this.state.sheet; if (!s) return;
+    const n = this.state.needs.find(x => x.id === s.needId); if (!n) { this.closeSheet(); return; }
+    this.setState({
+      needs: this.state.needs.filter(x => x.id !== s.needId),
+      assignments: this.state.assignments.filter(x => !(x.activityId === n.activityId && x.athleteId === n.athleteId)),
+      sheet: null,
+    });
+    this.notify('Atleta quitado de la actividad');
+  }
+
+  // ---- admin: activity CRUD ----
+  askDeleteActivity() { this.setState({ sheet: { kind: 'confirmDelAct', activityId: this.state.openActivity } }); }
+  doDeleteActivity() {
+    const s = this.state.sheet; if (!s) return;
+    this.setState({
+      activities: this.state.activities.filter(a => a.id !== s.activityId),
+      needs: this.state.needs.filter(n => n.activityId !== s.activityId),
+      assignments: this.state.assignments.filter(x => x.activityId !== s.activityId),
+      sheet: null, openActivity: null,
+    });
+    this.notify('Actividad eliminada');
+  }
+  editActivity() {
+    const a = this.act(this.state.openActivity); if (!a) return;
+    const iso = /^\d{4}-\d{2}-\d{2}$/.test(a.sortKey) ? a.sortKey : '';
+    this.setState({ sheet: { kind: 'addActividad', editId: a.id }, draft: { editId: a.id, name: a.name, type: a.type, dateISO: iso, time: a.time, place: a.place } });
+  }
+
+  // ---- admin: athlete CRUD ----
+  toggleActive(athId) {
+    const a = this.ath(athId);
+    this.setState({ athletes: this.state.athletes.map(x => x.id === athId ? { ...x, active: !x.active } : x) });
+    this.notify(a.active ? 'Atleta desactivado' : 'Atleta activado');
+  }
+  askDeleteAthlete(athId) { this.setState({ sheet: { kind: 'confirmDelAth', athleteId: athId } }); }
+  doDeleteAthlete() {
+    const s = this.state.sheet; if (!s) return;
+    this.setState({
+      athletes: this.state.athletes.filter(a => a.id !== s.athleteId),
+      needs: this.state.needs.filter(n => n.athleteId !== s.athleteId),
+      assignments: this.state.assignments.filter(x => x.athleteId !== s.athleteId),
+      sheet: null,
+    });
+    this.notify('Atleta eliminado');
+  }
+
+  // ---- admin: guides (acompañantes) ----
+  setUserSeg(seg) { this.setState({ userSeg: seg }); }
+  setGuideSearch(v) { this.setState({ guideSearch: v }); }
+  openGuideDetail(id) { this.setState({ openGuide: id }); }
+  closeGuideDetail() { this.setState({ openGuide: null }); }
+  toggleGuideActive(id) {
+    const g = this.state.guides.find(x => x.id === id); if (!g) return;
+    this.setState({ guides: this.state.guides.map(x => x.id === id ? { ...x, active: !x.active } : x) });
+    this.notify(g.active ? 'Gu\u00eda desactivado' : 'Gu\u00eda activado');
+  }
+  openEditGuide(id) {
+    const g = this.state.guides.find(x => x.id === id); if (!g) return;
+    this.setState({ sheet: { kind: 'editGuide', guideId: id }, draft: { name: g.name, phone: g.phone }, draftErr: '' });
+  }
+  saveGuide() {
+    const s = this.state.sheet; if (!s) return;
+    const d = this.state.draft; const name = (d.name || '').trim();
+    if (!name) { this.setState({ draftErr: 'Ingres\u00e1 el nombre del gu\u00eda.' }); return; }
+    const parts = name.split(/\s+/).map(p => p.charAt(0).toUpperCase() + p.slice(1));
+    const initials = (((parts[0] && parts[0][0]) || 'G') + ((parts[1] && parts[1][0]) || '')).toUpperCase();
+    this.setState({
+      guides: this.state.guides.map(g => g.id === s.guideId ? { ...g, name, initials, phone: (d.phone || '').trim() } : g),
+      sheet: null, draft: {},
+    });
+    this.notify('Gu\u00eda actualizado');
+  }
+
+  // ---- forms ----
+  setDraft(field, v) { this.setState({ draft: { ...this.state.draft, [field]: v }, draftErr: '', authError: '' }); }
+  setHourPart(which, v) {
+    const cur = (this.state.draft.time || '').split(':');
+    let h = cur[0] || '', m = cur[1] || '';
+    if (which === 'h') h = v; else m = v;
+    let time = '';
+    if (h && m) time = h + ':' + m;
+    else if (h) time = h + ':00';
+    else if (m) time = '00:' + m;
+    this.setDraft('time', time);
+  }
+
+  // ---- auth ----
+  gotoAuth(v) { this.setState({ authView: v, authError: '', draft: {} }); }
+  loginGoogle() { this.setState({ authed: true, authError: '', draft: {}, role: 'guia', tab: 'inicio', pendingTyc: !this.state.tycAccepted, user: { id: 'u1', name: 'Lucía', email: 'lucia.mendez@gmail.com', initials: 'LM' } }); }
+  submitEmail() {
+    const d = this.state.draft;
+    const email = (d.email || '').trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) { this.setState({ authError: 'Ingresá un email válido.' }); return; }
+    if (!(d.pass || '').trim()) { this.setState({ authError: 'Ingresá tu contraseña.' }); return; }
+    const base = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
+    const parts = base.split(/\s+/).map(s => s.charAt(0).toUpperCase() + s.slice(1));
+    const initials = ((parts[0] && parts[0][0]) || 'U') + ((parts[1] && parts[1][0]) || '');
+    this.setState({ authed: true, authError: '', draft: {}, role: 'guia', tab: 'inicio', pendingTyc: !this.state.tycAccepted, user: { id: 'u1', name: parts[0] || 'Vos', email, initials: initials.toUpperCase() } });
+  }
+  submitRegister() {
+    const d = this.state.draft;
+    const name = (d.name || '').trim(), email = (d.email || '').trim();
+    if (!name) { this.setState({ authError: 'Ingresá tu nombre.' }); return; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { this.setState({ authError: 'Ingresá un email válido.' }); return; }
+    if ((d.pass || '').length < 6) { this.setState({ authError: 'La contraseña debe tener al menos 6 caracteres.' }); return; }
+    const parts = name.split(/\s+/);
+    const initials = ((parts[0][0] || '') + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    this.setState({ authed: true, authError: '', draft: {}, role: 'guia', tab: 'inicio', tycAccepted: false, pendingTyc: true, user: { id: 'u1', name: parts[0], email, initials } });
+  }
+  submitAdmin() {
+    const d = this.state.draft;
+    const email = (d.email || '').trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) { this.setState({ authError: 'Ingresá el email del equipo.' }); return; }
+    if ((d.code || '').trim().toUpperCase() !== 'FDE2026') { this.setState({ authError: 'Código incorrecto. Pedí tu código de equipo a la fundación.' }); return; }
+    this.setState({ authed: true, authError: '', draft: {}, role: 'admin', tab: 'panel' });
+  }
+  logout() { this.setState({ authed: false, authView: 'welcome', authError: '', draft: {}, openActivity: null, sheet: null, role: 'guia', tab: 'inicio', notifSeen: false, pendingTyc: false, tycFull: false }); }
+  acceptTyc() { this.setState({ tycAccepted: true, pendingTyc: false, tycFull: false }); this.notify('¡Bienvenido/a a Acompañá!'); }
+  declineTyc() { this.logout(); }
+  openTycFull() { this.setState({ tycFull: true }); }
+  closeTycFull() { this.setState({ tycFull: false }); }
+
+  // ---- notifications ----
+  openNotifs() { this.setState({ sheet: { kind: 'notifs' }, notifSeen: true }); }
+  buildNotifs() {
+    const S = this.state;
+    const out = [];
+    if (S.role === 'admin') {
+      const acts = S.activities.slice().sort((a, b) => a.sortKey < b.sortKey ? -1 : 1);
+      acts.forEach(a => {
+        const ns = S.needs.filter(n => n.activityId === a.id);
+        const miss = ns.reduce((s, n) => s + Math.max(0, n.required - this.conf(a.id, n.athleteId)), 0);
+        const noCover = ns.filter(n => this.conf(a.id, n.athleteId) === 0).length;
+        if (miss > 0) out.push({ key: 'd' + a.id, glyph: noCover > 0 ? 'alert' : 'clock', iconBg: noCover > 0 ? '#FDECEA' : '#FBF0D8', iconColor: noCover > 0 ? '#C0392B' : '#8A5D0C', title: noCover > 0 ? 'Atletas sin acompañante' : 'Cobertura incompleta', body: a.name + ' · faltan ' + miss + (miss === 1 ? ' acompañante' : ' acompañantes') });
+      });
+    } else {
+      const mine = S.assignments.filter(x => x.userId === 'u1');
+      mine.map(x => ({ a: this.act(x.activityId), t: this.ath(x.athleteId) })).filter(o => o.a && o.t).sort((p, q) => p.a.sortKey < q.a.sortKey ? -1 : 1).forEach(o => {
+        out.push({ key: 'r' + o.a.id, glyph: 'calendar', iconBg: 'var(--fde-cyan-50)', iconColor: 'var(--fde-cyan)', title: 'Recordatorio de acompañamiento', body: 'Acompañás a ' + o.t.name + ' · ' + o.a.name + ' · ' + o.a.dateLabel });
+      });
+      const urgent = S.needs.filter(n => this.conf(n.activityId, n.athleteId) === 0).map(n => ({ a: this.act(n.activityId), t: this.ath(n.athleteId) })).filter(o => o.a && o.t).slice(0, 3);
+      urgent.forEach(o => out.push({ key: 'u' + o.a.id + o.t.id, glyph: 'alert', iconBg: '#FDECEA', iconColor: '#C0392B', title: o.t.name + ' necesita acompañante', body: o.a.name + ' · ' + o.a.dateLabel }));
+    }
+    return out;
+  }
+  saveAtleta() {
+    const d = this.state.draft; const name = (d.name || '').trim();
+    if (!name) { this.setState({ draftErr: 'Ingresá el nombre del atleta.' }); return; }
+    const parts = name.split(/\s+/);
+    const initials = ((parts[0][0] || '') + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    const colors = ['var(--fde-cyan)', 'var(--fde-emerald)', 'var(--fde-ocean)', 'var(--fde-aqua)', 'var(--fde-blue)', 'var(--fde-pine)'];
+    const category = (d.category || '').trim();
+    const gender = d.gender || '';
+    if (d.editId) {
+      this.setState({ athletes: this.state.athletes.map(a => a.id === d.editId ? { ...a, name, initials, sport: (d.sport || '').trim() || a.sport, category, gender } : a), sheet: null, draft: {} });
+      this.notify('Atleta actualizado'); return;
+    }
+    const ath = { id: 'a' + Date.now(), name, initials, color: colors[this.state.athletes.length % colors.length], sport: (d.sport || '').trim() || 'Atletismo', category, gender, active: true };
+    this.setState({ athletes: this.state.athletes.concat([ath]), sheet: null, draft: {} });
+    this.notify('Atleta creado');
+  }
+  saveActividad() {
+    const d = this.state.draft; const name = (d.name || '').trim();
+    if (!name) { this.setState({ draftErr: 'Ingresá el nombre de la actividad.' }); return; }
+    const iso = d.dateISO || '';
+    const dateLabel = iso ? this.formatDateLabel(iso) : '';
+    const time = (d.time || '').trim();
+    if (d.editId) {
+      this.setState({ activities: this.state.activities.map(a => a.id === d.editId ? { ...a, name, type: d.type || a.type, dateLabel: dateLabel || a.dateLabel, time: time || a.time, place: (d.place || '').trim() || a.place, sortKey: iso || a.sortKey } : a), sheet: null, draft: {} });
+      this.notify('Actividad actualizada'); return;
+    }
+    const act = { id: 'act' + Date.now(), name, type: d.type || 'carrera', dateLabel: dateLabel || 'A definir', time: time || '—', place: (d.place || '').trim() || 'A definir', desc: '', sortKey: iso || '2026-12-31' };
+    this.setState({ activities: this.state.activities.concat([act]), sheet: null, draft: {} });
+    this.notify('Actividad creada');
+  }
+
+  renderVals() {
+    const S = this.state;
+    const role = S.role, isGuia = role === 'guia', isAdmin = role === 'admin';
+    const open = S.openActivity, sheet = S.sheet, rdy = !S.loading;
+    const ACT = '#019AC4', INACT = '#90A6B0';
+    const meGuide = S.guides.find(g => g.id === (S.user && S.user.id));
+    const meDisabled = isGuia && S.authed && !!meGuide && meGuide.active === false;
+
+    const rows = S.needs.map(n => this.guiaRow(n));
+    const allNeeds = rows.filter(x => x.missing > 0 && this.actVisible(x.actId) && this.athActive(x.athId));
+    let filtered = allNeeds;
+    if (S.filter === 'urgent') filtered = allNeeds.filter(x => x.statusKey === 0);
+    else if (S.filter === 'week') filtered = allNeeds.filter(x => this.daysUntil(this.act(x.actId).sortKey) >= 0 && this.daysUntil(this.act(x.actId).sortKey) <= 7);
+    const needsList = filtered.sort((p, q) => {
+      if (p.statusKey !== q.statusKey) return p.statusKey - q.statusKey;
+      const ad = this.act(p.actId).sortKey, bd = this.act(q.actId).sortKey;
+      if (ad !== bd) return ad < bd ? -1 : 1;
+      return q.missing - p.missing;
+    });
+
+    const acts = S.activities.slice().sort((a, b) => a.sortKey < b.sortKey ? -1 : 1);
+    const coverageOf = (a) => {
+      const ns = S.needs.filter(n => n.activityId === a.id);
+      const req = ns.reduce((s, n) => s + n.required, 0);
+      const cnf = ns.reduce((s, n) => s + this.conf(a.id, n.athleteId), 0);
+      const sm = this.statusMeta(cnf, req);
+      const covLabel = req === 0 ? 'Sin atletas' : (cnf >= req ? 'Completo' : 'Faltan ' + (req - cnf));
+      return { req, cnf, sm, covLabel, tm: this.typeMeta(a.type) };
+    };
+    const agType = S.agType || 'all', agFrom = S.agFrom || '', agTo = S.agTo || '';
+    const agVisible = acts.filter(a => this.actVisible(a.id) && (agType === 'all' || a.type === agType) && (!agFrom || a.sortKey >= agFrom) && (!agTo || a.sortKey <= agTo));
+    const agendaList = agVisible.map(a => { const c = coverageOf(a); return { key: a.id, name: a.name, glyph: c.tm.glyph, tileBg: c.tm.tileBg, tileColor: c.tm.tileColor, dateLabel: a.dateLabel, time: a.time, place: a.place, covBg: c.sm.bg, covText: c.sm.text, covLabel: c.covLabel, onOpen: () => this.setState({ openActivity: a.id }) }; });
+    const coverageList = acts.map(a => { const c = coverageOf(a); return { key: a.id, name: a.name, glyph: c.tm.glyph, tileBg: c.tm.tileBg, tileColor: c.tm.tileColor, dateLabel: a.dateLabel, time: a.time, required: c.req, confirmed: c.cnf, covBg: c.sm.bg, covText: c.sm.text, covStrong: c.sm.strong, covLabel: c.covLabel, pct: this.pct(c.cnf, c.req), onOpen: () => this.setState({ openActivity: a.id }) }; });
+
+    // ---- Actividades screen: type + date-range filters ----
+    const typeF = S.actTypeFilter || 'all';
+    const dFrom = S.actDateFrom || '', dTo = S.actDateTo || '';
+    const athF = S.actAthFilter || 'all';
+    const favList = S.favAthletes || [];
+    const favSet = new Set(favList);
+    const favOnly = !!S.favOnly;
+    const actHasAth = (actId, athId) => S.needs.some(n => n.activityId === actId && n.athleteId === athId);
+    const actsFiltered = acts.filter(a => {
+      if (typeF !== 'all' && a.type !== typeF) return false;
+      if (dFrom && a.sortKey < dFrom) return false;
+      if (dTo && a.sortKey > dTo) return false;
+      if (athF !== 'all' && !actHasAth(a.id, athF)) return false;
+      if (favOnly && !S.needs.some(n => n.activityId === a.id && favSet.has(n.athleteId))) return false;
+      return true;
+    });
+    const actividadesList = actsFiltered.map(a => { const c = coverageOf(a); const vis = a.visible !== false; return { key: a.id, name: a.name, glyph: c.tm.glyph, tileBg: c.tm.tileBg, tileColor: c.tm.tileColor, dateLabel: a.dateLabel, time: a.time, required: c.req, confirmed: c.cnf, covBg: c.sm.bg, covText: c.sm.text, covStrong: c.sm.strong, covLabel: c.covLabel, pct: this.pct(c.cnf, c.req), visible: vis, hidden: !vis, cardOpacity: vis ? 1 : 0.62, checkBg: vis ? 'var(--color-primary)' : '#fff', checkBorder: vis ? 'var(--color-primary)' : 'var(--border-strong)', checkAria: vis ? 'Ocultar para acompañantes' : 'Mostrar a acompañantes', onToggleVisible: () => this.toggleActVisible(a.id), onOpen: () => this.setState({ openActivity: a.id }) }; });
+    const typeDefs = [
+      { key: 'all', label: 'Todas', glyph: 'grid' },
+      { key: 'carrera', label: 'Carreras', glyph: 'activity' },
+      { key: 'entrenamiento', label: 'Entrenamientos', glyph: 'dumbbell' },
+      { key: 'evento', label: 'Eventos', glyph: 'star' },
+    ];
+    const typeOpts = typeDefs.map(o => ({ key: o.key, label: o.label, glyph: o.glyph, active: typeF === o.key, notActive: typeF !== o.key, rowBg: typeF === o.key ? 'var(--fde-cyan-50)' : '#fff', rowColor: typeF === o.key ? 'var(--fde-cyan-700)' : 'var(--text-strong)', onPick: () => this.setActType(o.key) }));
+    const typeActive = typeF !== 'all';
+    const typeLabel = (typeDefs.find(o => o.key === typeF) || typeDefs[0]).label;
+    const fmtShort = (iso) => { const p = iso.split('-'); const mm = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][+p[1] - 1]; return (+p[2]) + ' ' + mm; };
+    let dateLabel = 'Fecha';
+    if (dFrom && dTo) dateLabel = fmtShort(dFrom) + ' – ' + fmtShort(dTo);
+    else if (dFrom) dateLabel = 'Desde ' + fmtShort(dFrom);
+    else if (dTo) dateLabel = 'Hasta ' + fmtShort(dTo);
+    const dateActive = !!(dFrom || dTo);
+    const anyActFilter = typeActive || dateActive || athF !== 'all' || favOnly;
+    const pill = (on) => ({ bg: on ? 'var(--fde-cyan-50)' : '#fff', border: on ? 'var(--fde-cyan)' : 'var(--border-strong)', color: on ? 'var(--fde-cyan-700)' : 'var(--text-strong)' });
+    const tp = pill(typeActive), dp = pill(dateActive);
+
+    // ---- Actividades screen: filter-by-athlete + favorites ----
+    const athDefs = S.athletes.slice().sort((a, b) => {
+      const fa = favSet.has(a.id) ? 0 : 1, fb = favSet.has(b.id) ? 0 : 1;
+      if (fa !== fb) return fa - fb;
+      return a.name.localeCompare(b.name);
+    });
+    const athFilterOpts = athDefs.map(a => {
+      const isFav = favSet.has(a.id), sel = athF === a.id;
+      return {
+        key: a.id, name: a.name, selected: sel, notSelected: !sel,
+        rowBg: sel ? 'var(--fde-cyan-50)' : '#fff', rowColor: sel ? 'var(--fde-cyan-700)' : 'var(--text-strong)',
+        isFav, starColor: isFav ? '#E6A700' : 'var(--border-strong)', starFill: isFav ? '#E6A700' : 'none',
+        starBg: isFav ? '#FCF3D6' : 'var(--surface-sunken)',
+        favLabel: isFav ? 'Quitar de favoritos' : 'Marcar como favorito',
+        onPick: () => this.setActAth(a.id),
+        onToggleFav: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.toggleFavAthlete(a.id); },
+      };
+    });
+    const athFilterActive = athF !== 'all';
+    const athSel = S.athletes.find(a => a.id === athF);
+    const athFilterLabel = athFilterActive ? (athSel ? athSel.name : 'Atleta') : 'Atleta';
+    const ahp = pill(athFilterActive);
+
+    // ---- Agenda (guía) filter-bar values ----
+    const agTypeOpts = typeDefs.map(o => ({ key: o.key, label: o.label, glyph: o.glyph, active: agType === o.key, rowBg: agType === o.key ? 'var(--fde-cyan-50)' : '#fff', rowColor: agType === o.key ? 'var(--fde-cyan-700)' : 'var(--text-strong)', onPick: () => this.setAgType(o.key) }));
+    const agTypeActive = agType !== 'all';
+    const agTypeLabel = (typeDefs.find(o => o.key === agType) || typeDefs[0]).label;
+    let agDateLabel = 'Fecha';
+    if (agFrom && agTo) agDateLabel = fmtShort(agFrom) + ' – ' + fmtShort(agTo);
+    else if (agFrom) agDateLabel = 'Desde ' + fmtShort(agFrom);
+    else if (agTo) agDateLabel = 'Hasta ' + fmtShort(agTo);
+    const agDateActive = !!(agFrom || agTo);
+    const agtp = pill(agTypeActive), agdp = pill(agDateActive);
+
+    const mine = S.assignments.filter(x => x.userId === 'u1');
+    const myList = mine.filter(x => this.actVisible(x.activityId) && this.athActive(x.athleteId)).map(x => { const a = this.act(x.activityId), t = this.ath(x.athleteId), tm = this.typeMeta(a.type); return { key: x.id, athName: t.name, actName: a.name, glyph: tm.glyph, tileBg: tm.tileBg, tileColor: tm.tileColor, dateLabel: a.dateLabel, time: a.time, sortKey: a.sortKey, onCancel: () => this.askCancel(x.activityId, x.athleteId) }; }).sort((p, q) => p.sortKey < q.sortKey ? -1 : 1);
+
+    let detail = {};
+    if (open) {
+      const a = this.act(open); const tm = this.typeMeta(a.type);
+      const ns = S.needs.filter(n => n.activityId === open);
+      detail = {
+        detailActName: a.name, detailType: tm.label, detailGlyph: tm.glyph,
+        detailDate: a.dateLabel, detailTime: a.time, detailPlace: a.place, detailDesc: a.desc,
+        detailAthletes: ns.filter(n => this.athActive(n.athleteId)).map(n => this.guiaRow(n)),
+        detailEmpty: ns.filter(n => this.athActive(n.athleteId)).length === 0,
+        adminDetailEmpty: ns.length === 0,
+        adminDetailAthletes: ns.map(n => {
+          const t = this.ath(n.athleteId); const c = this.conf(open, n.athleteId); const sm = this.statusMeta(c, n.required);
+          const guides = S.assignments.filter(x => x.activityId === open && x.athleteId === n.athleteId).map(x => ({ key: x.id, name: x.name, onRemove: () => this.removeGuide(x.id) }));
+          return { key: n.id, athName: t.name, athInitials: t.initials, athColor: t.color, required: n.required, confirmed: c, statusStrong: sm.strong, statusText: sm.text, statusLabel: sm.label, statusGlyph: sm.glyph, guides, noGuides: guides.length === 0, onInc: () => this.setRequired(n.id, 1), onDec: () => this.setRequired(n.id, -1), onAddGuide: () => this.openPickGuide(open, n.athleteId), onRemoveAthlete: () => this.askRemoveAthlete(n.id) };
+        }),
+      };
+    }
+
+    const atletasList = S.athletes.map(a => ({ key: a.id, name: a.name, athInitials: a.initials, athColor: a.color, sport: a.sport, activeLabel: a.active ? 'Activo' : 'Inactivo', opacity: a.active ? 1 : 0.55, toggleLabel: a.active ? 'Desactivar' : 'Activar', toggleBg: a.active ? 'var(--surface-sunken)' : 'var(--fde-emerald-50)', toggleColor: a.active ? 'var(--text-muted)' : 'var(--fde-pine)', onToggle: () => this.toggleActive(a.id), onEdit: () => this.setState({ sheet: { kind: 'addAtleta', editId: a.id }, draft: { editId: a.id, name: a.name, sport: a.sport, category: a.category || '', gender: a.gender || '' }, draftErr: '' }), onDelete: () => this.askDeleteAthlete(a.id) }));
+
+    const incompleteNeeds = S.needs.filter(n => this.conf(n.activityId, n.athleteId) < n.required);
+    const deficitActs = new Set(incompleteNeeds.map(n => n.activityId));
+
+    const guidePalette = ['var(--fde-cyan)', 'var(--fde-emerald)', 'var(--fde-ocean)', 'var(--fde-aqua)', 'var(--fde-blue)', 'var(--fde-pine)'];
+    const gq = (S.guideSearch || '').trim().toLowerCase();
+    const guidesList = S.guides
+      .map((g, i) => ({ g, color: guidePalette[i % guidePalette.length] }))
+      .filter(({ g }) => !gq || g.name.toLowerCase().indexOf(gq) !== -1)
+      .map(({ g, color }) => ({
+        key: g.id, name: g.name, initials: g.initials, color,
+        catLabel: g.cat, activeLabel: g.active ? 'Activo' : 'Inactivo', opacity: g.active ? 1 : 0.55,
+        statusBg: g.active ? 'var(--fde-emerald-50)' : 'var(--surface-sunken)',
+        statusColor: g.active ? 'var(--fde-pine)' : 'var(--text-muted)',
+        onOpen: () => this.openGuideDetail(g.id),
+      }));
+    const guidesEmpty = guidesList.length === 0;
+    let guideDetail = {};
+    if (S.openGuide) {
+      const gi = S.guides.findIndex(x => x.id === S.openGuide);
+      const gd = gi >= 0 ? S.guides[gi] : null;
+      if (gd) guideDetail = {
+        gdName: gd.name, gdInitials: gd.initials, gdColor: guidePalette[gi % guidePalette.length],
+        gdEmail: gd.email, gdPhone: gd.phone, gdJoined: gd.joined, gdCat: gd.cat,
+        gdStatusLabel: gd.active ? 'Activo' : 'Inactivo',
+        gdStatusBg: gd.active ? 'var(--fde-emerald-50)' : 'var(--surface-sunken)',
+        gdStatusColor: gd.active ? 'var(--fde-pine)' : 'var(--text-muted)',
+        gdToggleLabel: gd.active ? 'Desactivar gu\u00eda' : 'Activar gu\u00eda',
+        gdToggleBg: gd.active ? '#FDECEA' : 'var(--fde-emerald-50)',
+        gdToggleColor: gd.active ? 'var(--fde-danger)' : 'var(--fde-pine)',
+      };
+    }
+    const segGuiasOn = S.userSeg === 'guias';
+
+    let sv = {};
+    if (sheet) {
+      const a = sheet.activityId ? this.act(sheet.activityId) : null;
+      const t = sheet.athleteId ? this.ath(sheet.athleteId) : null;
+      const pickAvail = sheet.kind === 'pickAthlete' ? S.athletes.filter(x => x.active && !S.needs.some(n => n.activityId === sheet.activityId && n.athleteId === x.id)) : [];
+      const guideBusy = sheet.kind === 'pickGuide' ? new Set(S.assignments.filter(x => x.activityId === sheet.activityId).map(x => x.userId)) : new Set();
+      sv = {
+        sheetConfirm: sheet.kind === 'confirm', sheetConflict: sheet.kind === 'conflict', sheetSuccess: sheet.kind === 'success',
+        sheetConfirmCancel: sheet.kind === 'confirmCancel', sheetPickAthlete: sheet.kind === 'pickAthlete',
+        sheetConfirmRemoveAth: sheet.kind === 'confirmRemoveAth', sheetConfirmDelAct: sheet.kind === 'confirmDelAct', sheetConfirmDelAth: sheet.kind === 'confirmDelAth',
+        sheetAddAtleta: sheet.kind === 'addAtleta', sheetAddActividad: sheet.kind === 'addActividad',
+        sheetEditGuide: sheet.kind === 'editGuide',
+        sheetPickGuide: sheet.kind === 'pickGuide',
+        pickGuideAthName: t ? t.name : '',
+        guidePickList: (sheet.kind === 'pickGuide' ? S.guides : []).map(g => {
+          const busy = guideBusy.has(g.id);
+          return {
+            key: g.id, name: g.name, initials: g.initials, busy, free: !busy,
+            nameColor: busy ? 'var(--text-muted)' : 'var(--text-strong)',
+            avatarBg: busy ? 'var(--surface-sunken)' : 'var(--fde-cyan-50)',
+            avatarColor: busy ? 'var(--text-muted)' : 'var(--fde-cyan-700)',
+            cardBg: busy ? 'var(--surface-sunken)' : '#fff',
+            cardBorder: busy ? 'var(--border-subtle)' : 'var(--border-strong)',
+            cardOpacity: busy ? 0.6 : 1,
+            cursor: busy ? 'default' : 'pointer',
+            statusLabel: busy ? 'Ya en esta actividad' : 'Libre',
+            statusColor: busy ? 'var(--text-muted)' : 'var(--fde-pine)',
+            onPick: busy ? (() => {}) : (() => this.addGuideUser(g)),
+          };
+        }),
+        sheetAthName: t ? t.name : '', sheetAthInitials: t ? t.initials : '', sheetAthColor: t ? t.color : 'var(--fde-cyan)',
+        sheetActName: a ? a.name : '', sheetActDate: a ? (a.dateLabel + ' · ' + a.time) : '',
+        conflictOther: sheet.otherId ? this.ath(sheet.otherId).name : '',
+        successAthName: t ? t.name : '', cancelAthName: t ? t.name : '', removeAthName: t ? t.name : '', delAthName: t ? t.name : '', delActName: a ? a.name : '',
+        pickList: pickAvail.map(x => ({ key: x.id, name: x.name, sport: x.sport, athInitials: x.initials, athColor: x.color, onPick: () => this.addNeed(sheet.activityId, x.id) })),
+        pickEmpty: sheet.kind === 'pickAthlete' && pickAvail.length === 0,
+      };
+    }
+    const dtype = S.draft.type || 'carrera';
+    const chip = (on) => on ? { b: 'var(--color-primary)', bg: 'var(--fde-cyan-50)', c: 'var(--fde-cyan-700)' } : { b: 'var(--border-strong)', bg: '#fff', c: 'var(--text-muted)' };
+    const tc = chip(dtype === 'carrera'), te = chip(dtype === 'entrenamiento'), tv = chip(dtype === 'evento');
+    const isEdit = !!(S.draft && S.draft.editId);
+
+    const flt = (on) => on ? { bg: 'var(--color-primary)', color: '#fff', border: 'var(--color-primary)' } : { bg: '#fff', color: 'var(--text-muted)', border: 'var(--border-subtle)' };
+    const fa = flt(S.filter === 'all'), fu = flt(S.filter === 'urgent'), fw = flt(S.filter === 'week');
+    const notifList = this.buildNotifs();
+
+    return {
+      demoBar: (this.props && this.props.showDemoBar) !== false,
+      loading: S.loading && S.authed, isGuia, isAdmin,
+      navGuia: isGuia && S.authed && !meDisabled, navAdmin: isAdmin && S.authed,
+      showAuth: !S.authed,
+      authWelcome: S.authView === 'welcome', authEmail: S.authView === 'email', authRegister: S.authView === 'register', authAdmin: S.authView === 'admin',
+      authError: !!S.authError, authErrorMsg: S.authError || '',
+      gotoWelcome: () => this.gotoAuth('welcome'), gotoEmail: () => this.gotoAuth('email'), gotoRegister: () => this.gotoAuth('register'), gotoAdmin: () => this.gotoAuth('admin'),
+      loginGoogle: () => this.loginGoogle(), submitEmail: () => this.submitEmail(), submitRegister: () => this.submitRegister(), submitAdmin: () => this.submitAdmin(), logout: () => this.logout(),
+      showTyc: rdy && S.authed && isGuia && !!S.pendingTyc,
+      tycSummaryOpen: !S.tycFull, tycFullOpen: !!S.tycFull,
+      acceptTyc: () => this.acceptTyc(), declineTyc: () => this.declineTyc(),
+      openTycFull: () => this.openTycFull(), closeTycFull: () => this.closeTycFull(),
+      setDraftEmail: (e) => this.setDraft('email', e.target.value), setDraftPass: (e) => this.setDraft('pass', e.target.value), setDraftCode: (e) => this.setDraft('code', e.target.value),
+      draftEmail: S.draft.email || '', draftPass: S.draft.pass || '', draftCode: S.draft.code || '',
+      roleGuiaActive: isGuia ? 'var(--color-primary)' : 'transparent', roleGuiaText: isGuia ? '#fff' : 'var(--text-muted)',
+      roleAdminActive: isAdmin ? 'var(--fde-navy)' : 'transparent', roleAdminText: isAdmin ? '#fff' : 'var(--text-muted)',
+      setGuia: () => this.setState({ authed: true, role: 'guia', tab: 'inicio', openActivity: null, sheet: null }),
+      setAdmin: () => this.setState({ authed: true, role: 'admin', tab: 'panel', openActivity: null, sheet: null }),
+
+      statusBarBg: '#F4F8FA',
+      statusBarColor: '#112532',
+
+      showInicio: rdy && S.authed && isGuia && !meDisabled && !open && S.tab === 'inicio',
+      showAgenda: rdy && S.authed && isGuia && !meDisabled && !open && S.tab === 'agenda',
+      showPerfil: rdy && S.authed && isGuia && !meDisabled && !open && S.tab === 'perfil',
+      showDetailGuia: rdy && S.authed && isGuia && !meDisabled && !!open,
+      showDisabled: rdy && meDisabled,
+      showAdminPanel: rdy && S.authed && isAdmin && !open && S.tab === 'panel',
+      showAdminAtletas: rdy && S.authed && isAdmin && !open && !S.openGuide && S.tab === 'atletas',
+      showGuideDetail: rdy && S.authed && isAdmin && !open && !!S.openGuide && S.tab === 'atletas',
+      showAdminActividades: rdy && S.authed && isAdmin && !open && S.tab === 'actividades',
+      showDetailAdmin: rdy && S.authed && isAdmin && !!open,
+
+      inicioColor: S.tab === 'inicio' ? ACT : INACT, agendaColor: S.tab === 'agenda' ? ACT : INACT, perfilColor: S.tab === 'perfil' ? ACT : INACT,
+      panelColor: S.tab === 'panel' ? ACT : INACT, atletasColor: S.tab === 'atletas' ? ACT : INACT, actividadesColor: S.tab === 'actividades' ? ACT : INACT,
+      inicioCur: S.tab === 'inicio' ? 'page' : 'false', agendaCur: S.tab === 'agenda' ? 'page' : 'false', perfilCur: S.tab === 'perfil' ? 'page' : 'false',
+      panelCur: S.tab === 'panel' ? 'page' : 'false', atletasCur: S.tab === 'atletas' ? 'page' : 'false', actividadesCur: S.tab === 'actividades' ? 'page' : 'false',
+      goInicio: () => this.setState({ tab: 'inicio', openActivity: null }),
+      goAgenda: () => this.setState({ tab: 'agenda', openActivity: null }),
+      goPerfil: () => this.setState({ tab: 'perfil', openActivity: null }),
+      goPanel: () => this.setState({ tab: 'panel', openActivity: null, openGuide: null }),
+      goAtletas: () => this.setState({ tab: 'atletas', openActivity: null, openGuide: null }),
+      goActividades: () => this.setState({ tab: 'actividades', openActivity: null, openGuide: null }),
+      back: () => this.setState({ openActivity: null }),
+      openNotifs: () => this.openNotifs(),
+
+      setFilterAll: () => this.setState({ filter: 'all' }), setFilterUrgent: () => this.setState({ filter: 'urgent' }), setFilterWeek: () => this.setState({ filter: 'week' }),
+      fAll: S.filter === 'all', fUrgent: S.filter === 'urgent', fWeek: S.filter === 'week',
+      fAllBg: fa.bg, fAllColor: fa.color, fAllBorder: fa.border,
+      fUrgBg: fu.bg, fUrgColor: fu.color, fUrgBorder: fu.border,
+      fWeekBg: fw.bg, fWeekColor: fw.color, fWeekBorder: fw.border,
+
+      userName: S.user.name, userEmail: S.user.email, userInitials: S.user.initials, adminName: S.adminName,
+      needCount: allNeeds.length, needsList, needsEmpty: needsList.length === 0,
+      filterCountLabel: needsList.length === 0 ? '' : ('Mostrando ' + needsList.length + (needsList.length === 1 ? ' atleta' : ' atletas') + (S.filter === 'all' ? '' : ' · filtrado')),
+      emptyTitle: allNeeds.length === 0 ? '¡Todo cubierto!' : 'Nada en este filtro',
+      emptySub: allNeeds.length === 0 ? 'Ningún atleta espera acompañante por ahora.' : 'Probá con otro filtro para ver más atletas.',
+      agendaList, agendaEmpty: agendaList.length === 0,
+      agTypeOpts, agTypeLabel, agTypeActive, agDateLabel, agDateActive,
+      agTypeFilter: agType, agDateFrom: agFrom, agDateTo: agTo,
+      agTypeMenuOpen: S.agMenu === 'type', agDateMenuOpen: S.agMenu === 'date', agMenuOpen: !!S.agMenu,
+      agTypePillBg: agtp.bg, agTypePillBorder: agtp.border, agTypePillColor: agtp.color,
+      agDatePillBg: agdp.bg, agDatePillBorder: agdp.border, agDatePillColor: agdp.color,
+      agAnyFilter: agTypeActive || agDateActive,
+      agToggleTypeMenu: () => this.toggleAgMenu('type'), agToggleDateMenu: () => this.toggleAgMenu('date'),
+      agCloseMenu: () => this.closeAgMenu(), agClearDates: () => this.clearAgDates(),
+      agSetFrom: (e) => this.setAgFrom(e.target.value), agSetTo: (e) => this.setAgTo(e.target.value),
+      agClearFilters: () => this.setState({ agType: 'all', agFrom: '', agTo: '', agMenu: null }),
+      coverageList, actividadesList, actividadesEmpty: actividadesList.length === 0,
+      actTypeFilter: typeF, actDateFrom: dFrom, actDateTo: dTo,
+      typeOpts, typeLabel, typeActive,
+      typeMenuOpen: S.actMenu === 'type', dateMenuOpen: S.actMenu === 'date', actMenuOpen: !!S.actMenu,
+      typePillBg: tp.bg, typePillBorder: tp.border, typePillColor: tp.color,
+      datePillBg: dp.bg, datePillBorder: dp.border, datePillColor: dp.color,
+      dateLabel, dateActive, anyActFilter,
+      toggleTypeMenu: () => this.toggleActMenu('type'), toggleDateMenu: () => this.toggleActMenu('date'),
+      closeActMenu: () => this.closeActMenu(), clearActDates: () => this.clearActDates(),
+      setActDateFrom: (e) => this.setActDateFrom(e.target.value), setActDateTo: (e) => this.setActDateTo(e.target.value),
+      clearActFilters: () => this.setState({ actTypeFilter: 'all', actDateFrom: '', actDateTo: '', actAthFilter: 'all', favOnly: false, actMenu: null }),
+
+      athFilterOpts, athFilterLabel, athFilterActive,
+      athFilterAllActive: !athFilterActive,
+      athAllRowBg: !athFilterActive ? 'var(--fde-cyan-50)' : '#fff',
+      athAllRowColor: !athFilterActive ? 'var(--fde-cyan-700)' : 'var(--text-strong)',
+      clearAthFilter: () => this.setActAth('all'),
+      athPillBg: ahp.bg, athPillBorder: ahp.border, athPillColor: ahp.color,
+      athMenuOpen: S.actMenu === 'ath', toggleAthMenu: () => this.toggleActMenu('ath'),
+      favOnly, favOnlyOn: favOnly, favCount: favList.length,
+      favTrackBg: favOnly ? 'var(--color-primary)' : 'var(--border-strong)',
+      favKnobShift: favOnly ? 'translateX(20px)' : 'translateX(0)',
+      favPillBorder: favOnly ? 'var(--fde-cyan)' : 'var(--border-strong)',
+      favPillBg: favOnly ? 'var(--fde-cyan-50)' : '#fff',
+      favPillColor: favOnly ? 'var(--fde-cyan-700)' : 'var(--text-muted)',
+      toggleFavOnly: () => this.toggleFavOnly(),
+      myCount: mine.length, doneCount: S.done, myList, myEmpty: mine.length === 0,
+
+      kpiActivities: S.activities.length, kpiAthletes: S.athletes.filter(a => a.active).length, kpiGuides: S.registeredGuides,
+      kpiNoCoverage: incompleteNeeds.length, kpiDeficit: deficitActs.size, hasDeficit: deficitActs.size > 0,
+      kpiAlertBg: deficitActs.size > 0 ? '#FDECEA' : '#E4F4EC', kpiAlertBorder: deficitActs.size > 0 ? '#F5C6C0' : '#CDEBDA', kpiAlertColor: deficitActs.size > 0 ? '#C0392B' : '#15734D',
+
+      atletasList, atletasEmpty: atletasList.length === 0,
+      openAddAtleta: () => this.setState({ sheet: { kind: 'addAtleta' }, draft: {} }),
+      openAddActividad: () => this.setState({ sheet: { kind: 'addActividad' }, draft: { type: 'carrera' } }),
+      openAddAthleteToActivity: () => this.openAddAthleteToActivity(),
+      editActivity: () => this.editActivity(), askDeleteActivity: () => this.askDeleteActivity(),
+
+      ...detail,
+
+      showToast: !!S.toast, toast: S.toast,
+      notifList, notifEmpty: notifList.length === 0, notifUnread: !S.notifSeen && notifList.length > 0, notifCount: notifList.length,
+      appReady: S.authed && !S.loading,
+      showSheet: !!sheet, ...sv, sheetNotifs: !!sheet && sheet.kind === 'notifs',
+      confirmSign: () => this.confirmSign(), closeSheet: () => this.closeSheet(), stop: (e) => this.stop(e),
+      doCancel: () => this.doCancel(), doRemoveAthlete: () => this.doRemoveAthlete(), doDeleteActivity: () => this.doDeleteActivity(), doDeleteAthlete: () => this.doDeleteAthlete(),
+      goMyList: () => this.setState({ role: 'guia', tab: 'perfil', openActivity: null, sheet: null }),
+
+      draftName: S.draft.name || '', draftSport: S.draft.sport || '', draftDateISO: S.draft.dateISO || '', draftTime: S.draft.time || '', draftPlace: S.draft.place || '',
+      draftHourH: (S.draft.time || '').split(':')[0] || '', draftMin: (S.draft.time || '').split(':')[1] || '',
+      hourOptions: [{ value: '', label: 'Hora', key: 'none' }].concat(Array.from({ length: 24 }, (_, i) => { const hh = String(i).padStart(2, '0'); return { value: hh, label: hh, key: hh }; })),
+      minuteOptions: [{ value: '', label: 'Min', key: 'none' }, { value: '00', label: '00', key: '00' }, { value: '15', label: '15', key: '15' }, { value: '30', label: '30', key: '30' }, { value: '45', label: '45', key: '45' }],
+      setHourH: (e) => this.setHourPart('h', e.target.value), setMin: (e) => this.setHourPart('m', e.target.value),
+      draftError: !!S.draftErr, draftErrorMsg: S.draftErr || '',
+      saveAtletaLabel: isEdit ? 'Guardar cambios' : 'Guardar atleta',
+      atletaSheetTitle: isEdit ? 'Editar atleta' : 'Nuevo atleta',
+      draftCategory: S.draft.category || '', draftGender: S.draft.gender || '',
+      setDraftCategory: (e) => this.setDraft('category', e.target.value),
+      setDraftGender: (e) => this.setDraft('gender', e.target.value),
+      actSheetTitle: isEdit ? 'Editar actividad' : 'Nueva actividad', actSaveLabel: isEdit ? 'Guardar cambios' : 'Crear actividad',
+      setDraftName: (e) => this.setDraft('name', e.target.value),
+      setDraftSport: (e) => this.setDraft('sport', e.target.value),
+      setDraftDateISO: (e) => this.setDraft('dateISO', e.target.value),
+      setDraftTime: (e) => this.setDraft('time', e.target.value),
+      setDraftPlace: (e) => this.setDraft('place', e.target.value),
+      setTypeCarrera: () => this.setDraft('type', 'carrera'),
+      setTypeEntrenamiento: () => this.setDraft('type', 'entrenamiento'),
+      setTypeEvento: () => this.setDraft('type', 'evento'),
+      typeCarreraBorder: tc.b, typeCarreraBg: tc.bg, typeCarreraColor: tc.c,
+      typeEntreBorder: te.b, typeEntreBg: te.bg, typeEntreColor: te.c,
+      typeEventoBorder: tv.b, typeEventoBg: tv.bg, typeEventoColor: tv.c,
+      saveAtleta: () => this.saveAtleta(), saveActividad: () => this.saveActividad(),
+
+      segUserAtletas: !segGuiasOn, segUserGuias: segGuiasOn,
+      segAtletasBg: !segGuiasOn ? '#fff' : 'transparent', segAtletasColor: !segGuiasOn ? 'var(--color-primary)' : 'var(--text-muted)', segAtletasShadow: !segGuiasOn ? 'var(--shadow-xs)' : 'none',
+      segGuiasBg: segGuiasOn ? '#fff' : 'transparent', segGuiasColor: segGuiasOn ? 'var(--color-primary)' : 'var(--text-muted)', segGuiasShadow: segGuiasOn ? 'var(--shadow-xs)' : 'none',
+      setSegAtletas: () => this.setUserSeg('atletas'), setSegGuias: () => this.setUserSeg('guias'),
+      guideSearch: S.guideSearch || '', setGuideSearch: (e) => this.setGuideSearch(e.target.value), clearGuideSearch: () => this.setGuideSearch(''),
+      guideSearchActive: !!(S.guideSearch || '').trim(),
+      guidesList, guidesEmpty,
+      closeGuideDetail: () => this.closeGuideDetail(),
+      gdToggle: () => this.toggleGuideActive(S.openGuide), gdEdit: () => this.openEditGuide(S.openGuide), saveGuide: () => this.saveGuide(),
+      draftPhone: S.draft.phone || '', setDraftPhone: (e) => this.setDraft('phone', e.target.value),
+      ...guideDetail,
+    };
+  }
+}
+</script>
+</body>
+</html>
