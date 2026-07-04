@@ -29,6 +29,8 @@ interface AuthContextValue {
     password: string,
     role: UserRole,
     adminCode?: string,
+    phone?: string,
+    category?: string,
   ) => Promise<void>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
@@ -165,12 +167,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signUp = useCallback(
-    async (name: string, email: string, password: string, role: UserRole, adminCode?: string) => {
+    async (
+      name: string,
+      email: string,
+      password: string,
+      role: UserRole,
+      adminCode?: string,
+      phone?: string,
+      category?: string,
+    ) => {
       const data: Record<string, string> = {
         full_name: name.trim(),
         initials: initialsFrom(name),
         role,
       }
+      // Teléfono y categoría del Atleta Guía: el trigger handle_new_user
+      // (migración 0005) los copia del metadata al perfil.
+      if (phone?.trim()) data.phone = phone.trim()
+      if (category?.trim()) data.category = category.trim()
       if (role === 'admin' && adminCode) data.admin_code = adminCode
       const { data: result, error } = await supabase.auth.signUp({
         email: email.trim(),

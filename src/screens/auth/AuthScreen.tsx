@@ -275,6 +275,8 @@ function RegisterForm({ onView }: { onView: (v: View) => void }) {
   const { signUp } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [category, setCategory] = useState('')
   const [pass, setPass] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -286,10 +288,11 @@ function RegisterForm({ onView }: { onView: (v: View) => void }) {
     if (!name.trim()) return setError('Ingresá tu nombre.')
     const parsed = emailSchema.safeParse(email)
     if (!parsed.success) return setError(parsed.error.issues[0].message)
+    if (!phone.trim()) return setError('Ingresá tu teléfono.')
     if (pass.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.')
     setLoading(true)
     try {
-      await signUp(name, email, pass, 'guia')
+      await signUp(name, email, pass, 'guia', undefined, phone, category)
       setDone(true)
     } catch (err) {
       setError(friendlyError((err as Error).message))
@@ -322,6 +325,8 @@ function RegisterForm({ onView }: { onView: (v: View) => void }) {
       <FormError>{error}</FormError>
       <TextField label="Nombre completo" id="name" maxLength={120} value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre y apellido" autoComplete="name" />
       <TextField label="Email" id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vos@email.com" />
+      <TextField label="Teléfono" id="phone" type="tel" maxLength={40} autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+598 99 123 456" />
+      <TextField label="Categoría (opcional)" id="category" maxLength={60} value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Ej: Sub-18, Máster…" />
       <TextField label="Contraseña" id="pass" type="password" autoComplete="new-password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Mínimo 6 caracteres" />
       <Button full loading={loading} type="submit" style={{ marginTop: 6 }}>
         Crear cuenta
