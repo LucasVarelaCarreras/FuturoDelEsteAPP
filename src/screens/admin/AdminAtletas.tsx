@@ -157,7 +157,7 @@ export function AdminAtletas() {
       {/* Pestañas Atletas Líder / Atletas Guía */}
       <div
         role="tablist"
-        aria-label="Tipo de atleta"
+        aria-label="Elegir entre Atletas Líder y Atletas Guía"
         style={{
           display: 'flex',
           gap: 4,

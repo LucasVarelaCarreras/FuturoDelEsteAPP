@@ -68,9 +68,9 @@ export function AdminPanel() {
   }
 
   const kpis = [
-    { label: 'Atletas activos', value: athletes.filter((a) => a.active).length, color: 'var(--fde-emerald)' },
+    { label: 'Atletas Líder activos', value: athletes.filter((a) => a.active).length, color: 'var(--fde-emerald)' },
     { label: 'Actividades', value: activities.length, color: 'var(--fde-cyan)' },
-    { label: 'Guías registrados', value: guidesQ.data?.length ?? 0, color: 'var(--fde-ocean)' },
+    { label: 'Atletas Guía registrados', value: guidesQ.data?.length ?? 0, color: 'var(--fde-ocean)' },
     {
       label: 'Cupos por cubrir',
       value: upcoming.reduce((s, a) => s + missingForActivity(openNeeds, assignments, a.id), 0),
