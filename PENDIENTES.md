@@ -58,8 +58,47 @@ la interfaz).
       [primer nombre real]" como la demo. Todo verificado con
       Playwright.
 
-Queda para la iteración 2 (otro agente): filtros de Actividades del
-guía, favoritos del guía y headers decorativos con degradé.
+## Ronda de fidelidad con la demo v2.2 — iteración 2 (COMPLETA)
+
+Referencia: `legacy/Versiones/v2.2_extracted/Acompa*.dc.html`. Verificado
+con typecheck + `npm run build` + pruebas funcionales reales (PostgreSQL
+16 local con stubs de `auth.uid()/auth.role()` para la RLS; Chromium a
+390px contra un mock de Supabase para la interfaz — 17 checks de UI +
+3 del Panel del admin, todos PASS).
+
+- [x] **Filtros de Actividades del guía — segunda fila** (demo líneas
+      ~590-620): en `GuiaActividades` se agregó, debajo de la fila de
+      tipo+fecha, un dropdown "Atleta Líder" (panel blanco flotante con
+      sombra; fila "Todos los atletas" arriba con separador; por cada
+      Atleta Líder activo una fila con check de selección y su propia
+      estrella circular de 34x34 para favoritear) y un toggle "Favoritos"
+      (switch visual) que limita la lista a las actividades que
+      involucran a Atletas Líder marcados por ESE guía. Va SÓLO en
+      Actividades del guía (la demo no lo tiene en Actividades del admin).
+- [x] **Favoritos del guía — migración 0006**: `athlete_favorites`
+      (creada en la 0004 SÓLO para `is_admin()`) ahora deja que CUALQUIER
+      usuario autenticado lea/escriba únicamente SUS PROPIAS filas
+      (`auth.uid() = user_id`), sin importar el rol. La 0006 reemplaza las
+      3 políticas de la 0004 (no se editó ese archivo ya aplicado). Los
+      hooks `useFavorites`/`useToggleFavorite` ya eran genéricos.
+      Probado contra PostgreSQL 16 local (8 casos, PASS): un guía
+      favoritea para sí, NO ve ni borra los favoritos de otro usuario, NO
+      puede insertar suplantando el `user_id` de otro (with check), anon
+      sin acceso, el admin sigue con los suyos.
+      **PENDIENTE MANUAL para Lucas: aplicar la migración 0006 en el
+      Supabase real (después de la 0004, que también sigue pendiente).
+      Sin la 0006 el guía no puede marcar favoritos (da error de RLS); el
+      admin sigue funcionando con lo de la 0004.**
+- [x] **Headers decorativos con degradé**: `GuiaInicio` y `AdminPanel`
+      envuelven su saludo/título en un bloque con `var(--gradient-deep)`
+      y esquinas inferiores redondeadas (mismos estilos que los detalles),
+      como separador visual antes de las tarjetas/paneles. Sólo decorativo
+      (texto en blanco sobre el degradé, sin texto nuevo).
+- [x] **Cancelar directo desde Perfil**: cada fila de "Mis
+      acompañamientos" en `GuiaPerfil` tiene un botón "Cancelar" que usa
+      `useCancelAssignment` con el mismo Sheet de confirmación
+      ("¿Seguro que querés cancelar?") de Inicio/Actividades; no navega a
+      otra pantalla.
 
 ## Ronda de correcciones pedida por Lucas (COMPLETA — sólo queda aplicar la migración 0004 en Supabase, ver abajo)
 

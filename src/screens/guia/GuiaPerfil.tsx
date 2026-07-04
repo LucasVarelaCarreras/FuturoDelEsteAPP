@@ -1,16 +1,41 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useActivities, useAssignments, useAthletes, useLatestTermsAcceptance } from '@/hooks/data'
-import { Avatar, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
+import {
+  useActivities,
+  useAssignments,
+  useAthletes,
+  useCancelAssignment,
+  useLatestTermsAcceptance,
+} from '@/hooks/data'
+import { useToast } from '@/context/ToastContext'
+import { Avatar, Button, Card, EmptyState, ErrorState, FullScreenLoader } from '@/components/ui'
+import { Sheet } from '@/components/Sheet'
 import { Icon } from '@/components/Icon'
 import { colorForId, formatDateLabel } from '@/lib/format'
+import type { AssignmentRow } from '@/types/database'
 
 export function GuiaPerfil() {
   const { profile, signOut } = useAuth()
+  const { notify } = useToast()
   const activitiesQ = useActivities()
   const athletesQ = useAthletes()
   const assignmentsQ = useAssignments()
   const tcQ = useLatestTermsAcceptance(profile?.id)
+  const cancel = useCancelAssignment()
+
+  const [cancelAssignment, setCancelAssignment] = useState<AssignmentRow | null>(null)
+
+  const doCancel = async () => {
+    if (!cancelAssignment) return
+    try {
+      await cancel.mutateAsync(cancelAssignment.id)
+      notify('Acompañamiento cancelado')
+    } catch {
+      notify('No se pudo cancelar. Intentá de nuevo.')
+    } finally {
+      setCancelAssignment(null)
+    }
+  }
 
   const athMap = useMemo(() => new Map((athletesQ.data ?? []).map((a) => [a.id, a])), [athletesQ.data])
   const actMap = useMemo(() => new Map((activitiesQ.data ?? []).map((a) => [a.id, a])), [activitiesQ.data])
@@ -66,7 +91,26 @@ export function GuiaPerfil() {
                   {r.act!.name} · {formatDateLabel(r.act!.date)}
                 </div>
               </div>
-              <Icon glyph="checkcircle" size={20} color="var(--fde-success)" />
+              <button
+                onClick={() => setCancelAssignment(r.assignment)}
+                aria-label={`Cancelar acompañamiento a ${r.ath!.name}`}
+                style={{
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1.5px solid var(--border-subtle)',
+                  background: 'var(--surface-card)',
+                  color: 'var(--fde-danger)',
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  cursor: 'pointer',
+                }}
+              >
+                <Icon glyph="x" size={14} color="var(--fde-danger)" /> Cancelar
+              </button>
             </Card>
           ))}
         </div>
@@ -108,6 +152,18 @@ export function GuiaPerfil() {
       <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text-muted)', marginTop: 18 }}>
         Fundación Futuro del Este · v1.0.0
       </p>
+
+      {/* Confirmar cancelación (mismo patrón que Inicio/Actividades) */}
+      <Sheet open={!!cancelAssignment} onClose={() => setCancelAssignment(null)} title="Cancelar acompañamiento">
+        <div style={{ paddingBottom: 8 }}>
+          <p style={{ fontSize: 14.5, color: 'var(--text-body)', lineHeight: 1.6, marginBottom: 16 }}>
+            ¿Seguro que querés cancelar tu acompañamiento? El cupo quedará disponible para otra persona.
+          </p>
+          <Button full variant="danger" loading={cancel.isPending} onClick={doCancel}>
+            Sí, cancelar
+          </Button>
+        </div>
+      </Sheet>
     </div>
   )
 }
