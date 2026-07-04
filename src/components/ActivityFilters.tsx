@@ -98,8 +98,12 @@ export function ActivityFilters({ value, onChange, athletes, favByAthlete, onTog
         <div onClick={() => setOpenMenu(null)} style={{ position: 'fixed', inset: 0, zIndex: 6 }} aria-hidden="true" />
       )}
 
-      {/* Fila 1 — filtro por tipo + filtro por rango de fecha */}
-      <div style={{ display: 'flex', gap: 9, marginBottom: 8, position: 'relative', zIndex: 7 }}>
+      {/* Fila 1 — filtro por tipo + filtro por rango de fecha.
+          zIndex dinámico: cuando un dropdown de ESTA fila está abierto, la
+          fila sube por encima de la fila 2 (si no, al tener ambas filas el
+          mismo zIndex fijo, la fila 2 -que va después en el DOM- siempre
+          pintaba encima y tapaba el popover). */}
+      <div style={{ display: 'flex', gap: 9, marginBottom: 8, position: 'relative', zIndex: openMenu === 'type' || openMenu === 'date' ? 20 : 7 }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <button
             onClick={() => setOpenMenu((m) => (m === 'type' ? null : 'type'))}
@@ -205,7 +209,7 @@ export function ActivityFilters({ value, onChange, athletes, favByAthlete, onTog
       </div>
 
       {/* Fila 2 — dropdown de Atleta Líder (con estrellas de favorito) + toggle Favoritos */}
-      <div style={{ display: 'flex', gap: 9, marginBottom: 10, position: 'relative', zIndex: 7 }}>
+      <div style={{ display: 'flex', gap: 9, marginBottom: 10, position: 'relative', zIndex: openMenu === 'ath' ? 20 : 7 }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <button
             onClick={() => setOpenMenu((m) => (m === 'ath' ? null : 'ath'))}
@@ -302,7 +306,11 @@ export function ActivityFilters({ value, onChange, athletes, favByAthlete, onTog
           )}
         </div>
 
-        {/* Toggle "Favoritos" (switch visual como la demo) */}
+        {/* Toggle "Favoritos": solo ícono + switch (sin la palabra "Favoritos",
+            el significado ya es obvio por contexto) para no comerle ancho a
+            "Atleta Líder" al lado. Mismo padding/altura que el resto de los
+            botones de filtro (filterButtonStyle) para quedar a la misma
+            altura. Accesibilidad cubierta por aria-label. */}
         <button
           onClick={() => onChange({ favOnly: !value.favOnly })}
           aria-pressed={value.favOnly}
@@ -312,21 +320,24 @@ export function ActivityFilters({ value, onChange, athletes, favByAthlete, onTog
             display: 'flex',
             alignItems: 'center',
             gap: 9,
-            padding: '9px 11px',
+            padding: '10px 12px',
             borderRadius: 'var(--radius-md)',
             border: '1.5px solid ' + (value.favOnly ? '#e6a817' : 'var(--border-subtle)'),
             background: value.favOnly ? '#fef6e0' : 'var(--surface-card)',
             color: value.favOnly ? '#a9760d' : 'var(--text-body)',
             fontWeight: 800,
             fontSize: 13,
+            cursor: 'pointer',
           }}
         >
           <Icon glyph="star" size={15} color="currentColor" fill={value.favOnly ? '#f5c542' : 'none'} />
-          <span>Favoritos</span>
+          {/* Switch más chico (antes 38x22 con thumb 18) para que su altura de
+              contenido no supere la del ícono (15px) y el botón quede a la
+              misma altura exacta que los demás filtros. */}
           <span
             style={{
-              width: 38,
-              height: 22,
+              width: 32,
+              height: 16,
               borderRadius: 999,
               background: value.favOnly ? '#f5c542' : 'var(--border-strong)',
               position: 'relative',
@@ -339,8 +350,8 @@ export function ActivityFilters({ value, onChange, athletes, favByAthlete, onTog
                 position: 'absolute',
                 top: 2,
                 left: 2,
-                width: 18,
-                height: 18,
+                width: 12,
+                height: 12,
                 borderRadius: '50%',
                 background: '#fff',
                 boxShadow: '0 1px 3px rgba(0,0,0,.25)',
