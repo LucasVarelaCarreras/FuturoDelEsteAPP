@@ -127,6 +127,33 @@ export function useToggleAthleteActive() {
   })
 }
 
+/** Marca / desmarca un Atleta Líder como favorito del admin (estrella). */
+export function useSetAthleteFavorite() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, favorite }: { id: string; favorite: boolean }) => {
+      const { error } = await supabase.from('athletes').update({ favorite }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.athletes }),
+  })
+}
+
+/**
+ * Marca / desmarca un Atleta Guía como favorito del admin (estrella).
+ * En la base sólo un admin puede escribir esta columna (migración 0004).
+ */
+export function useSetGuideFavorite() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, favorite }: { id: string; favorite: boolean }) => {
+      const { error } = await supabase.from('profiles').update({ favorite }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.guides }),
+  })
+}
+
 export function useDeleteAthlete() {
   const qc = useQueryClient()
   return useMutation({

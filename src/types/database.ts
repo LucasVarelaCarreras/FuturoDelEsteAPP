@@ -11,6 +11,8 @@ export type ProfileRow = {
   email: string
   initials: string
   role: UserRole
+  /** Marcado como favorito por el admin (sólo un admin puede cambiarlo). */
+  favorite: boolean
   created_at: string
   updated_at: string
 }
@@ -24,6 +26,8 @@ export type AthleteRow = {
   category: string
   gender: string
   active: boolean
+  /** Marcado como favorito por el admin. */
+  favorite: boolean
   created_by: string | null
   created_at: string
   updated_at: string

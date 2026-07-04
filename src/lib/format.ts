@@ -35,6 +35,14 @@ const BRAND_COLORS = [
   'var(--fde-pine)',
 ]
 
+/** Normaliza un texto para búsquedas: minúsculas y sin tildes. */
+export function searchKey(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
 /** Color de marca determinístico según un id (para avatares). */
 export function colorForId(id: string): string {
   let hash = 0
