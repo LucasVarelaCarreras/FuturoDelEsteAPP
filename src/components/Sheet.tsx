@@ -14,11 +14,25 @@ interface SheetProps {
 export function Sheet({ open, onClose, title, children, dismissible = true }: SheetProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
+  // Los callbacks se leen a través de refs para que el efecto de apertura
+  // dependa SOLO de `open`. Si dependiera de `onClose` (que suele ser una
+  // arrow function nueva en cada render del padre), cada tecla escrita en un
+  // formulario cuyo estado vive en el padre re-ejecutaría el efecto: su
+  // limpieza devuelve el foco al elemento previo y el timer vuelve a enfocar
+  // el panel — el input perdía el foco tras cada letra (bug reportado en el
+  // alta de Atleta Líder).
+  const onCloseRef = useRef(onClose)
+  const dismissibleRef = useRef(dismissible)
+  useEffect(() => {
+    onCloseRef.current = onClose
+    dismissibleRef.current = dismissible
+  })
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && dismissible) {
-        onClose()
+      if (e.key === 'Escape' && dismissibleRef.current) {
+        onCloseRef.current()
         return
       }
       // Focus trap: el Tab circula dentro de la hoja (diálogo modal).
@@ -61,7 +75,7 @@ export function Sheet({ open, onClose, title, children, dismissible = true }: Sh
       clearTimeout(focusTimer)
       previouslyFocused?.focus?.()
     }
-  }, [open, dismissible, onClose])
+  }, [open])
 
   if (!open) return null
 
