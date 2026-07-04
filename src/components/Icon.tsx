@@ -24,6 +24,7 @@ export type Glyph =
   | 'mappin'
   | 'minus'
   | 'plus'
+  | 'search'
   | 'settings'
   | 'shield'
   | 'star'
@@ -151,6 +152,12 @@ const PATHS: Record<Glyph, JSX.Element> = {
       <line x1="5" y1="12" x2="19" y2="12" />
     </>
   ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </>
+  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />
@@ -202,17 +209,19 @@ interface IconProps {
   size?: number
   color?: string
   strokeWidth?: number
+  /** Relleno del trazo (p. ej. estrella de favorito "llena"). */
+  fill?: string
   style?: CSSProperties
   className?: string
 }
 
-export function Icon({ glyph, size = 22, color = 'currentColor', strokeWidth = 2, style, className }: IconProps) {
+export function Icon({ glyph, size = 22, color = 'currentColor', strokeWidth = 2, fill = 'none', style, className }: IconProps) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill}
       stroke={color}
       strokeWidth={strokeWidth}
       strokeLinecap="round"

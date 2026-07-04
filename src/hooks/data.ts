@@ -6,6 +6,7 @@ import type {
   ActivityType,
   AssignmentRow,
   AthleteRow,
+  FavoriteRow,
   NeedRow,
   ProfileRow,
 } from '@/types/database'
@@ -76,6 +77,54 @@ export function useGuides(enabled = true) {
       if (error) throw error
       return data ?? []
     },
+  })
+}
+
+/**
+ * Favoritos del admin en la sección Atletas (Atletas Líder y Guía).
+ * RLS: cada admin ve y edita sólo su propia lista; un guía no tiene
+ * acceso (la pantalla que los usa es exclusiva del admin).
+ */
+export function useFavorites(enabled = true) {
+  return useQuery({
+    queryKey: qk.favorites,
+    enabled,
+    queryFn: async (): Promise<FavoriteRow[]> => {
+      const { data, error } = await supabase.from('athlete_favorites').select('*')
+      if (error) throw error
+      return data ?? []
+    },
+  })
+}
+
+export function useToggleFavorite() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      kind,
+      targetId,
+      existing,
+    }: {
+      userId: string
+      kind: 'lider' | 'guia'
+      targetId: string
+      /** Si ya está marcado, la fila a desmarcar. */
+      existing?: FavoriteRow
+    }) => {
+      if (existing) {
+        const { error } = await supabase.from('athlete_favorites').delete().eq('id', existing.id)
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('athlete_favorites').insert(
+          kind === 'lider'
+            ? { user_id: userId, athlete_id: targetId }
+            : { user_id: userId, guide_id: targetId },
+        )
+        if (error) throw error
+      }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.favorites }),
   })
 }
 

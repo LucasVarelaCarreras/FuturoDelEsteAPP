@@ -61,6 +61,18 @@ export type AssignmentRow = {
   created_at: string
 }
 
+/**
+ * Favorito del admin en la sección Atletas. Apunta a exactamente UNO:
+ * un Atleta Líder (athlete_id) o un Atleta Guía (guide_id).
+ */
+export type FavoriteRow = {
+  id: string
+  user_id: string
+  athlete_id: string | null
+  guide_id: string | null
+  created_at: string
+}
+
 export type TcAcceptanceRow = {
   id: string
   user_id: string
@@ -92,6 +104,7 @@ export interface Database {
       activities: Table<ActivityRow>
       needs: Table<NeedRow>
       assignments: Table<AssignmentRow>
+      athlete_favorites: Table<FavoriteRow>
       tc_acceptances: Table<TcAcceptanceRow>
       settings: Table<SettingRow>
     }

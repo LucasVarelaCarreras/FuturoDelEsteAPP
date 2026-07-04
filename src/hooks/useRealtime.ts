@@ -9,6 +9,7 @@ const TABLE_KEYS: Record<string, readonly unknown[]> = {
   needs: qk.needs,
   assignments: qk.assignments,
   profiles: qk.guides,
+  athlete_favorites: qk.favorites,
 }
 
 /**
