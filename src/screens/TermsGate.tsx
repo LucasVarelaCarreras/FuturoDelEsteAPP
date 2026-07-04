@@ -81,7 +81,7 @@ export function TermsGate({ children }: { children: ReactNode }) {
 
         <h1 style={{ fontSize: 19, fontWeight: 800, textAlign: 'center', marginBottom: 6 }}>{TERMS_TITLE}</h1>
         <p style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 18, lineHeight: 1.5 }}>
-          Antes de acompañar atletas, necesitamos que confirmes lo siguiente:
+          Antes de acompañar Atletas Líder, necesitamos que confirmes lo siguiente:
         </p>
 
         <ul style={{ margin: '0 0 16px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>

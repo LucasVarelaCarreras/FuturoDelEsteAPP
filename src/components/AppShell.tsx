@@ -24,7 +24,7 @@ const GUIA_NAV: NavItem[] = [
 
 const ADMIN_NAV: NavItem[] = [
   { to: '/panel', label: 'Panel', glyph: 'grid' },
-  { to: '/atletas', label: 'Atletas', glyph: 'users' },
+  { to: '/atletas', label: 'Atletas Líder', glyph: 'users' },
   { to: '/actividades', label: 'Actividades', glyph: 'calendar' },
   { to: '/config', label: 'Ajustes', glyph: 'settings' },
 ]

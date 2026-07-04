@@ -54,7 +54,7 @@ export function GuiaPerfil() {
 
       <h2 style={{ fontSize: 16, marginBottom: 12 }}>Mis acompañamientos</h2>
       {mine.length === 0 ? (
-        <EmptyState icon={<Icon glyph="calendar" size={28} color="var(--fde-cyan)" />} title="Sin acompañamientos" body="Cuando te anotes para acompañar a un atleta, aparecerá acá." />
+        <EmptyState icon={<Icon glyph="calendar" size={28} color="var(--fde-cyan)" />} title="Sin acompañamientos" body="Cuando te anotes para acompañar a un Atleta Líder, aparecerá acá." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {mine.map((r) => (

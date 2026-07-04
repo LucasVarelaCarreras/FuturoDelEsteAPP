@@ -268,7 +268,7 @@ export function useSetRequired() {
 export function assignmentErrorMessage(e: unknown): string {
   const msg = e instanceof Error ? e.message.toLowerCase() : ''
   if (msg.includes('duplicate')) return 'Ya estás anotado en esta actividad.'
-  if (msg.includes('cupo_completo')) return 'Ese cupo ya se completó. Elegí otro atleta.'
+  if (msg.includes('cupo_completo')) return 'Ese cupo ya se completó. Elegí otro Atleta Líder.'
   if (msg.includes('atleta_no') || msg.includes('actividad_no'))
     return 'Ese cupo ya no está disponible.'
   return 'No se pudo completar. Intentá de nuevo.'

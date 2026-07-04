@@ -118,7 +118,7 @@ export function NeedCard({
           </button>
         ) : mineOther ? (
           <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>
-            Ya acompañás a otro atleta acá
+            Ya acompañás a otro Atleta Líder acá
           </button>
         ) : isFull ? (
           <button disabled style={{ ...btn('var(--surface-sunken)', 'var(--text-muted)'), cursor: 'not-allowed' }}>

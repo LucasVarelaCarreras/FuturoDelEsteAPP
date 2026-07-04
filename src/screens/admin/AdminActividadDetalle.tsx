@@ -130,7 +130,7 @@ export function AdminActividadDetalle() {
 
       <div style={{ padding: '18px 16px calc(30px + var(--safe-bottom))' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h2 style={{ fontSize: 16 }}>Atletas en esta actividad</h2>
+          <h2 style={{ fontSize: 16 }}>Atletas Líder en esta actividad</h2>
           <button
             onClick={() => setPickAthleteOpen(true)}
             style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'var(--fde-cyan-50)', border: 'none', color: 'var(--fde-cyan-700)', fontWeight: 800, fontSize: 13, padding: '8px 13px', borderRadius: 'var(--radius-pill)' }}
@@ -141,7 +141,7 @@ export function AdminActividadDetalle() {
 
         {needs.length === 0 ? (
           <p style={{ fontSize: 13.5, color: 'var(--text-muted)', padding: '20px 0' }}>
-            No hay atletas inscriptos. Agregá atletas para gestionar la cobertura.
+            No hay Atletas Líder inscriptos. Agregá Atletas Líder para gestionar la cobertura.
           </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -161,7 +161,7 @@ export function AdminActividadDetalle() {
                         <Icon glyph={sm.glyph as never} size={12} color={sm.text} /> {sm.label}
                       </span>
                     </div>
-                    <button onClick={() => setConfirmRemoveNeed(need)} aria-label="Quitar atleta" style={{ background: 'none', border: 'none', padding: 6 }}>
+                    <button onClick={() => setConfirmRemoveNeed(need)} aria-label="Quitar Atleta Líder" style={{ background: 'none', border: 'none', padding: 6 }}>
                       <Icon glyph="trash" size={17} color="var(--text-muted)" />
                     </button>
                   </div>
@@ -216,9 +216,9 @@ export function AdminActividadDetalle() {
       </Sheet>
 
       {/* Quitar atleta */}
-      <Sheet open={!!confirmRemoveNeed} onClose={() => setConfirmRemoveNeed(null)} title="Quitar atleta">
+      <Sheet open={!!confirmRemoveNeed} onClose={() => setConfirmRemoveNeed(null)} title="Quitar Atleta Líder">
         <p style={{ fontSize: 14.5, color: 'var(--text-body)', lineHeight: 1.6, marginBottom: 16 }}>
-          ¿Quitar a este atleta de la actividad? Se eliminarán sus acompañantes asignados.
+          ¿Quitar a este Atleta Líder de la actividad? Se eliminarán sus acompañantes asignados.
         </p>
         <Button
           full
@@ -228,7 +228,7 @@ export function AdminActividadDetalle() {
             if (!confirmRemoveNeed) return
             try {
               await removeNeed.mutateAsync(confirmRemoveNeed)
-              notify('Atleta quitado de la actividad')
+              notify('Atleta Líder quitado de la actividad')
             } catch {
               notify('No se pudo quitar.')
             } finally {
@@ -241,9 +241,9 @@ export function AdminActividadDetalle() {
       </Sheet>
 
       {/* Elegir atleta para agregar */}
-      <Sheet open={pickAthleteOpen} onClose={() => setPickAthleteOpen(false)} title="Agregar atleta">
+      <Sheet open={pickAthleteOpen} onClose={() => setPickAthleteOpen(false)} title="Agregar Atleta Líder">
         {athletesNotInActivity.length === 0 ? (
-          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', padding: '10px 0 20px' }}>Todos los atletas activos ya están en esta actividad.</p>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', padding: '10px 0 20px' }}>Todos los Atletas Líder activos ya están en esta actividad.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 8 }}>
             {athletesNotInActivity.map((a) => (
@@ -252,7 +252,7 @@ export function AdminActividadDetalle() {
                 onClick={async () => {
                   try {
                     await addNeed.mutateAsync({ activityId: activity.id, athleteId: a.id })
-                    notify('Atleta agregado')
+                    notify('Atleta Líder agregado')
                   } catch {
                     notify('No se pudo agregar.')
                   } finally {

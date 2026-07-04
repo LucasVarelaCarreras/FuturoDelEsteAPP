@@ -157,7 +157,7 @@ export function GuiaActividades() {
                   </p>
                 )}
                 {actNeeds.length === 0 ? (
-                  <p style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 50 }}>Todavía no hay atletas inscriptos.</p>
+                  <p style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 50 }}>Todavía no hay Atletas Líder inscriptos.</p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {actNeeds.map((n) => (

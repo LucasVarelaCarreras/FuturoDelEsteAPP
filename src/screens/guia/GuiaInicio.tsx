@@ -112,11 +112,11 @@ export function GuiaInicio() {
 
   return (
     <div style={{ padding: '18px 16px 8px' }}>
-      <h1 style={{ fontSize: 23, marginBottom: 2 }}>Hola, {profile?.full_name.split(' ')[0]} 👋</h1>
+      <h1 style={{ fontSize: 23, marginBottom: 2 }}>Hola, {profile?.full_name.split(' ')[0]}</h1>
       <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 16 }}>
         {myAssignments.length > 0
           ? `Tenés ${myAssignments.length} acompañamiento${myAssignments.length > 1 ? 's' : ''} confirmado${myAssignments.length > 1 ? 's' : ''}.`
-          : 'Elegí un atleta para acompañar en la próxima actividad.'}
+          : 'Elegí un Atleta Líder para acompañar en la próxima actividad.'}
       </p>
 
       <SummaryStrip openCount={openRows.length} mineCount={myAssignments.length} />

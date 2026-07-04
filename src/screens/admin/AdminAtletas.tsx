@@ -36,10 +36,10 @@ export function AdminAtletas() {
   }
 
   const submit = async () => {
-    if (!form.name.trim()) return setError('Ingresá el nombre del atleta.')
+    if (!form.name.trim()) return setError('Ingresá el nombre del Atleta Líder.')
     try {
       await save.mutateAsync({ id: editing?.id, input: form })
-      notify(editing ? 'Atleta actualizado' : 'Atleta creado')
+      notify(editing ? 'Atleta Líder actualizado' : 'Atleta Líder creado')
       setSheetOpen(false)
     } catch {
       setError('No se pudo guardar. Intentá de nuevo.')
@@ -50,7 +50,7 @@ export function AdminAtletas() {
     if (!confirmDelete) return
     try {
       await del.mutateAsync(confirmDelete.id)
-      notify('Atleta eliminado')
+      notify('Atleta Líder eliminado')
     } catch {
       notify('No se pudo eliminar.')
     } finally {
@@ -64,18 +64,18 @@ export function AdminAtletas() {
   return (
     <div style={{ padding: '18px 16px 8px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h1 style={{ fontSize: 23 }}>Atletas</h1>
+        <h1 style={{ fontSize: 23 }}>Atletas Líder</h1>
         <Button onClick={openCreate} style={{ padding: '10px 16px', fontSize: 13.5 }}>
-          <Icon glyph="plus" size={16} color="#fff" /> Atleta
+          <Icon glyph="plus" size={16} color="#fff" /> Atleta Líder
         </Button>
       </div>
 
       {athletes.length === 0 ? (
         <EmptyState
           icon={<Icon glyph="users" size={28} color="var(--fde-cyan)" />}
-          title="Sin atletas"
-          body="Agregá el primer atleta líder de la fundación."
-          action={<Button onClick={openCreate}>Agregar atleta</Button>}
+          title="Sin Atletas Líder"
+          body="Agregá el primer Atleta Líder de la fundación."
+          action={<Button onClick={openCreate}>Agregar Atleta Líder</Button>}
         />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -117,7 +117,7 @@ export function AdminAtletas() {
         </div>
       )}
 
-      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={editing ? 'Editar atleta' : 'Nuevo atleta'}>
+      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={editing ? 'Editar Atleta Líder' : 'Nuevo Atleta Líder'}>
         <FormError>{error}</FormError>
         <TextField label="Nombre completo *" id="an" maxLength={120} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre y apellido" />
         <TextField label="Deporte" id="as" maxLength={60} value={form.sport} onChange={(e) => setForm({ ...form, sport: e.target.value })} placeholder="Atletismo, Natación…" />
@@ -129,11 +129,11 @@ export function AdminAtletas() {
           <option value="X">Otro</option>
         </SelectField>
         <Button full loading={save.isPending} onClick={submit} style={{ marginTop: 4 }}>
-          {editing ? 'Guardar cambios' : 'Guardar atleta'}
+          {editing ? 'Guardar cambios' : 'Guardar Atleta Líder'}
         </Button>
       </Sheet>
 
-      <Sheet open={!!confirmDelete} onClose={() => setConfirmDelete(null)} title="Eliminar atleta">
+      <Sheet open={!!confirmDelete} onClose={() => setConfirmDelete(null)} title="Eliminar Atleta Líder">
         <p style={{ fontSize: 14.5, color: 'var(--text-body)', lineHeight: 1.6, marginBottom: 16 }}>
           ¿Eliminar a <b style={{ color: 'var(--text-heading)' }}>{confirmDelete?.name}</b>? Se quitarán sus inscripciones y
           acompañamientos. Esta acción no se puede deshacer.
