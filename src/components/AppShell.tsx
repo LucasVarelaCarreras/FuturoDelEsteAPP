@@ -8,6 +8,7 @@ import { useRealtime } from '@/hooks/useRealtime'
 import { InstallPrompt } from './InstallPrompt'
 import { useToast } from '@/context/ToastContext'
 import { ADMIN_CODE_CHECK_KEY } from '@/screens/auth/AuthScreen'
+import logoUrl from '@/assets/logo.png'
 
 interface NavItem {
   to: string
@@ -170,23 +171,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   )
 }
 
+/** Logo oficial de la fundación (generado desde logo.png por gen-icons). */
 function WaveMark() {
   return (
-    <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
-      <defs>
-        <linearGradient id="wm" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#01B8A4" />
-          <stop offset="0.5" stopColor="#019AC4" />
-          <stop offset="1" stopColor="#01608F" />
-        </linearGradient>
-      </defs>
-      <rect width="100" height="100" rx="24" fill="#E2F3F9" />
-      <circle cx="50" cy="50" r="27" fill="url(#wm)" />
-      <g fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
-        <path d="M30 44q5 -5 10 0t10 0t10 0" />
-        <path d="M30 52q5 -5 10 0t10 0t10 0" />
-        <path d="M30 60q5 -5 10 0t10 0t10 0" />
-      </g>
-    </svg>
+    <img
+      src={logoUrl}
+      width={34}
+      height={34}
+      alt=""
+      aria-hidden="true"
+      style={{ display: 'block' }}
+    />
   )
 }

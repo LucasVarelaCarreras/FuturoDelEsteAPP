@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui'
 import { TextField, FormError } from '@/components/fields'
 import { Icon } from '@/components/Icon'
+import logoUrl from '@/assets/logo.png'
 
 type View = 'welcome' | 'login' | 'register' | 'admin' | 'forgot'
 
@@ -86,15 +87,13 @@ function Hero() {
         borderBottomRightRadius: 30,
       }}
     >
-      <svg width="72" height="72" viewBox="0 0 100 100" style={{ margin: '0 auto 14px', display: 'block' }}>
-        <rect width="100" height="100" rx="26" fill="rgba(255,255,255,0.16)" />
-        <circle cx="50" cy="50" r="27" fill="#fff" />
-        <g fill="none" stroke="#019AC4" strokeWidth="2.8" strokeLinecap="round">
-          <path d="M30 44q5 -5 10 0t10 0t10 0" />
-          <path d="M30 52q5 -5 10 0t10 0t10 0" />
-          <path d="M30 60q5 -5 10 0t10 0t10 0" />
-        </g>
-      </svg>
+      <img
+        src={logoUrl}
+        width={84}
+        height={84}
+        alt="Logo de la Fundación Futuro del Este"
+        style={{ margin: '0 auto 14px', display: 'block' }}
+      />
       <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, color: '#fff', letterSpacing: '0.02em' }}>
         FUTURO DEL ESTE
       </h1>
