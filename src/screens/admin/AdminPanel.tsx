@@ -79,10 +79,15 @@ export function AdminPanel() {
   ]
 
   return (
-    <div style={{ padding: '18px 16px 8px' }}>
-      <h1 style={{ fontSize: 23, marginBottom: 4 }}>Panel</h1>
-      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 18 }}>Resumen general de la fundación</p>
+    <div>
+      {/* Header decorativo con el degradé de marca (mismo patrón que los
+          detalles), como separador visual antes de los paneles. */}
+      <div data-deco-header="1" style={decoHeader}>
+        <h1 style={{ fontSize: 23, margin: 0, color: '#fff' }}>Panel</h1>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', margin: '6px 0 0' }}>Resumen general de la fundación</p>
+      </div>
 
+      <div style={{ padding: '18px 16px 8px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 24 }}>
         {kpis.map((k) => (
           <Card key={k.label} style={{ padding: 15 }}>
@@ -141,6 +146,16 @@ export function AdminPanel() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }
+
+/** Header decorativo con el degradé oscuro de marca (copiado de los detalles). */
+const decoHeader = {
+  background: 'var(--gradient-deep)',
+  padding: 'calc(var(--safe-top) + 16px) 20px 26px',
+  borderBottomLeftRadius: 28,
+  borderBottomRightRadius: 28,
+  color: '#fff',
+} as const

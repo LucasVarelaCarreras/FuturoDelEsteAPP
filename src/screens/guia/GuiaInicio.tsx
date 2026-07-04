@@ -111,14 +111,19 @@ export function GuiaInicio() {
   }
 
   return (
-    <div style={{ padding: '18px 16px 8px' }}>
-      <h1 style={{ fontSize: 23, marginBottom: 2 }}>Hola, {profile?.full_name.split(' ')[0]}</h1>
-      <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 16 }}>
-        {myAssignments.length > 0
-          ? `Tenés ${myAssignments.length} acompañamiento${myAssignments.length > 1 ? 's' : ''} confirmado${myAssignments.length > 1 ? 's' : ''}.`
-          : 'Elegí un Atleta Líder para acompañar en la próxima actividad.'}
-      </p>
+    <div>
+      {/* Header decorativo con el degradé de marca (mismo patrón que los
+          detalles), como separador visual antes de los cupos. */}
+      <div data-deco-header="1" style={decoHeader}>
+        <h1 style={{ fontSize: 23, margin: 0, color: '#fff' }}>Hola, {profile?.full_name.split(' ')[0]}</h1>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', margin: '6px 0 0' }}>
+          {myAssignments.length > 0
+            ? `Tenés ${myAssignments.length} acompañamiento${myAssignments.length > 1 ? 's' : ''} confirmado${myAssignments.length > 1 ? 's' : ''}.`
+            : 'Elegí un Atleta Líder para acompañar en la próxima actividad.'}
+        </p>
+      </div>
 
+      <div style={{ padding: '18px 16px 8px' }}>
       <SummaryStrip openCount={openRows.length} mineCount={myAssignments.length} />
 
       <h2 style={{ fontSize: 16, margin: '20px 0 12px' }}>Cupos abiertos</h2>
@@ -174,9 +179,19 @@ export function GuiaInicio() {
           </Button>
         </div>
       </Sheet>
+      </div>
     </div>
   )
 }
+
+/** Header decorativo con el degradé oscuro de marca (copiado de los detalles). */
+const decoHeader = {
+  background: 'var(--gradient-deep)',
+  padding: 'calc(var(--safe-top) + 16px) 20px 26px',
+  borderBottomLeftRadius: 28,
+  borderBottomRightRadius: 28,
+  color: '#fff',
+} as const
 
 function SummaryStrip({ openCount, mineCount }: { openCount: number; mineCount: number }) {
   const items = [
