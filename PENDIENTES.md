@@ -301,6 +301,38 @@ y Playwright real contra un stub local de Supabase, a 360px y 390px.
       real de la sesión bien entrada la noche) aparece en Historial sin botón
       Cancelar, y en Actividades del admin con badge "Finalizada".
 
+## Mis acompañamientos como pantalla propia (COMPLETA)
+
+Pedido de Lucas: el Perfil del guía crecía sin límite empujando "Cerrar
+sesión" cada vez más abajo a medida que se acumulaban acompañamientos.
+Verificado con `npm run build` (typecheck + build limpios) y Playwright
+contra un stub local de Supabase (sesión inyectada en `localStorage` +
+mock de `/auth/v1/**` y `/rest/v1/**`), a 375px.
+
+- [x] **Nueva pantalla `/mis-acompanamientos`** (`GuiaAcompanamientos.tsx`):
+      se movieron ahí "Próximos acompañamientos" + "Historial" + el Sheet de
+      cancelar + el componente `AssignmentCard`, que antes vivían inline en
+      `GuiaPerfil.tsx`. Header con el mismo patrón visual que
+      `GuiaActividadDetalle` (degradé `--gradient-deep`, botón circular
+      "Volver" que navega a `/perfil`, esquinas inferiores redondeadas), con
+      el título "Mis acompañamientos". Se agregó la ruta en `App.tsx` junto
+      al resto de rutas del guía: es una pantalla "empujada" desde Perfil
+      (no es un tab de la barra inferior), igual que `/actividad/:id`.
+- [x] **`GuiaPerfil.tsx` simplificado**: en el lugar donde estaba la lista
+      completa ahora hay una tarjeta/botón "Mis acompañamientos" con badge
+      numérico de próximos acompañamientos (reutiliza `useActivities` +
+      `useAssignments`, que ya están en caché de TanStack Query, así que no
+      agrega pedidos nuevos al servidor) que navega a la nueva pantalla. Se
+      sacaron del archivo los imports/hooks que ya no hacían falta ahí
+      (`useAthletes`, `useCancelAssignment`, `Sheet`, `AssignmentRow` /
+      `ActivityRow` / `AthleteRow`, etc.).
+- [x] Verificado con Playwright: el botón en Perfil muestra el conteo
+      correcto de próximos (2), al tocarlo navega a `/mis-acompanamientos`
+      donde se ven Próximos/Historial con datos de prueba (2 próximos + 1
+      en historial), cancelar un acompañamiento próximo lo saca de la lista
+      y actualiza el conteo, y el botón Volver regresa a `/perfil` con el
+      badge ya actualizado (1).
+
 ## Por revisar
 
 - [ ] **Borrar atleta/actividad de una actividad no es atómico**: al quitar

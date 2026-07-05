@@ -17,6 +17,9 @@ const GuiaActividadDetalle = lazy(() =>
   import('@/screens/guia/GuiaActividadDetalle').then((m) => ({ default: m.GuiaActividadDetalle })),
 )
 const GuiaPerfil = lazy(() => import('@/screens/guia/GuiaPerfil').then((m) => ({ default: m.GuiaPerfil })))
+const GuiaAcompanamientos = lazy(() =>
+  import('@/screens/guia/GuiaAcompanamientos').then((m) => ({ default: m.GuiaAcompanamientos })),
+)
 const AdminPanel = lazy(() => import('@/screens/admin/AdminPanel').then((m) => ({ default: m.AdminPanel })))
 const AdminAtletas = lazy(() => import('@/screens/admin/AdminAtletas').then((m) => ({ default: m.AdminAtletas })))
 const AdminActividades = lazy(() => import('@/screens/admin/AdminActividades').then((m) => ({ default: m.AdminActividades })))
@@ -71,6 +74,7 @@ export function App() {
             <Route path="/actividades" element={<GuiaActividades />} />
             <Route path="/actividad/:id" element={<GuiaActividadDetalle />} />
             <Route path="/perfil" element={<GuiaPerfil />} />
+            <Route path="/mis-acompanamientos" element={<GuiaAcompanamientos />} />
             <Route path="*" element={<Navigate to="/inicio" replace />} />
           </Routes>
         </Suspense>
