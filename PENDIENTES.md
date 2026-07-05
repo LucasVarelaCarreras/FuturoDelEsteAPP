@@ -447,3 +447,38 @@ mock de `/auth/v1/**` y `/rest/v1/**`), a 375px.
 
 - Este archivo es solo de seguimiento manual; no se lee desde el código.
 - Cuando se resuelva un ítem, tildarlo o borrarlo de la lista.
+
+## Ronda de fidelidad con la demo v2.2 — iteración 5: orden de Actividades, foto de Google, auto-edición de perfil (COMPLETA)
+
+- [x] **Orden en Actividades del admin**: antes ordenaba todo por fecha
+      ascendente sin distinguir pasado/futuro, así que con el tiempo las
+      finalizadas (fecha más vieja) quedaban arriba de todo. Ahora se
+      muestran primero las futuras/vigentes (más próxima primero) y
+      después las finalizadas (la más recientemente finalizada primero),
+      usando el helper `isActivityPast` ya existente.
+- [x] **Foto de perfil al registrarse con Google**: el botón "Continuar
+      con Google" ya existía (asigna rol 'guia' de forma segura, un login
+      de Google nunca puede mandar el código de admin). Se agregó la
+      migración `0007_profile_avatar.sql` (columna `profiles.avatar_url`
+      + `handle_new_user` la copia de `raw_user_meta_data->>'avatar_url'`
+      o `'picture'`). El componente `Avatar` ahora acepta `src` opcional
+      (si falla la carga, cae a las iniciales). Se usa en `AppShell`
+      (avatar del header) y `GuiaPerfil` (tarjeta de cabecera). El
+      registro manual por email sigue sin foto (columna queda vacía).
+      **PENDIENTE MANUAL para Lucas: aplicar la migración 0007 en el SQL
+      Editor de Supabase, y activar el proveedor Google en Authentication
+      > Providers con su propio Client ID/Secret de Google Cloud Console
+      (redirect URI = la URL de callback que muestra esa misma pantalla
+      de Supabase). Sin esto el botón de Google sigue mostrando "todavía
+      no está disponible" (ya manejado con un mensaje amigable, no rompe
+      nada).**
+- [x] **El guía puede editar su propio perfil**: en Perfil, tocar la
+      tarjeta de cabecera (nombre/avatar) abre una hoja para editar
+      Nombre, Teléfono y Categoría — el email NO se muestra (espejo del
+      de auth, protegido por trigger) ni el estado activo/rol (protegidos
+      por `protect_profile_role`, sólo un admin puede tocarlos). Reusa el
+      hook `useUpdateGuideProfile` (la política RLS `profiles_update_self`
+      ya permitía esto a nivel de base, sólo faltaba la pantalla) y
+      `refreshProfile()` para reflejar los cambios sin recargar.
+
+Verificado: `npm run build` sin errores de TypeScript.

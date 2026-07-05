@@ -57,9 +57,18 @@ export function AdminActividades() {
 
   const sorted = useMemo(() => {
     const favActiveIds = new Set([...favByAthlete.keys()].filter((id) => athMap.get(id)?.active))
-    return applyActivityFilters(activities, needs, favActiveIds, filters).sort((a, b) =>
-      (a.date ?? '9999').localeCompare(b.date ?? '9999'),
-    )
+    const filtered = applyActivityFilters(activities, needs, favActiveIds, filters)
+    // Primero las futuras/vigentes (más próxima primero), después las
+    // finalizadas (la más recientemente finalizada primero): de lo
+    // contrario, con el tiempo, las finalizadas más viejas terminaban
+    // arriba de todo y enterraban las futuras.
+    const upcoming = filtered
+      .filter((a) => !isActivityPast(a.date, a.time))
+      .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'))
+    const past = filtered
+      .filter((a) => isActivityPast(a.date, a.time))
+      .sort((a, b) => (b.date ?? '0000').localeCompare(a.date ?? '0000'))
+    return [...upcoming, ...past]
   }, [activities, needs, filters, favByAthlete, athMap])
 
   // Para el badge "Faltan N" sólo cuentan atletas activos: los inactivos no

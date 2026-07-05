@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
+import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
 /* ---- Spinner ---- */
@@ -39,16 +39,39 @@ export function FullScreenLoader({ label = 'Cargando…' }: { label?: string }) 
   )
 }
 
-/* ---- Avatar con iniciales ---- */
+/* ---- Avatar: foto de perfil (si hay `src`) o círculo de iniciales ---- */
 export function Avatar({
   initials,
   color = 'var(--fde-cyan)',
   size = 42,
+  src,
 }: {
   initials: string
   color?: string
   size?: number
+  /** Foto de perfil (p. ej. de Google). Si falta o falla al cargar, se cae a las iniciales. */
+  src?: string | null
 }) {
+  const [imgFailed, setImgFailed] = useState(false)
+
+  if (src && !imgFailed) {
+    return (
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        onError={() => setImgFailed(true)}
+        style={{
+          width: size,
+          height: size,
+          flex: `0 0 ${size}px`,
+          borderRadius: '50%',
+          objectFit: 'cover',
+        }}
+      />
+    )
+  }
+
   return (
     <div
       aria-hidden="true"

@@ -107,6 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               initials={profile.initials || 'U'}
               color={colorForId(profile.id)}
               size={38}
+              src={profile.avatar_url}
             />
           )}
         </div>

@@ -17,6 +17,8 @@ export type ProfileRow = {
   category: string
   /** Cuenta habilitada. Sólo un admin puede cambiarlo (migración 0005). */
   active: boolean
+  /** Foto de perfil de Google (migración 0007). Vacía en registro manual. */
+  avatar_url: string | null
   created_at: string
   updated_at: string
 }
