@@ -482,3 +482,22 @@ mock de `/auth/v1/**` y `/rest/v1/**`), a 375px.
       `refreshProfile()` para reflejar los cambios sin recargar.
 
 Verificado: `npm run build` sin errores de TypeScript.
+
+## Mejoras pendientes acordadas con Lucas (batch para la próxima ronda)
+
+- [ ] **Subir el mínimo de contraseña a 8 caracteres** en Supabase
+      (Authentication → Providers → Email → Minimum password length, hoy
+      en 6). Cuando se haga, actualizar también el mensaje de error en
+      `src/screens/auth/AuthScreen.tsx` (`friendlyError`, línea ~28: "La
+      contraseña debe tener al menos 6 caracteres.") para que diga 8 y
+      coincida con el límite real.
+- [ ] **Configurar SMTP propio** (recomendado: Resend) para el envío de
+      emails de confirmación — el servicio incluido de Supabase tiene un
+      límite bajo de envíos por hora, pensado solo para pruebas chicas.
+      Postergado a propósito: por ahora se usa el de Supabase durante el
+      testeo inicial con usuarios reales; si empieza a fallar la entrega
+      de mails, se activa esto.
+
+Explícitamente decidido con Lucas: no aplicar estos cambios todavía, se
+acumulan acá junto con lo que reporten los usuarios reales durante el
+testeo, y se resuelven todos juntos en una tanda.
