@@ -518,3 +518,11 @@ testeo, y se resuelven todos juntos en una tanda.
       `.order('created_at')` (o por `id`) a la consulta de `useNeeds()`
       para que el orden sea siempre estable, sin importar cuántas veces
       se edite `required`.
+
+- [ ] **Idea a futuro (Lucas): animación al aplicar un filtro.** Cuando
+      se cambia un filtro (ej. "Carreras" en Actividades) y la lista se
+      actualiza, que las tarjetas nuevas no aparezcan todas de golpe sino
+      con una transición breve tipo "fade-in" (y opcionalmente
+      escalonada entre tarjetas, "stagger animation") — algo muy rápido,
+      solo para transmitir que la lista se actualizó. Pendiente de
+      confirmar con Lucas la referencia exacta antes de implementar.
