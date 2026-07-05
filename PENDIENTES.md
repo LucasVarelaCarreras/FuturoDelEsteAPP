@@ -501,3 +501,20 @@ Verificado: `npm run build` sin errores de TypeScript.
 Explícitamente decidido con Lucas: no aplicar estos cambios todavía, se
 acumulan acá junto con lo que reporten los usuarios reales durante el
 testeo, y se resuelven todos juntos en una tanda.
+
+- [ ] **Bug: al sumar/restar acompañantes requeridos en la ficha de una
+      actividad (admin), la fila del Atleta Líder se mueve al final de
+      la lista.** Causa raíz identificada: `useNeeds()` en
+      `src/hooks/data.ts` (línea ~44-53) hace `select('*')` sobre la
+      tabla `needs` **sin ningún `.order(...)`**. Postgres no garantiza
+      el orden de las filas si no se pide explícitamente — y un `UPDATE`
+      (como el que dispara `useSetRequired` al sumar/restar, línea ~344)
+      suele hacer que esa fila aparezca al final en el siguiente
+      `select`, porque internamente Postgres escribe una versión física
+      nueva de la fila actualizada. No tiene relación con el valor de
+      `required` ni con la cobertura, es puramente el orden no
+      determinístico de una consulta sin `ORDER BY`.
+      **Fix propuesto (no aplicado todavía)**: agregarle un
+      `.order('created_at')` (o por `id`) a la consulta de `useNeeds()`
+      para que el orden sea siempre estable, sin importar cuántas veces
+      se edite `required`.
